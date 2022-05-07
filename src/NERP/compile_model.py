@@ -1,4 +1,4 @@
-from NERDA.models import NERDA
+from NERP.NERDA.models import NERDA
 from NERP.prepare_data import prepare_data
 from sklearn.model_selection import train_test_split
 

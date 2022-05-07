@@ -1,4 +1,4 @@
-from NERDA.models import NERDA
+from NERP.NERDA.models import NERDA
 from NERP.utils import SentenceGetter
 import pandas as  pd
 import os

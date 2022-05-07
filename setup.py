@@ -16,12 +16,14 @@ setuptools.setup(
     package_dir={'': 'src'},
     python_requires='>=3.6',
     install_requires=[
-        'NERDA @ git+https://github.com/Chaarangan/NERDA@save_and_load_tokenizer',
         'torch',
         'transformers',
         'sklearn',
         'nltk',
-        'sentencepiece'
+        'sentencepiece',
+        'pandas',
+        'progressbar',
+        'pyconll'
     ],
     setup_requires=['pytest-runner'],
     tests_require=['pytest',
