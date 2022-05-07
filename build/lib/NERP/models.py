@@ -66,7 +66,7 @@ class NERP:
             is_bulk: bool = False,
             in_file_path: str = None,
             text: str = "Sample NERP input") -> str:
-        output, message = inference_pipeline(pretrained,
+        message = inference_pipeline(pretrained,
                                     model_path,
                                     tokenizer_path,
                                     out_file_path,
@@ -78,10 +78,7 @@ class NERP:
                                     tokenizer_parameters=self.tokenizer_parameters,
                                     max_len=self.max_len)
         
-        if(is_bulk):
-            return message
-        else:
-            return output, message
+        return message
     
 
 

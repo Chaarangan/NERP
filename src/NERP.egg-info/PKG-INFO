@@ -1,0 +1,17 @@
+Metadata-Version: 2.1
+Name: NERP
+Version: 1.0.0
+Summary: A Pipeline for Finetuning & Infering Transformers for Named-Entity Recognition
+Home-page: https://github.com/chaarangan/NERP
+Author: Charangan Vasantharajan
+Author-email: chaanuv@gmail.com
+License: UNKNOWN
+Platform: UNKNOWN
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Requires-Python: >=3.6
+Description-Content-Type: text/markdown
+
+## Background
+`NERP` is developed as a part of [National NLP Clinical Challenges (n2c2)](https://n2c2.dbmi.hms.harvard.edu/2022-track-1)’s submission as a pipeline for training NER models.
+

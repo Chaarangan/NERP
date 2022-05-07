@@ -22,9 +22,9 @@ setuptools.setup(
         'nltk',
         'sentencepiece'
     ],
-    # setup_requires=['pytest-runner'],
-    # tests_require=['pytest',
-    #                'pytest-cov'],
+    setup_requires=['pytest-runner'],
+    tests_require=['pytest',
+                   'pytest-cov'],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",

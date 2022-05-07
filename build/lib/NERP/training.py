@@ -4,6 +4,9 @@ from sklearn.model_selection import KFold
 from NERP.compile_model import compile_model
 from NERP.prepare_data import prepare_data
 
+# if you get a warning regarding TOKENIZERS_PARALLELISM, uncomment the below line.
+#os.environ["TOKENIZERS_PARALLELISM"] = "false"
+
 
 def do_train(train_data, test_data, limit, tag_scheme, hyperparameters, tokenizer_parameters, max_len, dropout, pretrained, test_size, isModelExists, model_path, model_dir, results):
     model = compile_model(train_data, limit, tag_scheme,
@@ -17,6 +20,7 @@ def do_train(train_data, test_data, limit, tag_scheme, hyperparameters, tokenize
     model.train()
 
     # save model
+    #model_name = os.path.join(model_dir, "pytorch_model-" + str(len(results)) + ".bin") if len(results) == 0 else os.path.join(model_dir, "pytorch_model.bin")
     model.save_network(output_dir=model_dir)
     print("Model stored!")
 

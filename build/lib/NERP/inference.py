@@ -3,6 +3,10 @@ from NERP.utils import SentenceGetter
 import pandas as  pd
 import os
 
+# if you get a warning regarding TOKENIZERS_PARALLELISM, uncomment the below line.
+#os.environ["TOKENIZERS_PARALLELISM"] = "false"
+
+
 def load_model(tag_scheme, pretrained, max_len, model_path, tokenizer_path, hyperparameters, tokenizer_parameters):
 
     # compile model
@@ -85,8 +89,8 @@ def inference_pipeline(pretrained,
         print("Bulk Mode!")
         predict_bulk(model, in_file_path, out_file_path)
 
-        return None, "Predictions are stored successfully!"
-
     else:
-        return model.predict_text(text), "Predicted successfully!"
+        print(model.predict_text(text))
+    
+    return "Successfully finished!"
     
