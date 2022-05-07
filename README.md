@@ -80,6 +80,34 @@ All huggingface transformer-based models are allowed.
 pip install NERP
 ```
 
+#### Initialize NERP
+```
+from NERP.NERP import NERP
+
+model = NERP(
+          tag_scheme=[
+              'B-PER',
+              'I-PER',
+              'B-ORG',
+              'I-ORG',
+              'B-LOC',
+              'I-LOC',
+              'B-MISC',
+              'I-MISC'
+          ],
+          hyperparameters={'epochs': 1,
+                                'warmup_steps': 500,
+                                'train_batch_size': 64,
+                                'learning_rate': 0.0001},
+          tokenizer_parameters={'do_lower_case': True},
+          max_len=128,
+          dropout=0.1,
+          pretrained_models=[
+              'roberta-base'
+          ]
+)
+```
+
 #### Training a NER model using NERP
 
 1. Train the base model
