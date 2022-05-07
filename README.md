@@ -76,12 +76,12 @@ All huggingface transformer-based models are allowed.
 #### Environment Setup
 1. Activate a new conda/python environment
 2. Execute the following to install required pip dependencies
-```
+```python
 pip install NERP
 ```
 
 #### Initialize NERP
-```
+```python
 from NERP.models import NERP
 
 model = NERP(
@@ -111,7 +111,7 @@ model = NERP(
 #### Training a NER model using NERP
 
 1. Train the base model
-```
+```python
 message = model.train(train_data="data/train.csv", test_data="data/test.csv",
                        limit=10000, test_size=0.2, is_model_exists=False, existing_model_path="", 
                        output_dir="models/")
@@ -119,7 +119,7 @@ print(message)
 ```
 
 2. Training by using a trained model weights to initialize the base model 
-```
+```python
 message = model.train(train_data="data/train.csv", test_data="data/test.csv",
                        limit=10000, test_size=0.2, is_model_exists=True, existing_model_path="models/pytorch-model.bin", 
                        output_dir="models/")
@@ -127,7 +127,7 @@ print(message)
 ```
 
 3. Training with KFold Cross Validation
-```
+```python
 message = model.train(train_data="data/train.csv", test_data="data/test.csv",
                        limit=10000, test_size=0.2, is_model_exists=False, existing_model_path="", 
                        output_dir="models/"
@@ -141,7 +141,7 @@ print(message)
 #### Inference of a NER model using NERP 
 
 1. Prediction on a sample text
-```
+```python
 output, message = model.inference(pretrained= "roberta-base", 
                               model_path="models/pytorch-model.bin",
                               tokenizer_path="models/tokenizer/",
@@ -150,7 +150,7 @@ print(output)
 ```
 
 2. Prediction on a csv file
-```
+```python
 message = model.inference(pretrained= "roberta-base", 
                               model_path="models/pytorch-model.bin",
                               tokenizer_path="models/tokenizer/",
