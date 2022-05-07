@@ -7,7 +7,7 @@ setuptools.setup(
     name="NERP",
     version="1.0.0",
     author="Charangan Vasantharajan",
-    author_email="charangan.18@cse.mrt.ac.lk",
+    author_email="chaanuv@gmail.com",
     description="A Pipeline for Finetuning & Infering Transformers for Named-Entity Recognition",
     long_description=long_description,
     long_description_content_type="text/markdown",
