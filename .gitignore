@@ -2,3 +2,4 @@
 .pypirc
 build
 dist
+.eggs
