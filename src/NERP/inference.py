@@ -4,7 +4,7 @@ import pandas as  pd
 import os
 
 # if you get a warning regarding TOKENIZERS_PARALLELISM, uncomment the below line.
-os.environ["TOKENIZERS_PARALLELISM"] = "false"
+#os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 
 def load_model(tag_scheme, pretrained, max_len, model_path, tokenizer_path, hyperparameters, tokenizer_parameters):

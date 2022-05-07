@@ -5,7 +5,7 @@ from NERP.compile_model import compile_model
 from NERP.prepare_data import prepare_data
 
 # if you get a warning regarding TOKENIZERS_PARALLELISM, uncomment the below line.
-os.environ["TOKENIZERS_PARALLELISM"] = "false"
+#os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 
 def do_train(train_data, test_data, limit, tag_scheme, hyperparameters, tokenizer_parameters, max_len, dropout, pretrained, test_size, isModelExists, model_path, model_dir, results):

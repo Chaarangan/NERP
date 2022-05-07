@@ -4,9 +4,6 @@ from NERP.training import training_pipeline
 
 class NERP:
     def __init__(self,
-                train_csv_file: str = None,
-                test_csv_file: str = None,
-                limit: int = 0,
                 tag_scheme: List[str] = [
                      'B-PER',
                      'I-PER',
@@ -26,13 +23,7 @@ class NERP:
                 dropout: float = 0.1,
                 pretrained_models: List[str] = [
                     'roberta-base'
-                ], 
-                test_size: float = 0.2,
-                isModelExists: bool = False,
-                existing_model_path: str = None,
-                output_dir: str = 'models/',
-                kfold: int = 0,
-                seed: int = 42) -> None:
+                ]) -> None:
 
         self.tag_scheme = tag_scheme
         self.hyperparameters = hyperparameters
