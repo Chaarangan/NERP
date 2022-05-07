@@ -7,7 +7,7 @@ Change it to create the desired configuration.
 
 #### Training Parameters
 | Parameters | Description | Default |
-| ------------- | ------------- |
+| ------------- | ------------- | ------------- |
 | train_data | path to training csv file | |
 | test_data | path to testing csv file | |
 | limit | Limit the number of observations to be returned from a given split. Defaults to None, which implies that the entire data split is returned. (it shoud be a ```int```) | 0 (whole data) |
