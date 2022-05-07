@@ -82,7 +82,7 @@ pip install NERP
 
 #### Initialize NERP
 ```
-from NERP.NERP import NERP
+from NERP.models import NERP
 
 model = NERP(
           tag_scheme=[
