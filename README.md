@@ -130,7 +130,7 @@ print(message)
 ```python
 message = model.train(train_data="data/train.csv", test_data="data/test.csv",
                        limit=10000, test_size=0.2, is_model_exists=False, existing_model_path="", 
-                       output_dir="models/"
+                       output_dir="models/",
                        kfold = 10,
                        seed = 42)
 print(message)

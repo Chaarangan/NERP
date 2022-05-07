@@ -16,6 +16,7 @@ setuptools.setup(
     package_dir={'': 'src'},
     python_requires='>=3.6',
     install_requires=[
+        'NERDA @ git+https://github.com/Chaarangan/NERDA@save_and_load_tokenizer',
         'torch',
         'transformers',
         'sklearn',
@@ -29,6 +30,5 @@ setuptools.setup(
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
     ],
-    include_package_data=True,
-    dependency_links=['https://github.com/Chaarangan/NERDA/tree/save_and_load_tokenizer']
+    include_package_data=True
 )
