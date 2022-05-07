@@ -75,7 +75,7 @@ All huggingface transformer-based models are allowed.
 ### Usage
 #### Environment Setup
 1. Activate a new conda/python environment
-2. Execute the following to install required pip dependencies
+2. Execute the following to install NERP
 ```python
 pip install NERP
 ```
