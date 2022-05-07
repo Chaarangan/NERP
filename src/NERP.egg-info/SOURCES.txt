@@ -1,6 +1,16 @@
 README.md
 setup.cfg
 setup.py
+src/NER/__init__.py
+src/NER/datasets.py
+src/NER/models.py
+src/NER/networks.py
+src/NER/performance.py
+src/NER/precooked.py
+src/NER/predictions.py
+src/NER/preprocessing.py
+src/NER/training.py
+src/NER/utils.py
 src/NERP/__init__.py
 src/NERP/compile_model.py
 src/NERP/inference.py

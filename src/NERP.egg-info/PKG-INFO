@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: NERP
-Version: 1.0.0
+Version: 1.3
 Summary: A Pipeline for Finetuning & Infering Transformers for Named-Entity Recognition
 Home-page: https://github.com/chaarangan/NERP
 Author: Charangan Vasantharajan
@@ -9,7 +9,7 @@ License: UNKNOWN
 Platform: UNKNOWN
 Classifier: Programming Language :: Python :: 3
 Classifier: License :: OSI Approved :: MIT License
-Requires-Python: >=3.6
+Requires-Python: >=3.8
 Description-Content-Type: text/markdown
 
 ## NERP - Pipeline for training NER models
