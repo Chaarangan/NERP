@@ -6,6 +6,34 @@ from NERP.prepare_data import prepare_data
 
 
 def do_train(train_data, test_data, limit, tag_scheme, hyperparameters, tokenizer_parameters, max_len, dropout, pretrained, test_size, isModelExists, model_path, model_dir, results):
+    """
+    Args:
+        train_data (str, required): Train csv file path
+        test_data (str, required): Test csv file path
+        limit (int, optional): Limit the number of observations to be 
+            returned from a given split. Defaults to None, which implies 
+            that the entire data split is returned
+        tag_scheme (List[str], optional): All available NER 
+                tags for the given data set EXCLUDING the special outside tag, 
+                that is handled separately.
+        hyperparameters (dict, optional): Hyperparameters for the model
+        tokenizer_parameters (dict, optional): Parameters for the tokenizer
+        max_len (int, required): The maximum sentence length
+        dropout (float, required): dropout probability
+        pretrianed (str, required): which pretrained 'huggingface' 
+                transformer to use
+        test_size (float, optional): train/test split ratio
+        isModelExists (bool, required): True if trained model exist and want to retrain on its weights, otherwise False.
+        model_path (str, optional): Trained model path if isModelExist is True, otherwise leave it as empty.
+        model_dir (str, required): Output directory to save trained model and clasification report
+        results (List[float], required): A list of accuracy scores
+
+    Returns:
+        results (List[float]): A list of accuracy scores
+        Save trained model and classification report
+
+
+    """
     model = compile_model(train_data, limit, tag_scheme,
                           hyperparameters, tokenizer_parameters, max_len, dropout, pretrained, test_size)
     if(isModelExists):
@@ -33,6 +61,14 @@ def do_train(train_data, test_data, limit, tag_scheme, hyperparameters, tokenize
 
 
 def write_accuracy_file(model_dir, results):
+    """
+    Args:
+        model_dir (str, required): Output model directory to store results
+        results (List[float], required): A list of accuracy scores
+
+    Returns:
+        Nothing. Save results as a text file in the output directory.
+    """
     with open(os.path.join(model_dir, "k-fold-accuracy-scores.txt"), "w") as wf:
         wf.write("K-Fold Accuracy Scores\n")
         for i in range(len(results)):

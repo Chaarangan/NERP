@@ -1,12 +1,9 @@
 import os
 import pandas as pd
-
 from NERP.utils import SentenceGetter
 
 
-def prepare_data(limit: int = None,
-                 file_path: str = None
-                 ) -> dict:
+def prepare_data(limit: int = None, file_path: str = None):
     """
     Args:
         limit (int, optional): Limit the number of observations to be 

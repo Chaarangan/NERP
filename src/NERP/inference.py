@@ -1,10 +1,24 @@
-from NER.models import NERDA
+from NERDA_framework.models import NERDA
 from NERP.utils import SentenceGetter
 import pandas as  pd
 import os
 
 def load_model(tag_scheme, pretrained, max_len, model_path, tokenizer_path, hyperparameters, tokenizer_parameters):
+    """
+    Args:
+        tag_scheme (List[str], optional): All available NER 
+                tags for the given data set EXCLUDING the special outside tag, 
+                that is handled separately.
+        pretrianed (str, optional): which pretrained 'huggingface' 
+                transformer to use
+        max_len (int, required): The maximum sentence length
+        hyperparameters (dict, optional): Hyperparameters for the model
+        tokenizer_path (str, optional): Existing tokenizer path if exist: otherwise it loads from huggingface.
+        tokenizer_parameters (dict, optional): Parameters for the tokenizer
 
+    Returns:
+        compiled model
+    """
     # compile model
     model = NERDA(
         tag_scheme=tag_scheme,

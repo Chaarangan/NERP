@@ -1,13 +1,11 @@
-from NER.models import NERDA
+from NERDA_framework.models import NERDA
 from NERP.prepare_data import prepare_data
 from sklearn.model_selection import train_test_split
-
 
 def compile_model(train_data, limit, tag_scheme, hyperparameters, tokenizer_parameters, max_len, dropout, pretrained, test_size):
     """
     Args:
         train_data (str, required): Train csv file path
-        valid_data (str, required): Valid csv file path
         limit (int, optional): Limit the number of observations to be 
             returned from a given split. Defaults to None, which implies 
             that the entire data split is returned
@@ -15,10 +13,12 @@ def compile_model(train_data, limit, tag_scheme, hyperparameters, tokenizer_para
                 tags for the given data set EXCLUDING the special outside tag, 
                 that is handled separately.
         hyperparameters (dict, optional): Hyperparameters for the model
+        tokenizer_parameters (dict, optional): Parameters for the tokenizer
         max_len (int, required): The maximum sentence length
         dropout (float, required): dropout probability
         pretrianed (str, optional): which pretrained 'huggingface' 
                 transformer to use
+        test_size (float, optional): train/test split ratio
 
     Returns:
         compiled model
