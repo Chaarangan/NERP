@@ -215,7 +215,7 @@ class NERDA:
 
         return "Model trained successfully"
 
-    def load_network_from_file(self, model_path = "model.bin", tokenizer_path = "./tokenizer/") -> str:
+    def load_network_from_file(self, model_path = "model.bin", tokenizer_path = None) -> str:
         """Load Pretrained NERDA Network from file
 
         Loads weights for a pretrained NERDA Network from file.

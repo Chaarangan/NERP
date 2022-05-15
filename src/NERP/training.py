@@ -1,3 +1,4 @@
+from typing import List
 import os
 import pandas as pd
 from sklearn.model_selection import KFold
@@ -5,7 +6,7 @@ from NERP.compile_model import compile_model
 from NERP.prepare_data import prepare_data
 
 
-def do_train(train_data, test_data, limit, tag_scheme, hyperparameters, tokenizer_parameters, max_len, dropout, pretrained, test_size, isModelExists, model_path, model_dir, results):
+def do_train(train_data, test_data, limit, tag_scheme, hyperparameters, tokenizer_parameters, max_len, dropout, pretrained, test_size, isModelExists, model_path, tokenizer_path, model_dir, results):
     """
     Args:
         train_data (str, required): Train csv file path
@@ -25,6 +26,7 @@ def do_train(train_data, test_data, limit, tag_scheme, hyperparameters, tokenize
         test_size (float, optional): train/test split ratio
         isModelExists (bool, required): True if trained model exist and want to retrain on its weights, otherwise False.
         model_path (str, optional): Trained model path if isModelExist is True, otherwise leave it as empty.
+        tokenizer_path (str, optional): Existing tokenizer path if isModelExist is True, otherwise leave it as empty.
         model_dir (str, required): Output directory to save trained model and clasification report
         results (List[float], required): A list of accuracy scores
 
@@ -38,7 +40,10 @@ def do_train(train_data, test_data, limit, tag_scheme, hyperparameters, tokenize
                           hyperparameters, tokenizer_parameters, max_len, dropout, pretrained, test_size)
     if(isModelExists):
       print("Model weights loading..")
-      model.load_network_from_file(model_path=model_path)
+      if(os.path.isdir(tokenizer_path)):
+          model.load_network_from_file(model_path=model_path, tokenizer_path=tokenizer_path)
+      else:
+          model.load_network_from_file(model_path=model_path)
       print("Model weights loaded!")
 
     print("Training started!")
@@ -83,19 +88,32 @@ def write_accuracy_file(model_dir, results):
 
 def training_pipeline(train_data,
                       test_data,
-                      limit,
-                      test_size,
-                      is_model_exists,
                       existing_model_path,
-                      output_dir,
-                      kfold,
-                      seed,
-                      tag_scheme,
-                      hyperparameters,
-                      tokenizer_parameters,
-                      max_len,
-                      dropout,
-                      pretrained_models):
+                      existing_tokenizer_path,
+                      tag_scheme: List[str] = [
+                          'B-PER',
+                          'I-PER',
+                          'B-ORG',
+                          'I-ORG',
+                          'B-LOC',
+                          'I-LOC',
+                          'B-MISC',
+                          'I-MISC'
+                      ],
+                      limit: int = 0,
+                      test_size: float = 0.2,
+                      is_model_exists: bool = False,
+                      output_dir: str = "./output",
+                      pretrained_models: List[str] = ["roberta-base"],
+                      hyperparameters: dict = {"epochs": 5,
+                                               "warmup_steps": 500,
+                                               "train_batch_size": 64,
+                                               "learning_rate": 0.0001},
+                      tokenizer_parameters: dict = {"do_lower_case": True},
+                      max_len: int = 128,
+                      dropout: float = 0.1,
+                      kfold: int = 0, 
+                      seed: int = 42) -> str:
 
     # getting vars
     for pretrained in pretrained_models:
@@ -150,7 +168,7 @@ def training_pipeline(train_data,
                 test_df.to_csv(test_data, index=False)
 
                 do_train(train_data, test_data, limit, tag_scheme, hyperparameters, tokenizer_parameters, max_len,
-                         dropout, pretrained, test_size, is_model_exists, existing_model_path, os.path.join(model_dir, k_fold_step), results)
+                         dropout, pretrained, test_size, is_model_exists, existing_model_path, existing_tokenizer_path, os.path.join(model_dir, k_fold_step), results)
 
             # write accuracy file
             write_accuracy_file(model_dir, results)
@@ -158,6 +176,6 @@ def training_pipeline(train_data,
         else:
             print("Training {model} without K-Fold!".format(model=pretrained))
             do_train(train_data, test_data, limit, tag_scheme, hyperparameters, tokenizer_parameters, max_len,
-                     dropout, pretrained, test_size, is_model_exists, existing_model_path, model_dir, [0])
+                     dropout, pretrained, test_size, is_model_exists, existing_model_path, existing_tokenizer_path,  model_dir, [0])
     
     return "Training finished successfully!"

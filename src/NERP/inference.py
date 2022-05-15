@@ -2,6 +2,7 @@ from NERDA_framework.models import NERDA
 from NERP.utils import SentenceGetter
 import pandas as  pd
 import os
+from typing import List
 
 def load_model(tag_scheme, pretrained, max_len, model_path, tokenizer_path, hyperparameters, tokenizer_parameters):
     """
@@ -32,7 +33,10 @@ def load_model(tag_scheme, pretrained, max_len, model_path, tokenizer_path, hype
     assert os.path.isfile(model_path), f'File {model_path} does not exist.'
     assert os.path.isdir(tokenizer_path), f'Folder {tokenizer_path} does not exist.'
 
-    model.load_network_from_file(model_path=model_path, tokenizer_path=tokenizer_path)
+    if(os.path.isdir(tokenizer_path)):
+        model.load_network_from_file(model_path=model_path, tokenizer_path=tokenizer_path)
+    else:
+        model.load_network_from_file(model_path=model_path)
     print("Model weights loaded!")
     return model
 
@@ -80,17 +84,26 @@ def predict_bulk(model, in_file_path, out_file_path):
     print("Predictions stored!")
 
 
-def inference_pipeline(pretrained,
-                       model_path,
+def inference_pipeline(model_path,
                        tokenizer_path,
-                       out_file_path,
-                       is_bulk,
+                       out_file_path, 
                        in_file_path,
-                       text,
-                       tag_scheme,
-                       hyperparameters,
-                       tokenizer_parameters,
-                       max_len):
+                       pretrained: str = "roberta-base",                       
+                       is_bulk: bool = False,                       
+                       text: str = "Hello from NERP",
+                       tag_scheme: List[str] = [
+                           'B-PER',
+                           'I-PER',
+                           'B-ORG',
+                           'I-ORG',
+                           'B-LOC',
+                           'I-LOC',
+                           'B-MISC',
+                           'I-MISC'
+                       ],
+                       hyperparameters: dict = {"train_batch_size": 64},
+                       tokenizer_parameters: dict = {"do_lower_case": True},
+                       max_len: int = 128):
 
     model = load_model(tag_scheme, pretrained, max_len,
                        model_path, tokenizer_path, hyperparameters, tokenizer_parameters)
