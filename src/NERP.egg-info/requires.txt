@@ -6,3 +6,4 @@ sentencepiece
 pandas
 progressbar
 pyconll
+pyyaml

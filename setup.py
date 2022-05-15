@@ -23,7 +23,8 @@ setuptools.setup(
         'sentencepiece',
         'pandas',
         'progressbar',
-        'pyconll'
+        'pyconll',
+        'pyyaml'
     ],
     setup_requires=['pytest-runner'],
     tests_require=['pytest',
