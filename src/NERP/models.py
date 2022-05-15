@@ -32,6 +32,7 @@ class NERP:
         self.in_file_path = dictionary["inference"]["bulk"]["in_file_path"]
         self.out_file_path = dictionary["inference"]["bulk"]["out_file_path"]
         self.text = dictionary["inference"]["individual"]["text"]
+        self.infer_max_len = dictionary["inference"]["max_len"]
     
     def train(self) -> str:
         message = training_pipeline(train_data = self.train_data,
@@ -124,7 +125,7 @@ class NERP:
                                     tag_scheme=self.tag_scheme, 
                                     hyperparameters=self.hyperparameters,
                                     tokenizer_parameters=self.tokenizer_parameters,
-                                    max_len=self.max_len)
+                                    max_len=self.infer_max_len)
         
         return output, message
     
@@ -139,7 +140,7 @@ class NERP:
                                              tag_scheme=self.tag_scheme,
                                              hyperparameters=self.hyperparameters,
                                              tokenizer_parameters=self.tokenizer_parameters,
-                                             max_len=self.max_len)
+                                             max_len=self.infer_max_len)
 
         return message
     
