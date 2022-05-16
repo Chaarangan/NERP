@@ -156,7 +156,7 @@ print(message)
 
 4. Training with KFold Cross Validation after load trained model weights to initialize the base model 
 ```python
-message = model.train_with_kfold_after_loading_netwr()
+message = model.train_with_kfold_after_loading_network()
 print(message)
 ```
 

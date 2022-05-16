@@ -1,12 +1,10 @@
 Metadata-Version: 2.1
 Name: NERP
-Version: 1.5
+Version: 1.7
 Summary: A Pipeline for Finetuning & Infering Transformers for Named-Entity Recognition
 Home-page: https://github.com/chaarangan/NERP
 Author: Charangan Vasantharajan
 Author-email: chaanuv@gmail.com
-License: UNKNOWN
-Platform: UNKNOWN
 Classifier: Programming Language :: Python :: 3
 Classifier: License :: OSI Approved :: MIT License
 Requires-Python: >=3.8
@@ -171,7 +169,7 @@ print(message)
 
 4. Training with KFold Cross Validation after load trained model weights to initialize the base model 
 ```python
-message = model.train_with_kfold_after_loading_netwr()
+message = model.train_with_kfold_after_loading_network()
 print(message)
 ```
 
@@ -212,4 +210,3 @@ If you want to contribute to NERP open a
 
 If you encounter a bug or want to suggest an enhancement, please 
 [open an issue](https://github.com/chaarangan/NERP/issues).
-
