@@ -10,6 +10,7 @@ class NERP:
         stream = open(config, 'r')
         dictionary = yaml.load(stream, Loader=yaml.FullLoader)
 
+        self.device = dictionary["torch"]["device"]
         self.tag_scheme = dictionary["data"]["tag_scheme"]
         self.hyperparameters = dictionary["model"]["hyperparameters"]
         self.tokenizer_parameters = dictionary["model"]["tokenizer_parameters"]
@@ -35,7 +36,8 @@ class NERP:
         self.infer_max_len = dictionary["inference"]["max_len"]
     
     def train(self) -> str:
-        message = training_pipeline(train_data = self.train_data,
+        message = training_pipeline(device = self.device, 
+                                    train_data = self.train_data,
                                     test_data = self.test_data,
                                     existing_model_path=None,
                                     existing_tokenizer_path=None,
@@ -55,7 +57,8 @@ class NERP:
         return message
     
     def train_after_load_network(self) -> str:
-        message = training_pipeline(train_data=self.train_data,
+        message = training_pipeline(device=self.device, 
+                                    train_data=self.train_data,
                                     test_data=self.test_data,
                                     existing_model_path=self.existing_model_path,
                                     existing_tokenizer_path=self.existing_tokenizer_path,
@@ -75,7 +78,8 @@ class NERP:
         return message
 
     def train_with_kfold(self) -> str:
-        message = training_pipeline(train_data=self.train_data,
+        message = training_pipeline(device=self.device, 
+                                    train_data=self.train_data,
                                     test_data=self.test_data,
                                     existing_model_path=None,
                                     existing_tokenizer_path=None,
@@ -95,7 +99,8 @@ class NERP:
         return message
     
     def train_with_kfold_after_load_network(self) -> str:
-        message = training_pipeline(train_data=self.train_data,
+        message = training_pipeline(device=self.device, 
+                                    train_data=self.train_data,
                                     test_data=self.test_data,
                                     existing_model_path=self.existing_model_path,
                                     existing_tokenizer_path=self.existing_tokenizer_path,
@@ -115,7 +120,8 @@ class NERP:
         return message
     
     def inference_text(self) -> str:
-        output, message = inference_pipeline(model_path = self.model_path,
+        output, message = inference_pipeline(device=self.device, 
+                                    model_path=self.model_path,
                                     tokenizer_path = self.tokenizer_path,
                                     out_file_path = None,
                                     in_file_path=None,
@@ -130,7 +136,8 @@ class NERP:
         return output, message
     
     def inference_bulk(self) -> str:
-        output, message = inference_pipeline(model_path=self.model_path,
+        output, message = inference_pipeline(device=self.device, 
+                                             model_path=self.model_path,
                                              tokenizer_path=self.tokenizer_path,
                                              out_file_path=self.in_file_path,
                                              in_file_path=self.in_file_path,

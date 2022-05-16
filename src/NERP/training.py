@@ -6,9 +6,11 @@ from NERP.compile_model import compile_model
 from NERP.prepare_data import prepare_data
 
 
-def do_train(train_data, test_data, limit, tag_scheme, hyperparameters, tokenizer_parameters, max_len, dropout, pretrained, test_size, isModelExists, model_path, tokenizer_path, model_dir, results):
+def do_train(device, train_data, test_data, limit, tag_scheme, hyperparameters, tokenizer_parameters, max_len, dropout, pretrained, test_size, isModelExists, model_path, tokenizer_path, model_dir, results):
     """
     Args:
+        device (str, optional): the desired device to use for computation. 
+                If not provided by the user, we take a guess.
         train_data (str, required): Train csv file path
         test_data (str, required): Test csv file path
         limit (int, optional): Limit the number of observations to be 
@@ -36,7 +38,7 @@ def do_train(train_data, test_data, limit, tag_scheme, hyperparameters, tokenize
 
 
     """
-    model = compile_model(train_data, limit, tag_scheme,
+    model = compile_model(device, train_data, limit, tag_scheme,
                           hyperparameters, tokenizer_parameters, max_len, dropout, pretrained, test_size)
     if(isModelExists):
       print("Model weights loading..")
@@ -86,7 +88,8 @@ def write_accuracy_file(model_dir, results):
     print(f"Mean-Accuracy: {sum(results) / len(results)}")
 
 
-def training_pipeline(train_data,
+def training_pipeline(device, 
+                      train_data,
                       test_data,
                       existing_model_path,
                       existing_tokenizer_path,
@@ -167,7 +170,7 @@ def training_pipeline(train_data,
                 train_df.to_csv(train_data, index=False)
                 test_df.to_csv(test_data, index=False)
 
-                do_train(train_data, test_data, limit, tag_scheme, hyperparameters, tokenizer_parameters, max_len,
+                do_train(device, train_data, test_data, limit, tag_scheme, hyperparameters, tokenizer_parameters, max_len,
                          dropout, pretrained, test_size, is_model_exists, existing_model_path, existing_tokenizer_path, os.path.join(model_dir, k_fold_step), results)
 
             # write accuracy file
@@ -175,7 +178,7 @@ def training_pipeline(train_data,
 
         else:
             print("Training {model} without K-Fold!".format(model=pretrained))
-            do_train(train_data, test_data, limit, tag_scheme, hyperparameters, tokenizer_parameters, max_len,
+            do_train(device, train_data, test_data, limit, tag_scheme, hyperparameters, tokenizer_parameters, max_len,
                      dropout, pretrained, test_size, is_model_exists, existing_model_path, existing_tokenizer_path,  model_dir, [0])
     
     return "Training finished successfully!"

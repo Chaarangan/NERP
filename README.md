@@ -54,6 +54,7 @@ inference:
 #### Training Parameters
 | Parameters | Description | Default |
 | ------------- | ------------- | ------------- |
+| device |device (str, optional): the desired device to use for computation. If not provided by the user, we take a guess. | |
 | train_data | path to training csv file | |
 | train_valid_split | train/valid split ratio | 0.2 |
 | test_data | path to testing csv file | |

@@ -2,9 +2,11 @@ from NERDA_framework.models import NERDA
 from NERP.prepare_data import prepare_data
 from sklearn.model_selection import train_test_split
 
-def compile_model(train_data, limit, tag_scheme, hyperparameters, tokenizer_parameters, max_len, dropout, pretrained, test_size):
+def compile_model(device, train_data, limit, tag_scheme, hyperparameters, tokenizer_parameters, max_len, dropout, pretrained, test_size):
     """
     Args:
+        device (str, optional): the desired device to use for computation. 
+                If not provided by the user, we take a guess.
         train_data (str, required): Train csv file path
         limit (int, optional): Limit the number of observations to be 
             returned from a given split. Defaults to None, which implies 
@@ -42,6 +44,7 @@ def compile_model(train_data, limit, tag_scheme, hyperparameters, tokenizer_para
     training_hyperparameters = hyperparameters
 
     model = NERDA(
+        device=device,
         dataset_training=training,
         dataset_validation=validation,
         tag_scheme=tag_scheme,
