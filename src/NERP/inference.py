@@ -4,7 +4,7 @@ import pandas as  pd
 import os
 from typing import List
 
-def load_model(tag_scheme, pretrained, max_len, model_path, tokenizer_path, hyperparameters, tokenizer_parameters):
+def load_model(device, tag_scheme, pretrained, max_len, model_path, tokenizer_path, hyperparameters, tokenizer_parameters):
     """
     Args:
         tag_scheme (List[str], optional): All available NER 
@@ -22,6 +22,7 @@ def load_model(tag_scheme, pretrained, max_len, model_path, tokenizer_path, hype
     """
     # compile model
     model = NERDA(
+        device=device,
         tag_scheme=tag_scheme,
         transformer=pretrained,
         max_len=max_len,
@@ -84,7 +85,8 @@ def predict_bulk(model, in_file_path, out_file_path):
     print("Predictions stored!")
 
 
-def inference_pipeline(model_path,
+def inference_pipeline(device, 
+                       model_path,
                        tokenizer_path,
                        out_file_path, 
                        in_file_path,
@@ -105,7 +107,7 @@ def inference_pipeline(model_path,
                        tokenizer_parameters: dict = {"do_lower_case": True},
                        max_len: int = 128):
 
-    model = load_model(tag_scheme, pretrained, max_len,
+    model = load_model(device, tag_scheme, pretrained, max_len,
                        model_path, tokenizer_path, hyperparameters, tokenizer_parameters)
 
     if(is_bulk):

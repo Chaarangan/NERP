@@ -1,10 +1,12 @@
 Metadata-Version: 2.1
 Name: NERP
-Version: 1.4
+Version: 1.5
 Summary: A Pipeline for Finetuning & Infering Transformers for Named-Entity Recognition
 Home-page: https://github.com/chaarangan/NERP
 Author: Charangan Vasantharajan
 Author-email: chaanuv@gmail.com
+License: UNKNOWN
+Platform: UNKNOWN
 Classifier: Programming Language :: Python :: 3
 Classifier: License :: OSI Approved :: MIT License
 Requires-Python: >=3.8
@@ -53,6 +55,7 @@ kfold:
   seed: 42
 
 inference:
+  max_len: 128 
   pretrained: "roberta-base"
   model_path: "roberta-base/model.bin"
   tokenizer_path: "roberta-base/tokenizer"
@@ -91,6 +94,7 @@ inference:
 #### Inference Parameters
 | Parameters | Description |
 | ------------- | ------------- |
+| max_len | the maximum sentence length (number of tokens after applying the transformer tokenizer) | 128 |
 | pretrained | 'huggingface' transformer model | roberta-base |
 | model_path | path to trained model | |
 | tokenizer_path | path to saved tokenizer folder | |
@@ -98,7 +102,6 @@ inference:
 | in_file_path | path to inference file otherwise leave it as empty | |
 | out_file_path | path to output file if the input is file, otherwise leave it as empty | |
 | text | sample inference text for individual prediction if **is_bulk** ```False``` | |
-| max_len | the maximum sentence length (number of tokens after applying the transformer tokenizer) | 128 |
 ---
 
 ### **Data Format**
@@ -209,3 +212,4 @@ If you want to contribute to NERP open a
 
 If you encounter a bug or want to suggest an enhancement, please 
 [open an issue](https://github.com/chaarangan/NERP/issues).
+
