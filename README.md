@@ -40,6 +40,7 @@ kfold:
   seed: 42
 
 inference:
+  max_len: 128 
   pretrained: "roberta-base"
   model_path: "roberta-base/model.bin"
   tokenizer_path: "roberta-base/tokenizer"
@@ -78,6 +79,7 @@ inference:
 #### Inference Parameters
 | Parameters | Description |
 | ------------- | ------------- |
+| max_len | the maximum sentence length (number of tokens after applying the transformer tokenizer) | 128 |
 | pretrained | 'huggingface' transformer model | roberta-base |
 | model_path | path to trained model | |
 | tokenizer_path | path to saved tokenizer folder | |
@@ -85,7 +87,6 @@ inference:
 | in_file_path | path to inference file otherwise leave it as empty | |
 | out_file_path | path to output file if the input is file, otherwise leave it as empty | |
 | text | sample inference text for individual prediction if **is_bulk** ```False``` | |
-| max_len | the maximum sentence length (number of tokens after applying the transformer tokenizer) | 128 |
 ---
 
 ### **Data Format**
