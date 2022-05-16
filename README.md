@@ -181,7 +181,7 @@ print(message)
 ```
 @inproceedings{nerp,
   title = {NERP},
-  author = {Charangan, Vasantharajan},
+  author = {Charangan Vasantharajan},
   year = {2022},
   publisher = {{GitHub}},
   url = {https://github.com/Chaarangan/NERP.git}
