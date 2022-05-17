@@ -1,3 +1,8 @@
+"""
+This section covers functionality for preparing Named Entity 
+Recognition data sets.
+Author: Charangan Vasantharajan
+"""
 import os
 import pandas as pd
 from NERP.utils import SentenceGetter

@@ -1,3 +1,8 @@
+"""
+This section covers functionality for computing predictions
+with a [NERP.models.NERP][] model.
+Author: Charangan Vasantharajan
+"""
 from NERDA_framework.models import NERDA
 from NERP.utils import SentenceGetter
 import pandas as  pd
@@ -32,9 +37,8 @@ def load_model(device, tag_scheme, pretrained, max_len, model_path, tokenizer_pa
 
     # getting inference vars
     assert os.path.isfile(model_path), f'File {model_path} does not exist.'
-    assert os.path.isdir(tokenizer_path), f'Folder {tokenizer_path} does not exist.'
 
-    if(os.path.isdir(tokenizer_path)):
+    if(tokenizer_path != None):
         model.load_network_from_file(model_path=model_path, tokenizer_path=tokenizer_path)
     else:
         model.load_network_from_file(model_path=model_path)

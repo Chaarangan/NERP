@@ -232,7 +232,9 @@ class NERDA:
         assert os.path.exists(model_path), "File does not exist. You can download network with download_network()"
         self.network.load_state_dict(torch.load(model_path, map_location = torch.device(self.device)))
 
-        if(os.path.exists(tokenizer_path)):
+        if(tokenizer_path != None):
+            assert os.path.isdir(
+                tokenizer_path), f'Folder {tokenizer_path} does not exist.'
             self.transformer_tokenizer = AutoTokenizer.from_pretrained(tokenizer_path)
         else:
             self.transformer_tokenizer = AutoTokenizer.from_pretrained(

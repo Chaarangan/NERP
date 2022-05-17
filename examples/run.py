@@ -4,28 +4,22 @@ if __name__ == '__main__':
     model = NERP("env.yaml")
 
     # simple baseline training
-    message = model.train()
-    print(message)
+    #model.train()
 
     # training with k-fold cros validation
-    message = model.train_with_kfold()
-    print(message)
+    #model.train_with_kfold()
 
     # train a already trained model by loading its weights
-    message = model.train_after_load_network()
-    print(message)
+    #model.train_after_load_network()
 
-    # train with k-fold cross validation a already trained model by loading its weights
-    message = model.train_with_kfold_after_load_network()
-    print(message)
+    # # train with k-fold cross validation a already trained model by loading its weights
+    #model.train_with_kfold_after_load_network()
 
-    # make predictions on a single sentence
-    output, message = model.inference_text()
-    print(message)
-    print(output)
+    # # make predictions on a single sentence
+    #output = model.inference_text()
+    #print(output)
 
-    # make predictions on a csv file
-    output, message = model.inference_bulk()
-    print(message)
+    # # make predictions on a csv file
+    model.inference_bulk()
 
 

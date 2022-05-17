@@ -5,6 +5,8 @@ Summary: A Pipeline for Finetuning & Infering Transformers for Named-Entity Reco
 Home-page: https://github.com/chaarangan/NERP
 Author: Charangan Vasantharajan
 Author-email: chaanuv@gmail.com
+License: UNKNOWN
+Platform: UNKNOWN
 Classifier: Programming Language :: Python :: 3
 Classifier: License :: OSI Approved :: MIT License
 Requires-Python: >=3.8
@@ -66,40 +68,40 @@ inference:
 
 
 #### Training Parameters
-| Parameters | Description | Default |
-| ------------- | ------------- | ------------- |
-| device |device (str, optional): the desired device to use for computation. If not provided by the user, we take a guess. | |
-| train_data | path to training csv file | |
-| train_valid_split | train/valid split ratio | 0.2 |
-| test_data | path to testing csv file | |
-| limit | Limit the number of observations to be returned from a given split. Defaults to None, which implies that the entire data split is returned. (it shoud be a ```int```) | 0 (whole data) |
-| tag_scheme | All available NER tags for the given data set EXCLUDING the special outside tag, that is handled separately | |
-| max_len | the maximum sentence length (number of tokens after applying the transformer tokenizer) | 128 |
-| dropout | dropout probability (float) | 0.1 |
-| epochs | number of epochs (int) | 5 |
-| warmup_steps | number of learning rate warmup steps (int) | 500 |
-| train_batch_size | batch Size for DataLoader (int) | 64 |
-| learning_rate | learning rate (float) | 0.0001 |
-| tokenizer_parameters | list of hyperparameters for tokenizer | do_lower_case: True |
-| pretrained_models | 'huggingface' transformer model | roberta-base |
-| is_model_exists | ```True``` for loading existing transformer model's weights otherwise ```False``` | False |
-| existing_model_path | model derived from the transformer | |
-| existing_tokenizer_path | tokenizer derived from the transformer | |
-| output_dir | path to output directory | models/ |
-| kfold | number of splits | 0 |
-| seed | random state value for k-fold | 42 |
+| Parameters | Description | Default | Type |
+| ------------- | ------------- | ------------- | ------------- |
+| device |device: the desired device to use for computation. If not provided by the user, we take a guess. | ```cuda``` or ```cpu```| optional | 
+| train_data | path to training csv file | | required |
+| train_valid_split | train/valid split ratio | 0.2 | optional | 
+| test_data | path to testing csv file | | required |
+| limit | Limit the number of observations to be returned from a given split. Defaults to None, which implies that the entire data split is returned. (it shoud be a ```int```) | 0 (whole data) | optional |
+| tag_scheme | All available NER tags for the given data set EXCLUDING the special outside tag, that is handled separately | | required |
+| max_len | the maximum sentence length (number of tokens after applying the transformer tokenizer) | 128 | optional |
+| dropout | dropout probability (float) | 0.1 | optional |
+| epochs | number of epochs (int) | 5 | optional |
+| warmup_steps | number of learning rate warmup steps (int) | 500 | optional |
+| train_batch_size | batch Size for DataLoader (int) | 64 | optional |
+| learning_rate | learning rate (float) | 0.0001 | optional |
+| tokenizer_parameters | list of hyperparameters for tokenizer | do_lower_case: True | optional |
+| pretrained_models | 'huggingface' transformer model | roberta-base | required |
+| is_model_exists | ```True``` for loading existing transformer model's weights otherwise ```False``` | False | optional |
+| existing_model_path | model derived from the transformer | | optional |
+| existing_tokenizer_path | tokenizer derived from the transformer | | optional |
+| output_dir | path to output directory | models/ | optional |
+| kfold | number of splits | 0 (no k-fold) | optional |
+| seed | random state value for k-fold | 42 | optional |
 
 #### Inference Parameters
-| Parameters | Description |
-| ------------- | ------------- |
-| max_len | the maximum sentence length (number of tokens after applying the transformer tokenizer) | 128 |
-| pretrained | 'huggingface' transformer model | roberta-base |
-| model_path | path to trained model | |
-| tokenizer_path | path to saved tokenizer folder | |
-| tag_scheme | All available NER tags for the given data set EXCLUDING the special outside tag, that is handled separately | |
-| in_file_path | path to inference file otherwise leave it as empty | |
-| out_file_path | path to output file if the input is file, otherwise leave it as empty | |
-| text | sample inference text for individual prediction if **is_bulk** ```False``` | |
+| Parameters | Description | Default | Type |
+| ------------- | ------------- | ------------- | ------------- |
+| max_len | the maximum sentence length (number of tokens after applying the transformer tokenizer) | 128 | optional |
+| pretrained | 'huggingface' transformer model | oberta-base | required |
+| model_path | path to trained model | | required  |
+| tokenizer_path | path to saved tokenizer folder | | optional |
+| tag_scheme | All available NER tags for the given data set EXCLUDING the special outside tag, that is handled separately | | required |
+| in_file_path | path to inference file otherwise leave it as empty | | optional |
+| out_file_path | path to output file if the input is file, otherwise leave it as empty | | optional |
+| text | sample inference text for individual prediction if **is_bulk** ```False``` | "Hello from NERP" | optional |
 ---
 
 ### **Data Format**
@@ -136,9 +138,17 @@ All huggingface transformer-based models are allowed.
 ### Usage
 #### Environment Setup
 1. Activate a new conda/python environment
-2. Execute the following to install NERP
+2. Install NERP
+- via pip
 ```python
 pip install NERP
+```
+
+- or via repository
+```bash
+git clone https://github.com/Chaarangan/NERP
+cd NERP
+pip install -e .
 ```
 
 #### Initialize NERP
@@ -188,7 +198,11 @@ print(message)
 ```
 
 ## Shout-outs
-- Thanks to [NERDA](https://github.com/ebanalyse/NERDA) package to have initiated us to develop this pipeline.
+- Thanks to [NERDA](https://github.com/ebanalyse/NERDA) package to have initiated us to develop this pipeline. We have intergrated NERDA framework with NERP with some modfications from the v1.0.0.
+
+Changes
+1. Method for saving and loading tokenizer
+2. Selected pull requests' solutions were added from: [NERDA PRs](https://github.com/ebanalyse/NERDA/pulls) 
 
 ## Cite this work
 
@@ -210,3 +224,4 @@ If you want to contribute to NERP open a
 
 If you encounter a bug or want to suggest an enhancement, please 
 [open an issue](https://github.com/chaarangan/NERP/issues).
+

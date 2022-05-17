@@ -1,3 +1,8 @@
+"""
+This section covers functionality for compiling Named Entity 
+Recognition models.
+Author: Charangan Vasantharajan
+"""
 from NERDA_framework.models import NERDA
 from NERP.prepare_data import prepare_data
 from sklearn.model_selection import train_test_split

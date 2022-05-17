@@ -1,3 +1,10 @@
+"""
+This section covers functionality for training Named Entity 
+Recognition models.
+- with k-fold
+- without k-fold
+Author: Charangan Vasantharajan
+"""
 from typing import List
 import os
 import pandas as pd
@@ -42,7 +49,7 @@ def do_train(device, train_data, test_data, limit, tag_scheme, hyperparameters, 
                           hyperparameters, tokenizer_parameters, max_len, dropout, pretrained, test_size)
     if(isModelExists):
       print("Model weights loading..")
-      if(os.path.isdir(tokenizer_path)):
+      if(tokenizer_path != None):
           model.load_network_from_file(model_path=model_path, tokenizer_path=tokenizer_path)
       else:
           model.load_network_from_file(model_path=model_path)
@@ -117,6 +124,7 @@ def training_pipeline(device,
                       dropout: float = 0.1,
                       kfold: int = 0, 
                       seed: int = 42) -> str:
+
 
     # getting vars
     for pretrained in pretrained_models:

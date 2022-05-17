@@ -1,3 +1,8 @@
+"""
+This section covers utility functions for Named Entity 
+Recognition models.
+Author: Charangan Vasantharajan
+"""
 class SentenceGetter(object):
     """
     Args:
