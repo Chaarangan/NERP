@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="NERP",
-    version="1.9",
+    version="2.0",
     author="Charangan Vasantharajan",
     author_email="chaanuv@gmail.com",
     description="A Pipeline for Finetuning & Infering Transformers for Named-Entity Recognition",
