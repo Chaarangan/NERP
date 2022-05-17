@@ -126,6 +126,7 @@ After training the model, the pipeline will return the following files in the ou
 * model.bin - pytorch NER model
 * tokenizer files
 * classification-report.csv - logging file
+* If k-fold - splitted datasets, models and tokenizers for each iteration
 
 ---
 
@@ -161,40 +162,35 @@ model = NERP("env.yaml")
 
 1. Train the base model
 ```python
-message = model.train()
-print(message)
+model.train()
 ```
 
 2. Training by using a trained model weights to initialize the base model 
 ```python
-message = model.train_after_load_network()
-print(message)
+model.train_after_load_network()
 ```
 
 3. Training with KFold Cross Validation
 ```python
-message = model.train_with_kfold()
-print(message)
+model.train_with_kfold()
 ```
 
 4. Training with KFold Cross Validation after load trained model weights to initialize the base model 
 ```python
-message = model.train_with_kfold_after_loading_network()
-print(message)
+model.train_with_kfold_after_loading_network()
 ```
 
 #### Inference of a NER model using NERP 
 
 1. Prediction on a sample text
 ```python
-output, message = model.inference_text()
+output = model.inference_text()
 print(output)
 ```
 
 2. Prediction on a csv file
 ```python
-message = model.inference_bulk()
-print(message)
+model.inference_bulk()
 ```
 
 ## Shout-outs
