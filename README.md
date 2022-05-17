@@ -185,7 +185,7 @@ Changes
 1. Method for saving and loading tokenizer
 2. Selected pull requests' solutions were added from: [NERDA PRs](https://github.com/ebanalyse/NERDA/pulls) 
 
-## Cite this work
+<!-- ## Cite this work
 
 ```
 @inproceedings{nerp,
@@ -195,7 +195,7 @@ Changes
   publisher = {{GitHub}},
   url = {https://github.com/Chaarangan/NERP.git}
 }
-```
+``` -->
 
 ## Contact
 We hope, that you will find `NERP` useful.

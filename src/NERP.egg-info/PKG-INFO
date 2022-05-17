@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: NERP
-Version: 1.8
+Version: 1.9
 Summary: A Pipeline for Finetuning & Infering Transformers for Named-Entity Recognition
 Home-page: https://github.com/chaarangan/NERP
 Author: Charangan Vasantharajan
@@ -140,7 +140,7 @@ All huggingface transformer-based models are allowed.
 2. Install NERP
 - via pip
 ```python
-pip install NERP
+pip install -i https://test.pypi.org/simple/ NERP==1.9
 ```
 
 - or via repository
