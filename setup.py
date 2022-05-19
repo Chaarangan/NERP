@@ -16,12 +16,13 @@ setuptools.setup(
     package_dir={'': 'src'},
     python_requires='>=3.8',
     install_requires=[
-        'torch',
-        'transformers',
-        'sklearn',
-        'nltk',
-        'sentencepiece',
+        'numpy',
         'pandas',
+        'scipy',
+        'nltk',
+        'transformers',
+        'scikit-learn',
+        'sentencepiece',
         'progressbar',
         'pyconll',
         'pyyaml'

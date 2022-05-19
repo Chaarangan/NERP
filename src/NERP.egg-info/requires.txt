@@ -1,9 +1,10 @@
-torch
-transformers
-sklearn
-nltk
-sentencepiece
+numpy
 pandas
+scipy
+nltk
+transformers
+scikit-learn
+sentencepiece
 progressbar
 pyconll
 pyyaml
