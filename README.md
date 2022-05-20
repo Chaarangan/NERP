@@ -12,6 +12,17 @@ NERP (Named Entity Recognition Pipeline) is a python package that offers an easy
 - Prediction on a single text
 - Prediction on a CSV file
 
+## Package Diagram
+<p>
+<img alt="NERP Main Component" src="diagrams/1.png" width="100%"/>
+</p>
+<p>
+<img align="left" alt="Component of NERP K-Fold Cross Validation" src="diagrams/2.png" width="440" height="100%"/>
+<img align="left" alt="Component of NERP Inference" src="diagrams/3.png" width="500" height="175"/>
+</p>
+---
+<br>
+
 ## **Config**
 
 The user interface consists of only one file config as a YAML. Change it to create the desired configuration.
