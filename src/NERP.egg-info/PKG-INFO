@@ -1,3 +1,16 @@
+Metadata-Version: 2.1
+Name: NERP
+Version: 0.0.0.1
+Summary: A pipeline for fine-tuning pre-trained transformers for Named Entity Recognition (NER) tasks
+Home-page: https://github.com/chaarangan/NERP
+Author: Charangan Vasantharajan
+Author-email: chaanuv@gmail.com
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Requires-Python: >=3.8
+Description-Content-Type: text/markdown
+License-File: LICENSE
+
 # NERP - Pipeline for training NER models
 
 ## What is it?

@@ -55,9 +55,6 @@ class NERP:
         self.limit = dictionary["data"]["limit"]
         if self.limit == None:
             self.limit = 0
-        self.is_model_exists = dictionary["train"]["is_model_exists"]
-        if self.is_model_exists == None:
-            self.is_model_exists = False
         self.existing_model_path = dictionary["train"]["existing_model_path"]
         self.existing_tokenizer_path = dictionary["train"]["existing_tokenizer_path"]
         self.output_dir = dictionary["train"]["output_dir"]
