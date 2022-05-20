@@ -16,6 +16,7 @@ setuptools.setup(
     package_dir={'': 'src'},
     python_requires='>=3.8',
     install_requires=[
+        'torch',
         'numpy',
         'pandas',
         'scipy',
