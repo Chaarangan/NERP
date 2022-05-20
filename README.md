@@ -127,7 +127,7 @@ All huggingface transformer-based models are allowed.
 2. Install NERP
 - via pip
 ```python
-pip install -i https://test.pypi.org/simple/ NERP==0.2
+pip install -i https://test.pypi.org/simple/ NERP==0.7
 ```
 
 - or via repository

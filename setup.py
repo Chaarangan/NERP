@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="NERP",
-    version="0.2",
+    version="0.97",
     author="Charangan Vasantharajan",
     author_email="chaanuv@gmail.com",
     description="A Pipeline for Finetuning & Infering Transformers for Named-Entity Recognition",
@@ -27,7 +27,6 @@ setuptools.setup(
         'pyconll',
         'pyyaml'
     ],
-    setup_requires=['pytest-runner'],
     tests_require=['pytest',
                    'pytest-cov'],
     classifiers=[
