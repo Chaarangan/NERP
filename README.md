@@ -4,11 +4,11 @@
 NERP (Named Entity Recognition Pipeline) is a python package that offers an easy-to-use pipeline for fine-tuning pre-trained transformers for Named Entity Recognition (NER) tasks.
 
 ## Main Features
-- Train a base model
-- Train an already trained model by loading its weights
-- Training with K-Fold Cross-Validation
-- Train an already trained model with K-Fold Cross Validation after loading its weights
-- Bulk mode training
+- Fine-tune a pretrained model
+- Save and reload model and train it on a new training data
+- Fine-tune a pretrained model with K-Fold Cross-Validation
+- Save and reload model and train it on a new training data with K-Fold Cross Validation
+- Fine-tune multiple pretrained models
 - Prediction on a single text
 - Prediction on a CSV file
 
@@ -19,19 +19,19 @@ NERP (Named Entity Recognition Pipeline) is a python package that offers an easy
     <td>NERP Main Component</td>
   </tr>
   <tr>
-    <td><img alt="NERP Main Component" src="diagrams/1.png"/></td>
+    <td><img alt="NERP Main Component" src="https://github.com/Chaarangan/NERP/blob/master/diagrams/1.png"/></td>
   </tr>
   <tr>
     <td>Component of NERP K-Fold Cross Validation</td>
   </tr>
   <tr>
-    <td><img align="left" alt="Component of NERP K-Fold Cross Validation" src="diagrams/2.png" height="200"/></td>
+    <td><img align="left" alt="Component of NERP K-Fold Cross Validation" src="https://github.com/Chaarangan/NERP/blob/master/diagrams/2.png" height="200"/></td>
   </tr>
   <tr>
     <td>Component of NERP Inference</td>
   </tr>
   <tr>
-    <td><img align="left" alt="Component of NERP Inference" src="diagrams/3.png" height="200"/></td>
+    <td><img align="left" alt="Component of NERP Inference" src="https://github.com/Chaarangan/NERP/blob/master/diagrams/3.png" height="200"/></td>
   </tr>
  </table>
 
@@ -226,7 +226,7 @@ Changes
 ```
 @inproceedings{nerp,
   title = {NERP},
-  author = {Charangan Vasantharajan},
+  author = {Charangan Vasantharajan, Kyaw Zin Tun, Lim Zhi Hao, Chng Eng Siong},
   year = {2022},
   publisher = {{GitHub}},
   url = {https://github.com/Chaarangan/NERP.git}
@@ -236,4 +236,8 @@ Changes
 ## Contributing to NERP
 All contributions, bug reports, bug fixes, documentation improvements, enhancements, and ideas are welcome.
 
-Feel free to ask questions on the [mailing list](https://groups.google.com/g/ner-pipeline).
+Feel free to ask questions and send feedbacks on the [mailing list](https://groups.google.com/g/ner-pipeline).
+
+If you want to contribute NERP, open a [PR](https://github.com/Chaarangan/NERP/pulls).
+
+If you encounter a bug or want to suggest an enhancement, please open an [issue](https://github.com/Chaarangan/NERP/issues).

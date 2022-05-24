@@ -3,6 +3,4 @@
 build
 dist
 .eggs
-publish.sh
-conda_env.sh
 src/NERP.egg-info
