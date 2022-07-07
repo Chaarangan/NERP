@@ -29,6 +29,7 @@ def load_model(device, tag_scheme, pretrained, max_len, model_path, tokenizer_pa
     model = NERDA(
         device=device,
         tag_scheme=tag_scheme,
+        tag_outside='O',
         transformer=pretrained,
         max_len=max_len,
         tokenizer_parameters=tokenizer_parameters,

@@ -29,7 +29,7 @@ setuptools.setup(
         'sentencepiece',
         'threadpoolctl',
         'scikit-learn',
-
+        'torchcrf'
     ],
     tests_require=['pytest',
                    'pytest-cov'],

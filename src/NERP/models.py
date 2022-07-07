@@ -23,6 +23,7 @@ class NERP:
         dictionary = yaml.load(stream, Loader=yaml.FullLoader)
 
         self.device = dictionary["torch"]["device"]
+        self.network = dictionary["model"]["network"]
         if self.device == None:
             self.device = "cpu"
         self.tag_scheme = dictionary["data"]["tag_scheme"]
@@ -81,7 +82,8 @@ class NERP:
             self.infer_max_len = 128
     
     def train(self) -> str:
-        message = training_pipeline(device = self.device, 
+        message = training_pipeline(network = self.network, 
+                                    device=self.device,
                                     train_data = self.train_data,
                                     test_data = self.test_data,
                                     existing_model_path=None,
@@ -105,7 +107,8 @@ class NERP:
         assert os.path.isfile(
             self.existing_model_path), f'File {self.existing_model_path} does not exist.'
 
-        message = training_pipeline(device=self.device, 
+        message = training_pipeline(network=self.network, 
+                                    device=self.device,
                                     train_data=self.train_data,
                                     test_data=self.test_data,
                                     existing_model_path=self.existing_model_path,
@@ -126,7 +129,8 @@ class NERP:
         return message
 
     def train_with_kfold(self) -> str:
-        message = training_pipeline(device=self.device, 
+        message = training_pipeline(network=self.network,
+                                    device=self.device,
                                     train_data=self.train_data,
                                     test_data=self.test_data,
                                     existing_model_path=None,
@@ -149,7 +153,8 @@ class NERP:
     def train_with_kfold_after_load_network(self) -> str:
         assert os.path.isfile(
             self.existing_model_path), f'File {self.existing_model_path} does not exist.'
-        message = training_pipeline(device=self.device, 
+        message = training_pipeline(network=self.network, 
+                                    device=self.device,
                                     train_data=self.train_data,
                                     test_data=self.test_data,
                                     existing_model_path=self.existing_model_path,
@@ -186,6 +191,27 @@ class NERP:
                                     tokenizer_parameters=self.tokenizer_parameters,
                                     max_len=self.infer_max_len)
         
+        return output
+    
+    def predict(self, text) -> str:
+        assert os.path.isfile(
+            self.model_path), f'File {self.model_path} does not exist.'
+
+        assert text != None, "Please input a text!"
+
+        output, message = inference_pipeline(device=self.device,
+                                             model_path=self.model_path,
+                                             tokenizer_path=self.tokenizer_path,
+                                             out_file_path=None,
+                                             in_file_path=None,
+                                             pretrained=self.pretrained,
+                                             is_bulk=False,
+                                             text=text,
+                                             tag_scheme=self.tag_scheme,
+                                             hyperparameters=self.hyperparameters,
+                                             tokenizer_parameters=self.tokenizer_parameters,
+                                             max_len=self.infer_max_len)
+
         return output
     
     def inference_bulk(self) -> str:

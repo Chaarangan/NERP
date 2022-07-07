@@ -7,7 +7,7 @@ from NERDA_framework.models import NERDA
 from NERP.prepare_data import prepare_data
 from sklearn.model_selection import train_test_split
 
-def compile_model(device, train_data, limit, tag_scheme, hyperparameters, tokenizer_parameters, max_len, dropout, pretrained, test_size):
+def compile_model(network, device, train_data, limit, tag_scheme, hyperparameters, tokenizer_parameters, max_len, dropout, pretrained, test_size):
     """
     Args:
         device (str, optional): the desired device to use for computation. 
@@ -49,6 +49,7 @@ def compile_model(device, train_data, limit, tag_scheme, hyperparameters, tokeni
     training_hyperparameters = hyperparameters
 
     model = NERDA(
+        network=network,
         device=device,
         dataset_training=training,
         dataset_validation=validation,

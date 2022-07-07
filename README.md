@@ -200,13 +200,19 @@ model.train_with_kfold_after_loading_network()
 
 ### Inference of a NER model using NERP 
 
-1. Prediction on a single text
+1. Prediction on a single text through YAML file
 ```python
 output = model.inference_text()
 print(output)
 ```
 
-2. Prediction on a CSV file
+1. Prediction on a single text through direct input
+```python
+output = model.predict("Hello from NERP")
+print(output)
+```
+
+3. Prediction on a CSV file
 ```python
 model.inference_bulk()
 ```

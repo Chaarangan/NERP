@@ -19,6 +19,10 @@ if __name__ == '__main__':
     output = model.inference_text()
     print(output)
 
+    # make predictions on a single sentence via direct input
+    output1 = model.predict("Hello from NERP")
+    print(output1)
+
     # make predictions on a csv file
     model.inference_bulk()
 

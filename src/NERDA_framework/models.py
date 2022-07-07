@@ -10,7 +10,7 @@ The interface enables you to easily
 - use it to predict entities in new texts.
 """
 from .datasets import get_conll_data
-from .networks import NERDANetwork
+from .networks import NERDANetwork, TransformerLstmCRF
 from .predictions import predict, predict_text
 from .performance import compute_f1_scores, flatten
 from .training import train_model
@@ -174,7 +174,14 @@ class NERDA:
         self.transformer_model = AutoModel.from_pretrained(transformer)
         self.transformer_tokenizer = AutoTokenizer.from_pretrained(transformer, **tokenizer_parameters)
         self.transformer_config = AutoConfig.from_pretrained(transformer)  
-        self.network = NERDANetwork(self.transformer_model, self.device, len(tag_complete), dropout = dropout)
+
+        if(network == "bilstm-crf"):
+            self.network = TransformerLstmCRF(
+                self.transformer_model, len(tag_complete), dropout=dropout)            
+        else:
+            self.network = NERDANetwork(
+                self.transformer_model, self.device, len(tag_complete), dropout=dropout)          
+                  
         self.network.to(self.device)
         self.validation_batch_size = validation_batch_size
         self.num_workers = num_workers
@@ -328,6 +335,7 @@ class NERDA:
 
     def predict_text(self, text: str, 
                      return_confidence:bool = False, **kwargs) -> list:
+        global tag_complete
         """Predict Named Entities in a Text
 
         Args:
@@ -383,42 +391,48 @@ class NERDA:
                                       **kwargs)
         
         # compute F1 scores by entity type
-        f1 = compute_f1_scores(y_pred = tags_predicted, 
-                               y_true = dataset.get('tags'),
-                               labels = self.tag_scheme,
-                               average = None)
+        # f1 = compute_f1_scores(y_pred = tags_predicted, 
+        #                        y_true = dataset.get('tags'),
+        #                        labels = self.tag_scheme,
+        #                        average = None)
         
-        # create DataFrame with performance scores (=F1)
-        df = list(zip(self.tag_scheme, f1[2], f1[0], f1[1]))
-        df = pd.DataFrame(df, columns = ['Level', 'F1-Score', 'Precision', 'Recall'])    
+        # # create DataFrame with performance scores (=F1)
+        # df = list(zip(self.tag_scheme, f1[2], f1[0], f1[1]))
+        # df = pd.DataFrame(df, columns = ['Level', 'F1-Score', 'Precision', 'Recall'])    
         
-        # compute MICRO-averaged F1-scores and add to table.
-        f1_micro = compute_f1_scores(y_pred = tags_predicted, 
-                                     y_true = dataset.get('tags'),
-                                     labels = self.tag_scheme,
-                                     average = 'micro')
-        f1_micro = pd.DataFrame({'Level' : ['AVG_MICRO'], 
-                                 'F1-Score': [f1_micro[2]],
-                                 'Precision': [np.nan],
-                                 'Recall': [np.nan]})
-        df = pd.concat([df, f1_micro])
+        # # compute MICRO-averaged F1-scores and add to table.
+        # f1_micro = compute_f1_scores(y_pred = tags_predicted, 
+        #                              y_true = dataset.get('tags'),
+        #                              labels = self.tag_scheme,
+        #                              average = 'micro')
+        # f1_micro = pd.DataFrame({'Level' : ['AVG_MICRO'], 
+        #                          'F1-Score': [f1_micro[2]],
+        #                          'Precision': [np.nan],
+        #                          'Recall': [np.nan]})
+        # df = pd.concat([df, f1_micro])
 
-        # compute MACRO-averaged F1-scores and add to table.
-        f1_macro = compute_f1_scores(y_pred = tags_predicted, 
-                                     y_true = dataset.get('tags'),
-                                     labels = self.tag_scheme,
-                                     average = 'macro')
-        f1_macro = pd.DataFrame({'Level' : ['AVG_MACRO'], 
-                                 'F1-Score': [f1_macro[2]],
-                                 'Precision': [np.nan],
-                                 'Recall': [np.nan]})
-        df = pd.concat([df, f1_macro])
+        # # compute MACRO-averaged F1-scores and add to table.
+        # f1_macro = compute_f1_scores(y_pred = tags_predicted, 
+        #                              y_true = dataset.get('tags'),
+        #                              labels = self.tag_scheme,
+        #                              average = 'macro')
+        # f1_macro = pd.DataFrame({'Level' : ['AVG_MACRO'], 
+        #                          'F1-Score': [f1_macro[2]],
+        #                          'Precision': [np.nan],
+        #                          'Recall': [np.nan]})
+        # df = pd.concat([df, f1_macro])
+
+        # compute F1 scores by entity type
+        f1 = compute_f1_scores(["O"] + self.tag_scheme, 
+                               y_pred=tags_predicted,
+                               y_true=dataset.get('tags'),
+                               labels=["O"] + self.tag_scheme)
 
         # compute and return accuracy if desired
         if return_accuracy:
             accuracy = accuracy_score(y_pred = flatten(tags_predicted), 
                                       y_true = flatten(dataset.get('tags')))
-            return {'f1':df, 'accuracy': accuracy}
+            return {'f1':f1, 'accuracy': accuracy}
       
-        return df
+        return {"f1": f1}
 
