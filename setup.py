@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="NERP",
-    version="1.0.0",
+    version="1.0.1-alpha",
     license='MIT',
     author="Charangan Vasantharajan",
     author_email="chaanuv@gmail.com",

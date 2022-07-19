@@ -10,7 +10,7 @@ The interface enables you to easily
 - use it to predict entities in new texts.
 """
 from .datasets import get_conll_data
-from .networks import NERDANetwork, TransformerLstmCRF
+from .networks import NERDANetwork
 from .predictions import predict, predict_text
 from .performance import compute_f1_scores, flatten
 from .training import train_model
@@ -97,6 +97,7 @@ class NERDA:
                  dataset_training: dict = None,
                  dataset_validation: dict = None,
                  max_len: int = 128,
+                 archi: str = "baseline",
                  network: torch.nn.Module = NERDANetwork,
                  dropout: float = 0.1,
                  hyperparameters: dict = {'epochs' : 4,
@@ -174,14 +175,20 @@ class NERDA:
         self.transformer_model = AutoModel.from_pretrained(transformer)
         self.transformer_tokenizer = AutoTokenizer.from_pretrained(transformer, **tokenizer_parameters)
         self.transformer_config = AutoConfig.from_pretrained(transformer)  
-
-        if(network == "bilstm-crf"):
-            self.network = TransformerLstmCRF(
-                self.transformer_model, len(tag_complete), dropout=dropout)            
-        else:
+        
+        if(archi == "baseline"):
             self.network = NERDANetwork(
-                self.transformer_model, self.device, len(tag_complete), dropout=dropout)          
-                  
+                self.transformer_model, self.device, len(tag_complete), dropout=dropout)
+        elif (archi == "bilstm-crf"):
+            self.network = TransformerBiLSTMCRF(
+                self.transformer_model, self.device, len(tag_complete), dropout=dropout)
+        elif (archi == "crf"):
+            self.network = TransformerCRF(
+                self.transformer_model, self.device, len(tag_complete), dropout=dropout)
+        elif (archi == "bilstm"):
+            self.network = TransformerBiLSTM(
+                self.transformer_model, self.device, len(tag_complete), dropout=dropout)
+        
         self.network.to(self.device)
         self.validation_batch_size = validation_batch_size
         self.num_workers = num_workers
@@ -381,46 +388,12 @@ class NERDA:
 
             
         Returns:
-            DataFrame with performance numbers, F1-scores,
-            Precision and Recall. Returns dictionary with
-            this AND accuracy, if return_accuracy is set to
-            True.
+            str: F1-scores, Precision and Recall. 
+            int: accuracy, if return_accuracy is set to True.
         """
         
         tags_predicted = self.predict(dataset.get('sentences'), 
                                       **kwargs)
-        
-        # compute F1 scores by entity type
-        # f1 = compute_f1_scores(y_pred = tags_predicted, 
-        #                        y_true = dataset.get('tags'),
-        #                        labels = self.tag_scheme,
-        #                        average = None)
-        
-        # # create DataFrame with performance scores (=F1)
-        # df = list(zip(self.tag_scheme, f1[2], f1[0], f1[1]))
-        # df = pd.DataFrame(df, columns = ['Level', 'F1-Score', 'Precision', 'Recall'])    
-        
-        # # compute MICRO-averaged F1-scores and add to table.
-        # f1_micro = compute_f1_scores(y_pred = tags_predicted, 
-        #                              y_true = dataset.get('tags'),
-        #                              labels = self.tag_scheme,
-        #                              average = 'micro')
-        # f1_micro = pd.DataFrame({'Level' : ['AVG_MICRO'], 
-        #                          'F1-Score': [f1_micro[2]],
-        #                          'Precision': [np.nan],
-        #                          'Recall': [np.nan]})
-        # df = pd.concat([df, f1_micro])
-
-        # # compute MACRO-averaged F1-scores and add to table.
-        # f1_macro = compute_f1_scores(y_pred = tags_predicted, 
-        #                              y_true = dataset.get('tags'),
-        #                              labels = self.tag_scheme,
-        #                              average = 'macro')
-        # f1_macro = pd.DataFrame({'Level' : ['AVG_MACRO'], 
-        #                          'F1-Score': [f1_macro[2]],
-        #                          'Precision': [np.nan],
-        #                          'Recall': [np.nan]})
-        # df = pd.concat([df, f1_macro])
 
         # compute F1 scores by entity type
         f1 = compute_f1_scores(["O"] + self.tag_scheme, 

@@ -9,9 +9,10 @@ import pandas as  pd
 import os
 from typing import List
 
-def load_model(device, tag_scheme, pretrained, max_len, model_path, tokenizer_path, hyperparameters, tokenizer_parameters):
+def load_model(archi, device, tag_scheme, pretrained, max_len, model_path, tokenizer_path, hyperparameters, tokenizer_parameters):
     """
     Args:
+        archi (str, optional): the desired architecture for the model
         tag_scheme (List[str], optional): All available NER 
                 tags for the given data set EXCLUDING the special outside tag, 
                 that is handled separately.
@@ -27,6 +28,7 @@ def load_model(device, tag_scheme, pretrained, max_len, model_path, tokenizer_pa
     """
     # compile model
     model = NERDA(
+        archi=archi,
         device=device,
         tag_scheme=tag_scheme,
         tag_outside='O',
@@ -90,7 +92,8 @@ def predict_bulk(model, in_file_path, out_file_path):
     print("Predictions stored!")
 
 
-def inference_pipeline(device, 
+def inference_pipeline(archi,
+                       device, 
                        model_path,
                        tokenizer_path,
                        out_file_path, 
@@ -112,7 +115,7 @@ def inference_pipeline(device,
                        tokenizer_parameters: dict = {"do_lower_case": True},
                        max_len: int = 128):
 
-    model = load_model(device, tag_scheme, pretrained, max_len,
+    model = load_model(archi, evice, tag_scheme, pretrained, max_len,
                        model_path, tokenizer_path, hyperparameters, tokenizer_parameters)
 
     if(is_bulk):

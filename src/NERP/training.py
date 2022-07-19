@@ -9,16 +9,17 @@ from typing import List
 import os
 import pandas as pd
 from sklearn.model_selection import KFold
-from NERP.compile_model import compile_model
-from NERP.prepare_data import prepare_data
+import torch
 
 
-def do_train(network, device, train_data, test_data, limit, tag_scheme, hyperparameters, tokenizer_parameters, max_len, dropout, pretrained, test_size, isModelExists, model_path, tokenizer_path, model_dir, results, return_accuracy):
+def do_train(archi, device, train_data, valid_data, test_data, limit, tag_scheme, hyperparameters, tokenizer_parameters, max_len, dropout, pretrained, test_size, isModelExists, model_path, tokenizer_path, model_dir, results, return_accuracy):
     """
     Args:
+        archi (str, optional): the desired architecture for the model
         device (str, optional): the desired device to use for computation. 
                 If not provided by the user, we take a guess.
         train_data (str, required): Train csv file path
+        valid_data (str, optional): Valid csv file path
         test_data (str, required): Test csv file path
         limit (int, optional): Limit the number of observations to be 
             returned from a given split. Defaults to None, which implies 
@@ -45,12 +46,13 @@ def do_train(network, device, train_data, test_data, limit, tag_scheme, hyperpar
 
 
     """
-    model = compile_model(network, device, train_data, limit, tag_scheme,
+    model = compile_model(archi, device, train_data, valid_data, limit, tag_scheme,
                           hyperparameters, tokenizer_parameters, max_len, dropout, pretrained, test_size)
     if(isModelExists):
       print("Model weights loading..")
       if(tokenizer_path != None):
-          model.load_network_from_file(model_path=model_path, tokenizer_path=tokenizer_path)
+          model.load_network_from_file(
+              model_path=model_path, tokenizer_path=tokenizer_path)
       else:
           model.load_network_from_file(model_path=model_path)
       print("Model weights loaded!")
@@ -64,13 +66,19 @@ def do_train(network, device, train_data, test_data, limit, tag_scheme, hyperpar
 
     # evaluate on test set
     test = prepare_data(limit, test_data)
+    print("Test: ({a}, {b})".format(
+        a=str(len(test["sentences"])), b=str(len(test["tags"]))))
     print("Test dataset is prepared!")
+
     c_report = model.evaluate_performance(
         test, return_accuracy=return_accuracy)
 
     # write logs
-    report_name = os.path.join(model_dir, "classification_report-" + str(len(results)) + ".csv") if len(results) == 0 else os.path.join(model_dir, "classification_report.csv")
-    c_report["f1"].to_csv(report_name, index=False)
+    report_name = os.path.join(model_dir, "classification_report-" + str(len(results)) +
+                               ".txt") if len(results) == 0 else os.path.join(model_dir, "classification_report.txt")
+    with open(report_name, "w") as wf:
+      wf.write(c_report["f1"])
+
     if(return_accuracy):
         results.append(c_report["accuracy"])
     print("Evaluation metrics stored!")
@@ -97,9 +105,10 @@ def write_accuracy_file(model_dir, results):
     print(f"Mean-Accuracy: {sum(results) / len(results)}")
 
 
-def training_pipeline(network,
+def training_pipeline(archi,
                       device,
                       train_data,
+                      valid_data,
                       test_data,
                       existing_model_path,
                       existing_tokenizer_path,
@@ -125,17 +134,18 @@ def training_pipeline(network,
                       tokenizer_parameters: dict = {"do_lower_case": True},
                       max_len: int = 128,
                       dropout: float = 0.1,
-                      kfold: int = 0, 
+                      kfold: int = 0,
                       seed: int = 42) -> str:
-
 
     # getting vars
     for pretrained in pretrained_models:
+        torch.cuda.empty_cache()
         # Creating model directory if not exists
         model_dir = os.path.join(output_dir, pretrained.split(
             "/")[-1] if len(pretrained.split("/")) > 1 else pretrained)
         if(not os.path.exists(model_dir)):
-            print("Directory not found: {model_dir}".format(model_dir=model_dir))
+            print("Directory not found: {model_dir}".format(
+                model_dir=model_dir))
             os.makedirs(model_dir)
             print("Directory created: {model_dir}".format(model_dir=model_dir))
 
@@ -144,9 +154,11 @@ def training_pipeline(network,
 
             model_dir = os.path.join(model_dir, "kfold")
             if(not os.path.exists(model_dir)):
-                print("Directory not found: {model_dir}".format(model_dir=model_dir))
+                print("Directory not found: {model_dir}".format(
+                    model_dir=model_dir))
                 os.makedirs(model_dir)
-                print("Directory created: {model_dir}".format(model_dir=model_dir))
+                print("Directory created: {model_dir}".format(
+                    model_dir=model_dir))
 
             # create df
             df_train = pd.read_csv(train_data)
@@ -181,7 +193,7 @@ def training_pipeline(network,
                 train_df.to_csv(train_data, index=False)
                 test_df.to_csv(test_data, index=False)
 
-                do_train(network, device, train_data, test_data, limit, tag_scheme, hyperparameters, tokenizer_parameters, max_len,
+                do_train(archi, device, train_data, valid_data, test_data, limit, tag_scheme, hyperparameters, tokenizer_parameters, max_len,
                          dropout, pretrained, test_size, is_model_exists, existing_model_path, existing_tokenizer_path, os.path.join(model_dir, k_fold_step), results, True)
 
             # write accuracy file
@@ -189,7 +201,7 @@ def training_pipeline(network,
 
         else:
             print("Training {model} without K-Fold!".format(model=pretrained))
-            do_train(network, device, train_data, test_data, limit, tag_scheme, hyperparameters, tokenizer_parameters, max_len,
+            do_train(archi, device, train_data, valid_data, test_data, limit, tag_scheme, hyperparameters, tokenizer_parameters, max_len,
                      dropout, pretrained, test_size, is_model_exists, existing_model_path, existing_tokenizer_path,  model_dir, [0], False)
-    
+
     return "Training finished successfully!"

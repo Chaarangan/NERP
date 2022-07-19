@@ -26,8 +26,7 @@ def prepare_data(limit: int = None, file_path: str = None):
     data = data.fillna(method="ffill")
 
     getter = SentenceGetter(data)
-    sentences = [[word[0] for word in sentence]
-                 for sentence in getter.sentences]
+    sentences = [[word[0] for word in sentence] for sentence in getter.sentences]
     entities = [[s[1] for s in sentence] for sentence in getter.sentences]
 
     if limit != 0:
