@@ -53,6 +53,8 @@ class NERP:
             self.pretrained_models = ["roberta-base"]
         self.train_data = dictionary["data"]["train_data"]
         self.valid_data = dictionary["data"]["valid_data"]
+        if self.valid_data == "":
+            self.valid_data = None
         self.train_valid_split = dictionary["data"]["train_valid_split"]
         if self.train_valid_split == None:
             self.train_valid_split = 0.2
