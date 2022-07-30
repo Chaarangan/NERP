@@ -26,6 +26,7 @@ class NERP:
         if self.device == None:
             self.device = "cpu"
         self.tag_scheme = dictionary["data"]["tag_scheme"]
+        self.o_tag_cr = dictionary["model"]["o_tag_cr"]
         self.hyperparameters = dictionary["model"]["hyperparameters"]
         if(self.hyperparameters["epochs"] == None):
             self.hyperparameters["epochs"] = 5
@@ -93,6 +94,7 @@ class NERP:
                                     existing_model_path=None,
                                     existing_tokenizer_path=None,
                                     tag_scheme=self.tag_scheme,
+                                    o_tag_cr=self.o_tag_cr,
                                     limit = self.limit,
                                     test_size=self.train_valid_split,
                                     is_model_exists=False,
@@ -119,6 +121,7 @@ class NERP:
                                     existing_model_path=self.existing_model_path,
                                     existing_tokenizer_path=self.existing_tokenizer_path,
                                     tag_scheme=self.tag_scheme,
+                                    o_tag_cr=self.o_tag_cr,
                                     limit=self.limit,
                                     test_size=self.train_valid_split,
                                     is_model_exists=True,
@@ -142,6 +145,7 @@ class NERP:
                                     existing_model_path=None,
                                     existing_tokenizer_path=None,
                                     tag_scheme=self.tag_scheme,
+                                    o_tag_cr=self.o_tag_cr,
                                     limit=self.limit,
                                     test_size=self.train_valid_split,
                                     is_model_exists=False,
@@ -167,6 +171,7 @@ class NERP:
                                     existing_model_path=self.existing_model_path,
                                     existing_tokenizer_path=self.existing_tokenizer_path,
                                     tag_scheme=self.tag_scheme,
+                                    o_tag_cr=self.o_tag_cr,
                                     limit=self.limit,
                                     test_size=self.train_valid_split,
                                     is_model_exists=True,

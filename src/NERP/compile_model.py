@@ -7,7 +7,7 @@ from NERDA.models import NERDA
 from sklearn.model_selection import train_test_split
 
 
-def compile_model(archi, device, train_data, valid_data, limit, tag_scheme, hyperparameters, tokenizer_parameters, max_len, dropout, pretrained, test_size):
+def compile_model(archi, device, train_data, valid_data, limit, tag_scheme, o_tag_cr, hyperparameters, tokenizer_parameters, max_len, dropout, pretrained, test_size):
     """
     Args:
         archi (str, optional): the desired architecture for the model
@@ -75,6 +75,7 @@ def compile_model(archi, device, train_data, valid_data, limit, tag_scheme, hype
         dataset_validation=validation,
         tag_scheme=tag_scheme,
         tag_outside='O',
+        o_tag_cr=o_tag_cr,
         transformer=transformer,
         dropout=dropout,
         max_len=max_len,

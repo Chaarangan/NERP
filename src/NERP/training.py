@@ -12,7 +12,7 @@ from sklearn.model_selection import KFold
 import torch
 
 
-def do_train(archi, device, train_data, valid_data, test_data, limit, tag_scheme, hyperparameters, tokenizer_parameters, max_len, dropout, pretrained, test_size, isModelExists, model_path, tokenizer_path, model_dir, results, return_accuracy):
+def do_train(archi, device, train_data, valid_data, test_data, limit, tag_scheme, o_tag_cr, hyperparameters, tokenizer_parameters, max_len, dropout, pretrained, test_size, isModelExists, model_path, tokenizer_path, model_dir, results, return_accuracy):
     """
     Args:
         archi (str, optional): the desired architecture for the model
@@ -46,7 +46,7 @@ def do_train(archi, device, train_data, valid_data, test_data, limit, tag_scheme
 
 
     """
-    model = compile_model(archi, device, train_data, valid_data, limit, tag_scheme,
+    model = compile_model(archi, device, train_data, valid_data, limit, tag_scheme, o_tag_cr,
                           hyperparameters, tokenizer_parameters, max_len, dropout, pretrained, test_size)
     if(isModelExists):
       print("Model weights loading..")
@@ -122,6 +122,7 @@ def training_pipeline(archi,
                           'B-MISC',
                           'I-MISC'
                       ],
+                      o_tag_cr: bool = True,
                       limit: int = 0,
                       test_size: float = 0.2,
                       is_model_exists: bool = False,
@@ -193,7 +194,7 @@ def training_pipeline(archi,
                 train_df.to_csv(train_data, index=False)
                 test_df.to_csv(test_data, index=False)
 
-                do_train(archi, device, train_data, valid_data, test_data, limit, tag_scheme, hyperparameters, tokenizer_parameters, max_len,
+                do_train(archi, device, train_data, valid_data, test_data, limit, tag_scheme, o_tag_cr, hyperparameters, tokenizer_parameters, max_len,
                          dropout, pretrained, test_size, is_model_exists, existing_model_path, existing_tokenizer_path, os.path.join(model_dir, k_fold_step), results, True)
 
             # write accuracy file
@@ -201,7 +202,7 @@ def training_pipeline(archi,
 
         else:
             print("Training {model} without K-Fold!".format(model=pretrained))
-            do_train(archi, device, train_data, valid_data, test_data, limit, tag_scheme, hyperparameters, tokenizer_parameters, max_len,
+            do_train(archi, device, train_data, valid_data, test_data, limit, tag_scheme, o_tag_cr, hyperparameters, tokenizer_parameters, max_len,
                      dropout, pretrained, test_size, is_model_exists, existing_model_path, existing_tokenizer_path,  model_dir, [0], False)
 
     return "Training finished successfully!"

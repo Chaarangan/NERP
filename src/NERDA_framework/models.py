@@ -94,6 +94,7 @@ class NERDA:
                             'I-MISC'
                             ],
                  tag_outside: str = 'O',
+                 o_tag_cr: bool = True,
                  dataset_training: dict = None,
                  dataset_validation: dict = None,
                  max_len: int = 128,
@@ -168,6 +169,7 @@ class NERDA:
         self.tag_outside = tag_outside
         self.tag_scheme = tag_scheme
         tag_complete = [tag_outside] + tag_scheme
+        self.o_tag_cr = o_tag_cr
         # fit encoder to _all_ possible tags.
         self.max_len = max_len
         self.tag_encoder = sklearn.preprocessing.LabelEncoder()
@@ -396,10 +398,14 @@ class NERDA:
                                       **kwargs)
 
         # compute F1 scores by entity type
-        f1 = compute_f1_scores(["O"] + self.tag_scheme, 
-                               y_pred=tags_predicted,
+        if(self.o_tag_cr == True):
+            labels = ["O"] + self.tag_scheme
+        else:
+            labels = self.tag_scheme
+            
+        f1 = compute_f1_scores(y_pred=tags_predicted,
                                y_true=dataset.get('tags'),
-                               labels=["O"] + self.tag_scheme)
+                               labels=labels)
 
         # compute and return accuracy if desired
         if return_accuracy:
