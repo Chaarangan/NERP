@@ -122,7 +122,7 @@ def training_pipeline(archi,
                           'B-MISC',
                           'I-MISC'
                       ],
-                      o_tag_cr: bool = Yes,
+                      o_tag_cr: bool = True,
                       limit: int = 0,
                       test_size: float = 0.2,
                       is_model_exists: bool = False,

@@ -94,7 +94,7 @@ class NERDA:
                             'I-MISC'
                             ],
                  tag_outside: str = 'O',
-                 o_tag_cr: bool = Yes,
+                 o_tag_cr: bool = True,
                  dataset_training: dict = None,
                  dataset_validation: dict = None,
                  max_len: int = 128,
