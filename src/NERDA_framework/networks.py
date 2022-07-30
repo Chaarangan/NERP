@@ -107,7 +107,7 @@ class TransformerCRF(nn.Module):
         self.dropout = nn.Dropout(dropout)
 
         self.classifier = nn.Linear(transformer_config.hidden_size, n_tags)
-        self.crf = CRF(n_tags, batch_first=True)
+        self.crf = CRF(n_tags)  # batch_first=True
         self.device = device
 
     # NOTE: 'offsets 'are not used in model as-is, but they are expected as output
@@ -197,7 +197,7 @@ class TransformerBiLSTMCRF(nn.Module):
         )
 
         self.classifier = nn.Linear(transformer_config.hidden_size, n_tags)
-        self.crf = CRF(n_tags, batch_first=True)
+        self.crf = CRF(n_tags)
         self.device = device
 
     # NOTE: 'offsets 'are not used in model as-is, but they are expected as output
