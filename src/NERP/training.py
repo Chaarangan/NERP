@@ -11,6 +11,7 @@ import pandas as pd
 from sklearn.model_selection import KFold
 import torch
 from NERP.compile_model import compile_model
+from NERP.prepare_data import prepare_data
 
 
 def do_train(archi, device, train_data, valid_data, test_data, limit, tag_scheme, o_tag_cr, hyperparameters, tokenizer_parameters, max_len, dropout, pretrained, test_size, isModelExists, model_path, tokenizer_path, model_dir, results, return_accuracy):

@@ -5,7 +5,7 @@ Author: Charangan Vasantharajan
 """
 from NERDA.models import NERDA
 from sklearn.model_selection import train_test_split
-
+from NERP.prepare_data import prepare_data
 
 def compile_model(archi, device, train_data, valid_data, limit, tag_scheme, o_tag_cr, hyperparameters, tokenizer_parameters, max_len, dropout, pretrained, test_size):
     """
