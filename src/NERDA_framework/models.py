@@ -10,7 +10,7 @@ The interface enables you to easily
 - use it to predict entities in new texts.
 """
 from .datasets import get_conll_data
-from .networks import NERDANetwork
+from .networks import NERDANetwork, TransformerBiLSTM, TransformerBiLSTMCRF, TransformerCRF
 from .predictions import predict, predict_text
 from .performance import compute_f1_scores, flatten
 from .training import train_model
