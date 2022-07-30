@@ -3,7 +3,7 @@ import torch
 import torch.nn as nn
 from transformers import AutoConfig
 from .utils import match_kwargs
-from torchcrf import CRF
+from TorchCRF import CRF
 
 class NERDANetwork(nn.Module):
     """A Generic Network for NERDA models.
