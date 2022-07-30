@@ -54,6 +54,7 @@ data:
 
 model: 
   archi: "baseline"
+  o_tag_cr: True
   max_len: 128 
   dropout: 0.1
   hyperparameters:
@@ -100,6 +101,7 @@ inference:
 | limit | Limit the number of observations to be returned from a given split. Defaults to None, which implies that the entire data split is returned. (it shoud be a ```int```) | 0 (whole data) | optional |
 | tag_scheme | All available NER tags for the given data set EXCLUDING the special outside tag, that is handled separately | | required |
 | archi | The desired architecture for the model (baseline, bilstm-crf, bilstm, crf) (str) | baseline | optional |
+| o_tag_cr | To include O tag in the classification report (bool) | True | optional |
 | max_len | the maximum sentence length (number of tokens after applying the transformer tokenizer) | 128 | optional |
 | dropout | dropout probability (float) | 0.1 | optional |
 | epochs | number of epochs (int) | 5 | optional |
@@ -164,14 +166,9 @@ All huggingface transformer-based models are allowed.
 ### Environment Setup
 1. Activate a new conda/python environment
 2. Install NERP
-- via pip
-```python
-pip install NERP
-```
-
-- or via repository
+- via repository
 ```bash
-git clone https://github.com/Chaarangan/NERP
+git clone --branch bilstm-crf https://github.com/Chaarangan/NERP.git
 cd NERP
 pip install -e .
 ```
