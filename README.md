@@ -174,8 +174,7 @@ pip install NERP==1.0.1
 - via repository
 ```bash
 git clone --branch v1.0.1 https://github.com/Chaarangan/NERP.git
-cd NERP
-pip install -e .
+cd NERP & pip install -e .
 ```
 
 ### Initialize NERP
