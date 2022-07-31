@@ -10,8 +10,8 @@ The interface enables you to easily
 - use it to predict entities in new texts.
 """
 from typing import List
-from NERP.inference import inference_pipeline
-from NERP.training import training_pipeline
+from .inference import inference_pipeline
+from .training import training_pipeline
 import yaml
 import os
 

@@ -5,7 +5,7 @@ Author: Charangan Vasantharajan
 """
 import os
 import pandas as pd
-from NERP.utils import SentenceGetter
+from .utils import SentenceGetter
 
 
 def prepare_data(limit: int = None, file_path: str = None):

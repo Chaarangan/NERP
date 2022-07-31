@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: NERP
-Version: 1.0.1a0
+Version: 1.0.1.0.0.0
 Summary: A pipeline for fine-tuning pre-trained transformers for Named Entity Recognition (NER) tasks
 Home-page: https://github.com/chaarangan/NERP
 Author: Charangan Vasantharajan

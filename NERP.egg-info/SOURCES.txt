@@ -14,12 +14,3 @@ NERP.egg-info/SOURCES.txt
 NERP.egg-info/dependency_links.txt
 NERP.egg-info/requires.txt
 NERP.egg-info/top_level.txt
-NERP/NERDA_framework/datasets.py
-NERP/NERDA_framework/models.py
-NERP/NERDA_framework/networks.py
-NERP/NERDA_framework/performance.py
-NERP/NERDA_framework/precooked.py
-NERP/NERDA_framework/predictions.py
-NERP/NERDA_framework/preprocessing.py
-NERP/NERDA_framework/training.py
-NERP/NERDA_framework/utils.py

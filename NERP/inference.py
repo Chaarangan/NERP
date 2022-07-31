@@ -4,7 +4,7 @@ with a [NERP.models.NERP][] model.
 Author: Charangan Vasantharajan
 """
 from NERP.NERDA_framework.models import NERDA
-from NERP.utils import SentenceGetter
+from .utils import SentenceGetter
 import pandas as  pd
 import os
 from typing import List
