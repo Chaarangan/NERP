@@ -1,36 +1,41 @@
-"""
-This section covers functionality for compiling Named Entity
-Recognition models.
+'''
+File: NERP/compile_model.py
+Project: NERP
+Created Date: Tuesday, May 24th 2022
 Author: Charangan Vasantharajan
-"""
+-----
+Last Modified: Sunday, July 31st 2022
+Modified By: Charangan Vasantharajan
+-----
+Copyright (c) 2022
+------------------------------------
+This script will prepare training and validation datasets and compile the model
+'''
+
 from NERDA_framework.models import NERDA
 from sklearn.model_selection import train_test_split
 from NERP.prepare_data import prepare_data
 
 def compile_model(archi, device, train_data, valid_data, limit, tag_scheme, o_tag_cr, hyperparameters, tokenizer_parameters, max_len, dropout, pretrained, test_size):
-    """
+    """This function will prepare training and validation datasets and compile the model
+
     Args:
-        archi (str, optional): the desired architecture for the model
-        device (str, optional): the desired device to use for computation. 
-                If not provided by the user, we take a guess.
-        train_data (str, required): Train csv file path
-        valid_data (str, optional): Valid csv file path
-        limit (int, optional): Limit the number of observations to be 
-            returned from a given split. Defaults to None, which implies 
-            that the entire data split is returned
-        tag_scheme (List[str], optional): All available NER 
-                tags for the given data set EXCLUDING the special outside tag, 
-                that is handled separately.
-        hyperparameters (dict, optional): Hyperparameters for the model
-        tokenizer_parameters (dict, optional): Parameters for the tokenizer
-        max_len (int, required): The maximum sentence length
-        dropout (float, required): dropout probability
-        pretrianed (str, optional): which pretrained 'huggingface' 
-                transformer to use
-        test_size (float, optional): train/test split ratio
+        archi (str): the desired architecture for the model
+        device (str): the desired device to use for computation
+        train_data (str): Train csv file path
+        valid_data (str): Valid csv file path
+        limit (int): Limit the number of observations to be returned from a given split. Defaults to None, which implies that the entire data split is returned
+        tag_scheme (List[str]): All available NER tags for the given data set EXCLUDING the special outside tag, that is handled separately
+        o_tag_cr (bool): To include O tag in the classification report
+        hyperparameters (dict): Hyperparameters for the model
+        tokenizer_parameters (dict): Parameters for the tokenizer
+        max_len (int): The maximum sentence length
+        dropout (float): dropout probability
+        pretrained (str): which pretrained 'huggingface' transformer to use
+        test_size (float): train/test split ratio
 
     Returns:
-        compiled model
+        object: compiled model
     """
 
     if (valid_data == None):
@@ -59,15 +64,6 @@ def compile_model(archi, device, train_data, valid_data, limit, tag_scheme, o_ta
 
     print("Train and Valid datasets are prepared!")
 
-    tag_scheme = tag_scheme
-    transformer = pretrained
-
-    # hyperparameters for network
-    dropout = dropout
-    max_len = max_len
-    # hyperparameters for training
-    training_hyperparameters = hyperparameters
-
     model = NERDA(
         archi=archi,
         device=device,
@@ -76,10 +72,10 @@ def compile_model(archi, device, train_data, valid_data, limit, tag_scheme, o_ta
         tag_scheme=tag_scheme,
         tag_outside='O',
         o_tag_cr=o_tag_cr,
-        transformer=transformer,
+        transformer=pretrained,
         dropout=dropout,
         max_len=max_len,
-        hyperparameters=training_hyperparameters,
+        hyperparameters=hyperparameters,
         tokenizer_parameters=tokenizer_parameters
     )
     print("Model compiled with {archi} architecture!".format(archi=archi))

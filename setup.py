@@ -5,8 +5,8 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="NERP",
-    version="1.0.1-alpha",
-    license='MIT',
+    version="1.0.1.0.0.2",
+    license='LICENSE.txt',
     author="Charangan Vasantharajan",
     author_email="chaanuv@gmail.com",
     description="A pipeline for fine-tuning pre-trained transformers for Named Entity Recognition (NER) tasks",

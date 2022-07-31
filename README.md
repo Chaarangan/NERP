@@ -166,9 +166,14 @@ All huggingface transformer-based models are allowed.
 ### Environment Setup
 1. Activate a new conda/python environment
 2. Install NERP
+- via pip
+```
+pip install NERP==1.0.1
+```
+
 - via repository
 ```bash
-git clone --branch bilstm-crf https://github.com/Chaarangan/NERP.git
+git clone --branch v1.0.1 https://github.com/Chaarangan/NERP.git
 cd NERP
 pip install -e .
 ```
@@ -226,9 +231,11 @@ MIT License
 ## Shout-outs
 - Thanks to [NERDA](https://github.com/ebanalyse/NERDA) package to have initiated us to develop this pipeline. We have integrated the NERDA framework with NERP with some modifications from v1.0.0.
 
-Changes
+Changes from the NERDA(1.0.0) to our NERDA submodule.
 1. Method for saving and loading tokenizer
 2. Selected pull requests' solutions were added from [NERDA PRs](https://github.com/ebanalyse/NERDA/pulls) 
+3. Implementation of the classification report
+4. Added multiple network architecture support
 
 ## Cite this work
 

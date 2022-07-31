@@ -1,14 +1,21 @@
-"""
-This section covers the interface for `NERP` models, that is 
-implemented as its own Python class [NERP.models.NERP][].
+'''
+File: NERP/models.py
+Project: NERP
+Created Date: Tuesday, May 24th 2022
+Author: Charangan Vasantharajan
+-----
+Last Modified: Sunday, July 31st 2022
+Modified By: Charangan Vasantharajan
+-----
+Copyright (c) 2022
+------------------------------------
+This section covers the interface for `NERP` models, that is implemented as its own Python class [NERP.models.NERP][]. The interface enables you to easily 
+    - specify your own [NERP.models.NERP][] model
+    - train it
+    - evaluate it
+    - use it to predict entities in new texts.
+'''
 
-The interface enables you to easily 
-
-- specify your own [NERP.models.NERP][] model
-- train it
-- evaluate it
-- use it to predict entities in new texts.
-"""
 from typing import List
 from NERP.inference import inference_pipeline
 from NERP.training import training_pipeline
