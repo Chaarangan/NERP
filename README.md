@@ -167,7 +167,7 @@ All huggingface transformer-based models are allowed.
 1. Activate a new conda/python environment
 2. Install NERP
 - via pip
-```
+```bash
 pip install NERP==1.0.1
 ```
 
