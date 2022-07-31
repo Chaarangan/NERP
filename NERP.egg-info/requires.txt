@@ -1,0 +1,13 @@
+torch
+transformers
+joblib
+nltk
+pandas
+progressbar
+pyconll
+PyYAML
+scipy
+sentencepiece
+threadpoolctl
+scikit-learn
+TorchCRF

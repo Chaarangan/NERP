@@ -3,7 +3,7 @@ This section covers functionality for computing predictions
 with a [NERP.models.NERP][] model.
 Author: Charangan Vasantharajan
 """
-from NERDA_framework.models import NERDA
+from NERP.NERDA_framework.models import NERDA
 from NERP.utils import SentenceGetter
 import pandas as  pd
 import os

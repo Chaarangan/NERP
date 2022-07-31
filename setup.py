@@ -6,15 +6,14 @@ with open("README.md", "r") as fh:
 setuptools.setup(
     name="NERP",
     version="1.0.1-alpha",
-    license='MIT',
+    license='LICENSE.txt',
     author="Charangan Vasantharajan",
     author_email="chaanuv@gmail.com",
     description="A pipeline for fine-tuning pre-trained transformers for Named Entity Recognition (NER) tasks",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/chaarangan/NERP",
-    packages=setuptools.find_packages(where='src'),
-    package_dir={'': 'src'},
+    packages=["NERP"],
     python_requires='>=3.7',
     install_requires=[
         'torch',
