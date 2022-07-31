@@ -168,12 +168,12 @@ All huggingface transformer-based models are allowed.
 2. Install NERP
 - via pip
 ```bash
-pip install NERP==1.0.1
+pip install NERP==1.0.2
 ```
 
 - via repository
 ```bash
-git clone --branch v1.0.1 https://github.com/Chaarangan/NERP.git
+git clone --branch v1.0.2 https://github.com/Chaarangan/NERP.git
 cd NERP & pip install -e .
 ```
 
