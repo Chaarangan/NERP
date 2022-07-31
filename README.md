@@ -96,7 +96,7 @@ inference:
 | device |device: the desired device to use for computation. If not provided by the user, we take a guess. | ```cuda``` or ```cpu```| optional | 
 | train_data | path to training csv file | | required |
 | valid_data | path to validation csv file | | optional |
-| train_valid_split | train/valid split ratio | 0.2 | optional | 
+| train_valid_split | train/valid split ratio if valid data not exists | 0.2 | optional | 
 | test_data | path to testing csv file | | required |
 | limit | Limit the number of observations to be returned from a given split. Defaults to None, which implies that the entire data split is returned. (it shoud be a ```int```) | 0 (whole data) | optional |
 | tag_scheme | All available NER tags for the given data set EXCLUDING the special outside tag, that is handled separately | | required |
@@ -127,7 +127,7 @@ inference:
 | tag_scheme | All available NER tags for the given data set EXCLUDING the special outside tag, that is handled separately | | required |
 | in_file_path | path to inference file otherwise leave it as empty | | optional |
 | out_file_path | path to the output file if the input is a file, otherwise leave it as empty | | optional |
-| text | sample inference text for individual prediction if **is_bulk** ```False``` | "Hello from NERP" | optional |
+| text | sample inference text for individual prediction | "Hello from NERP" | optional |
 ---
 
 ### **Data Format**
@@ -152,7 +152,7 @@ After training the model, the pipeline will return the following files in the ou
 * model.bin - PyTorch NER model
 * tokenizer files
 * classification-report.csv - logging file
-* If k-fold - split datasets, models and tokenizers for each iteration
+* If k-fold - split datasets, models and tokenizers for each iteration and accuracy file
 
 ---
 
