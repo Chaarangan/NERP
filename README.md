@@ -1,4 +1,4 @@
-# NERP - Pipeline for training NER models
+# NERP - NER Pipeline
 
 ## What is it?
 NERP (Named Entity Recognition Pipeline) is a python package that offers an easy-to-use pipeline for fine-tuning pre-trained transformers for Named Entity Recognition (NER) tasks.
