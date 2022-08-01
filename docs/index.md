@@ -91,43 +91,43 @@ inference:
 
 
 #### Training Parameters
-| Parameters | Description | Default | Type |
-| ------------- | ------------- | ------------- | ------------- |
-| device |device: the desired device to use for computation. If not provided by the user, we take a guess. | ```cuda``` or ```cpu```| optional | 
-| train_data | path to training csv file | | required |
-| valid_data | path to validation csv file | | optional |
-| train_valid_split | train/valid split ratio if valid data not exists | 0.2 | optional | 
-| test_data | path to testing csv file | | required |
-| limit | Limit the number of observations to be returned from a given split. Defaults to None, which implies that the entire data split is returned. (it shoud be a ```int```) | 0 (whole data) | optional |
-| tag_scheme | All available NER tags for the given data set EXCLUDING the special outside tag, that is handled separately | | required |
-| archi | The desired architecture for the model (baseline, bilstm-crf, bilstm, crf) (str) | baseline | optional |
-| o_tag_cr | To include O tag in the classification report (bool) | True | optional |
-| max_len | the maximum sentence length (number of tokens after applying the transformer tokenizer) | 128 | optional |
-| dropout | dropout probability (float) | 0.1 | optional |
-| epochs | number of epochs (int) | 5 | optional |
-| warmup_steps | number of learning rate warmup steps (int) | 500 | optional |
-| train_batch_size | batch Size for DataLoader (int) | 64 | optional |
-| learning_rate | learning rate (float) | 0.0001 | optional |
-| tokenizer_parameters | list of hyperparameters for tokenizer | do_lower_case: True | optional |
-| pretrained_models | 'huggingface' transformer model | roberta-base | required |
-| existing_model_path | model derived from the transformer | | optional |
-| existing_tokenizer_path | tokenizer derived from the transformer | | optional |
-| output_dir | path to output directory | models/ | optional |
-| kfold | number of splits | 0 (no k-fold) | optional |
-| seed | random state value for k-fold | 42 | optional |
+ Parameters | Description | Default | Type 
+ ------------- | ------------- | ------------- | ------------- 
+ device |device: the desired device to use for computation. If not provided by the user, we take a guess. | ```cuda``` or ```cpu```| optional 
+ train_data | path to training csv file | | required 
+ valid_data | path to validation csv file | | optional 
+ train_valid_split | train/valid split ratio if valid data not exists | 0.2 | optional 
+ test_data | path to testing csv file | | required 
+ limit | Limit the number of observations to be returned from a given split. Defaults to None, which implies that the entire data split is returned. (it shoud be a ```int```) | 0 (whole data) | optional 
+ tag_scheme | All available NER tags for the given data set EXCLUDING the special outside tag, that is handled separately | | required 
+ archi | The desired architecture for the model (baseline, bilstm-crf, bilstm, crf) (str) | baseline | optional 
+ o_tag_cr | To include O tag in the classification report (bool) | True | optional 
+ max_len | the maximum sentence length (number of tokens after applying the transformer tokenizer) | 128 | optional 
+ dropout | dropout probability (float) | 0.1 | optional 
+ epochs | number of epochs (int) | 5 | optional 
+ warmup_steps | number of learning rate warmup steps (int) | 500 | optional 
+ train_batch_size | batch Size for DataLoader (int) | 64 | optional 
+ learning_rate | learning rate (float) | 0.0001 | optional 
+ tokenizer_parameters | list of hyperparameters for tokenizer | do_lower_case: True | optional 
+ pretrained_models | 'huggingface' transformer model | roberta-base | required 
+ existing_model_path | model derived from the transformer | | optional 
+ existing_tokenizer_path | tokenizer derived from the transformer | | optional 
+ output_dir | path to output directory | models/ | optional 
+ kfold | number of splits | 0 (no k-fold) | optional 
+ seed | random state value for k-fold | 42 | optional 
 
 #### Inference Parameters
-| Parameters | Description | Default | Type |
-| ------------- | ------------- | ------------- | ------------- |
-| archi | The architecture for the trained model (baseline, bilstm-crf, bilstm, crf) (str) | baseline | optional |
-| max_len | the maximum sentence length (number of tokens after applying the transformer tokenizer) | 128 | optional |
-| pretrained | 'huggingface' transformer model | roberta-base | required |
-| model_path | path to trained model | | required  |
-| tokenizer_path | path to saved tokenizer folder | | optional |
-| tag_scheme | All available NER tags for the given data set EXCLUDING the special outside tag, that is handled separately | | required |
-| in_file_path | path to inference file otherwise leave it as empty | | optional |
-| out_file_path | path to the output file if the input is a file, otherwise leave it as empty | | optional |
-| text | sample inference text for individual prediction | "Hello from NERP" | optional |
+ Parameters | Description | Default | Type 
+ ------------- | ------------- | ------------- | ------------- 
+ archi | The architecture for the trained model (baseline, bilstm-crf, bilstm, crf) (str) | baseline | optional 
+ max_len | the maximum sentence length (number of tokens after applying the transformer tokenizer) | 128 | optional 
+ pretrained | 'huggingface' transformer model | roberta-base | required 
+ model_path | path to trained model | | required  
+ tokenizer_path | path to saved tokenizer folder | | optional 
+ tag_scheme | All available NER tags for the given data set EXCLUDING the special outside tag, that is handled separately | | required 
+ in_file_path | path to inference file otherwise leave it as empty | | optional 
+ out_file_path | path to the output file if the input is a file, otherwise leave it as empty | | optional 
+ text | sample inference text for individual prediction | "Hello from NERP" | optional 
 ---
 
 ### **Data Format**
