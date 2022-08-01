@@ -91,6 +91,7 @@ inference:
 
 
 #### Training Parameters
+
  Parameters | Description | Default | Type 
  ------------- | ------------- | ------------- | ------------- 
  device |device: the desired device to use for computation. If not provided by the user, we take a guess. | ```cuda``` or ```cpu```| optional 
@@ -117,6 +118,7 @@ inference:
  seed | random state value for k-fold | 42 | optional 
 
 #### Inference Parameters
+
  Parameters | Description | Default | Type 
  ------------- | ------------- | ------------- | ------------- 
  archi | The architecture for the trained model (baseline, bilstm-crf, bilstm, crf) (str) | baseline | optional 
@@ -128,6 +130,7 @@ inference:
  in_file_path | path to inference file otherwise leave it as empty | | optional 
  out_file_path | path to the output file if the input is a file, otherwise leave it as empty | | optional 
  text | sample inference text for individual prediction | "Hello from NERP" | optional 
+ 
 ---
 
 ### **Data Format**
