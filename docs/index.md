@@ -13,28 +13,6 @@ NERP (Named Entity Recognition Pipeline) is a python package that offers an easy
 - Prediction on a single text
 - Prediction on a CSV file
 
-## Package Diagram
-
-<table>
-  <tr>
-    <td>NERP Main Component</td>
-  </tr>
-  <tr>
-    <td><img alt="NERP Main Component" src="https://github.com/Chaarangan/NERP/blob/master/diagrams/1.png"/></td>
-  </tr>
-  <tr>
-    <td>Component of NERP K-Fold Cross Validation</td>
-  </tr>
-  <tr>
-    <td><img align="left" alt="Component of NERP K-Fold Cross Validation" src="https://github.com/Chaarangan/NERP/blob/master/diagrams/2.png" height="200"/></td>
-  </tr>
-  <tr>
-    <td>Component of NERP Inference</td>
-  </tr>
-  <tr>
-    <td><img align="left" alt="Component of NERP Inference" src="https://github.com/Chaarangan/NERP/blob/master/diagrams/3.png" height="200"/></td>
-  </tr>
- </table>
 
 ## **Config**
 
@@ -90,7 +68,7 @@ inference:
 ```
 
 
-#### Training Parameters
+### Training Parameters
 
  Parameters | Description | Default | Type 
  ------------- | ------------- | ------------- | ------------- 
@@ -117,7 +95,7 @@ inference:
  kfold | number of splits | 0 (no k-fold) | optional 
  seed | random state value for k-fold | 42 | optional 
 
-#### Inference Parameters
+### Inference Parameters
 
  Parameters | Description | Default | Type 
  ------------- | ------------- | ------------- | ------------- 
