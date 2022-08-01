@@ -1,9 +1,10 @@
-# NERP - Pipeline for training NER models
+# NERP - NER Pipeline
 
 ## What is it?
 NERP (Named Entity Recognition Pipeline) is a python package that offers an easy-to-use pipeline for fine-tuning pre-trained transformers for Named Entity Recognition (NER) tasks.
 
 ## Main Features
+- Different Architectures (BiLSTM, CRF, BiLSTM+CRF)
 - Fine-tune a pretrained model
 - Save and reload model and train it on a new training data
 - Fine-tune a pretrained model with K-Fold Cross-Validation
@@ -45,12 +46,15 @@ torch:
   device: "cuda"
 data:
   train_data: 'data/train.csv'
-  train_valid_split: 0.2
+  valid_data: 'data/valid.csv'
+  train_valid_split: None
   test_data: 'data/test.csv'
   limit: 10
   tag_scheme: ['B-PER', 'I-PER', 'B-ORG', 'I-ORG', 'B-LOC', 'I-LOC', 'B-MISC', 'I-MISC']
 
 model: 
+  archi: "baseline"
+  o_tag_cr: True
   max_len: 128 
   dropout: 0.1
   hyperparameters:
@@ -64,7 +68,6 @@ model:
     - roberta-base
 
 train:
-  is_model_exists: True
   existing_model_path: "roberta-base/model.bin"
   existing_tokenizer_path: "roberta-base/tokenizer"
   output_dir: "output/"
@@ -74,6 +77,7 @@ kfold:
   seed: 42
 
 inference:
+  archi: "bilstm-crf"
   max_len: 128 
   pretrained: "roberta-base"
   model_path: "roberta-base/model.bin"
@@ -91,10 +95,13 @@ inference:
 | ------------- | ------------- | ------------- | ------------- |
 | device |device: the desired device to use for computation. If not provided by the user, we take a guess. | ```cuda``` or ```cpu```| optional | 
 | train_data | path to training csv file | | required |
-| train_valid_split | train/valid split ratio | 0.2 | optional | 
+| valid_data | path to validation csv file | | optional |
+| train_valid_split | train/valid split ratio if valid data not exists | 0.2 | optional | 
 | test_data | path to testing csv file | | required |
 | limit | Limit the number of observations to be returned from a given split. Defaults to None, which implies that the entire data split is returned. (it shoud be a ```int```) | 0 (whole data) | optional |
 | tag_scheme | All available NER tags for the given data set EXCLUDING the special outside tag, that is handled separately | | required |
+| archi | The desired architecture for the model (baseline, bilstm-crf, bilstm, crf) (str) | baseline | optional |
+| o_tag_cr | To include O tag in the classification report (bool) | True | optional |
 | max_len | the maximum sentence length (number of tokens after applying the transformer tokenizer) | 128 | optional |
 | dropout | dropout probability (float) | 0.1 | optional |
 | epochs | number of epochs (int) | 5 | optional |
@@ -112,6 +119,7 @@ inference:
 #### Inference Parameters
 | Parameters | Description | Default | Type |
 | ------------- | ------------- | ------------- | ------------- |
+| archi | The architecture for the trained model (baseline, bilstm-crf, bilstm, crf) (str) | baseline | optional |
 | max_len | the maximum sentence length (number of tokens after applying the transformer tokenizer) | 128 | optional |
 | pretrained | 'huggingface' transformer model | roberta-base | required |
 | model_path | path to trained model | | required  |
@@ -119,7 +127,7 @@ inference:
 | tag_scheme | All available NER tags for the given data set EXCLUDING the special outside tag, that is handled separately | | required |
 | in_file_path | path to inference file otherwise leave it as empty | | optional |
 | out_file_path | path to the output file if the input is a file, otherwise leave it as empty | | optional |
-| text | sample inference text for individual prediction if **is_bulk** ```False``` | "Hello from NERP" | optional |
+| text | sample inference text for individual prediction | "Hello from NERP" | optional |
 ---
 
 ### **Data Format**
@@ -144,7 +152,7 @@ After training the model, the pipeline will return the following files in the ou
 * model.bin - PyTorch NER model
 * tokenizer files
 * classification-report.csv - logging file
-* If k-fold - split datasets, models and tokenizers for each iteration
+* If k-fold - split datasets, models and tokenizers for each iteration and accuracy file
 
 ---
 
@@ -159,15 +167,14 @@ All huggingface transformer-based models are allowed.
 1. Activate a new conda/python environment
 2. Install NERP
 - via pip
-```python
-pip install NERP
+```bash
+pip install NERP==1.0.2
 ```
 
-- or via repository
+- via repository
 ```bash
-git clone https://github.com/Chaarangan/NERP
-cd NERP
-pip install -e .
+git clone --branch v1.0.2 https://github.com/Chaarangan/NERP.git
+cd NERP & pip install -e .
 ```
 
 ### Initialize NERP
@@ -200,13 +207,19 @@ model.train_with_kfold_after_loading_network()
 
 ### Inference of a NER model using NERP 
 
-1. Prediction on a single text
+1. Prediction on a single text through YAML file
 ```python
 output = model.inference_text()
 print(output)
 ```
 
-2. Prediction on a CSV file
+1. Prediction on a single text through direct input
+```python
+output = model.predict("Hello from NERP")
+print(output)
+```
+
+3. Prediction on a CSV file
 ```python
 model.inference_bulk()
 ```
@@ -217,9 +230,11 @@ MIT License
 ## Shout-outs
 - Thanks to [NERDA](https://github.com/ebanalyse/NERDA) package to have initiated us to develop this pipeline. We have integrated the NERDA framework with NERP with some modifications from v1.0.0.
 
-Changes
+Changes from the NERDA(1.0.0) to our NERDA submodule.
 1. Method for saving and loading tokenizer
 2. Selected pull requests' solutions were added from [NERDA PRs](https://github.com/ebanalyse/NERDA/pulls) 
+3. Implementation of the classification report
+4. Added multiple network architecture support
 
 ## Cite this work
 

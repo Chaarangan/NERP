@@ -4,8 +4,9 @@ for [NERDA.models.NERDA][] models.
 """
 
 from typing import List
-from sklearn.metrics import precision_recall_fscore_support
+from sklearn.metrics import classification_report
 import warnings
+import pandas as pd
 
 def flatten(l: list):
     """Flattens list"""
@@ -14,8 +15,7 @@ def flatten(l: list):
 
 def compute_f1_scores(y_pred: List[List[str]], 
                       y_true: List[List[str]], 
-                      labels: List[str],
-                      **kwargs) -> list:
+                      labels: List[str]) -> list:
     """Compute F1 scores.
     
     Computes F1 Scores
@@ -46,9 +46,5 @@ def compute_f1_scores(y_pred: List[List[str]],
     y_pred = flatten(y_pred)
     y_true = flatten(y_true) 
 
-    f1_scores = precision_recall_fscore_support(y_true = y_true,
-                                                y_pred = y_pred,
-                                                labels = labels,
-                                                **kwargs) 
-
-    return f1_scores                                                                
+    f1_scores = classification_report(y_true, y_pred, labels=labels, digits=4)
+    return f1_scores

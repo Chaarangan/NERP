@@ -1,18 +1,22 @@
-"""
-This section covers utility functions for Named Entity 
-Recognition models.
+'''
+File: NERP/utils.py
+Project: NERP
+Created Date: Tuesday, May 24th 2022
 Author: Charangan Vasantharajan
-"""
-class SentenceGetter(object):
-    """
-    Args:
-        data : dataframe
-          data
-        sentences : list
-          list of sentences of the data in the form of tuple(word ,tag)
+-----
+Last Modified: Sunday, July 31st 2022
+Modified By: Charangan Vasantharajan
+-----
+Copyright (c) 2022
+------------------------------------
+This script contains a class to create sentences from samples using sentence numbers
+'''
 
-    Returns:
-        Nothing
+class SentenceGetter(object):
+    """This class will group samples using its sentence number and make it as a sentence
+
+    Args:
+        object (df): dataframe contains NER samples with BIO tags and sentence numbers
     """
 
     def __init__(self, data):

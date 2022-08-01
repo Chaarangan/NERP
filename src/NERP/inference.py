@@ -1,38 +1,51 @@
-"""
-This section covers functionality for computing predictions
-with a [NERP.models.NERP][] model.
+'''
+File: NERP/inference.py
+Project: NERP
+Created Date: Tuesday, May 24th 2022
 Author: Charangan Vasantharajan
-"""
+-----
+Last Modified: Sunday, July 31st 2022
+Modified By: Charangan Vasantharajan
+-----
+Copyright (c) 2022
+------------------------------------
+This script will compute predictions for a single text input as well as CSV file input
+'''
+
 from NERDA_framework.models import NERDA
 from NERP.utils import SentenceGetter
 import pandas as  pd
 import os
 from typing import List
 
-def load_model(device, tag_scheme, pretrained, max_len, model_path, tokenizer_path, hyperparameters, tokenizer_parameters):
-    """
+def load_model(archi, device, tag_scheme, pretrained, max_len, model_path, tokenizer_path, hyperparameters, tokenizer_parameters):
+    """This function will load the trained model with tokenizer if exists
+
     Args:
-        tag_scheme (List[str], optional): All available NER 
-                tags for the given data set EXCLUDING the special outside tag, 
-                that is handled separately.
-        pretrianed (str, optional): which pretrained 'huggingface' 
-                transformer to use
-        max_len (int, required): The maximum sentence length
-        hyperparameters (dict, optional): Hyperparameters for the model
-        tokenizer_path (str, optional): Existing tokenizer path if exist: otherwise it loads from huggingface.
-        tokenizer_parameters (dict, optional): Parameters for the tokenizer
+        archi (str): the desired architecture for the model
+        device (str): the desired device to use for computation
+        tag_scheme (List[str]): All available NER tags for the given data set EXCLUDING the special outside tag, that is handled separately
+        pretrained (str): which pretrained 'huggingface' transformer to use
+        max_len (int): The maximum sentence length
+        model_path (str): Trained model path
+        tokenizer_path (str): Existing tokenizer path if exist: otherwise it loads from huggingface.
+        hyperparameters (dict): Hyperparameters for the model
+        tokenizer_parameters (dict): Parameters for the tokenizer
 
     Returns:
-        compiled model
+        object: compiled model
     """
     # compile model
     model = NERDA(
+        archi=archi,
         device=device,
         tag_scheme=tag_scheme,
+        tag_outside='O',
         transformer=pretrained,
+        dropout=dropout,
         max_len=max_len,
-        tokenizer_parameters=tokenizer_parameters,
-        hyperparameters=hyperparameters
+        hyperparameters=hyperparameters,
+        tokenizer_parameters=tokenizer_parameters
     )
 
     # getting inference vars
@@ -45,16 +58,13 @@ def load_model(device, tag_scheme, pretrained, max_len, model_path, tokenizer_pa
     print("Model weights loaded!")
     return model
 
-
 def predict_bulk(model, in_file_path, out_file_path):
-    """
-      Args:
-          model (object, required): Compiled model
-          in_file_path (str, required): Input csv file path
-          out_file_path (str, required): Output csv file path
+    """This function will make predictions on the CSV input file
 
-      Returns:
-          Nothing. Saves predictions to a file as a side-effect
+    Args:
+        model (object): Compiled model from load_model function
+        in_file_path (str): Input csv file path
+        out_file_path (str): Output csv file path
     """
     data = pd.read_csv(in_file_path)
     data = data.fillna(method="ffill")
@@ -89,7 +99,8 @@ def predict_bulk(model, in_file_path, out_file_path):
     print("Predictions stored!")
 
 
-def inference_pipeline(device, 
+def inference_pipeline(archi,
+                       device, 
                        model_path,
                        tokenizer_path,
                        out_file_path, 
@@ -111,7 +122,7 @@ def inference_pipeline(device,
                        tokenizer_parameters: dict = {"do_lower_case": True},
                        max_len: int = 128):
 
-    model = load_model(device, tag_scheme, pretrained, max_len,
+    model = load_model(archi, evice, tag_scheme, pretrained, max_len,
                        model_path, tokenizer_path, hyperparameters, tokenizer_parameters)
 
     if(is_bulk):

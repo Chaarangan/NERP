@@ -1,14 +1,21 @@
-"""
-This section covers the interface for `NERP` models, that is 
-implemented as its own Python class [NERP.models.NERP][].
+'''
+File: NERP/models.py
+Project: NERP
+Created Date: Tuesday, May 24th 2022
+Author: Charangan Vasantharajan
+-----
+Last Modified: Sunday, July 31st 2022
+Modified By: Charangan Vasantharajan
+-----
+Copyright (c) 2022
+------------------------------------
+This section covers the interface for `NERP` models, that is implemented as its own Python class [NERP.models.NERP][]. The interface enables you to easily 
+    - specify your own [NERP.models.NERP][] model
+    - train it
+    - evaluate it
+    - use it to predict entities in new texts.
+'''
 
-The interface enables you to easily 
-
-- specify your own [NERP.models.NERP][] model
-- train it
-- evaluate it
-- use it to predict entities in new texts.
-"""
 from typing import List
 from NERP.inference import inference_pipeline
 from NERP.training import training_pipeline
@@ -26,6 +33,7 @@ class NERP:
         if self.device == None:
             self.device = "cpu"
         self.tag_scheme = dictionary["data"]["tag_scheme"]
+        self.o_tag_cr = dictionary["model"]["o_tag_cr"]
         self.hyperparameters = dictionary["model"]["hyperparameters"]
         if(self.hyperparameters["epochs"] == None):
             self.hyperparameters["epochs"] = 5
@@ -38,6 +46,9 @@ class NERP:
         self.tokenizer_parameters = dictionary["model"]["tokenizer_parameters"]
         if(self.tokenizer_parameters["do_lower_case"] == None):
             self.tokenizer_parameters["do_lower_case"] = True
+        self.archi = dictionary["model"]["archi"]
+        if self.archi == None:
+            self.archi = "baseline"
         self.max_len = dictionary["model"]["max_len"]
         if self.max_len == None:
             self.max_len = 128
@@ -48,6 +59,9 @@ class NERP:
         if self.pretrained_models == [None]:
             self.pretrained_models = ["roberta-base"]
         self.train_data = dictionary["data"]["train_data"]
+        self.valid_data = dictionary["data"]["valid_data"]
+        if self.valid_data == "":
+            self.valid_data = None
         self.train_valid_split = dictionary["data"]["train_valid_split"]
         if self.train_valid_split == None:
             self.train_valid_split = 0.2
@@ -81,12 +95,15 @@ class NERP:
             self.infer_max_len = 128
     
     def train(self) -> str:
-        message = training_pipeline(device = self.device, 
+        message = training_pipeline(archi = self.archi,
+                                    device = self.device, 
                                     train_data = self.train_data,
+                                    valid_data=self.valid_data,
                                     test_data = self.test_data,
                                     existing_model_path=None,
                                     existing_tokenizer_path=None,
                                     tag_scheme=self.tag_scheme,
+                                    o_tag_cr=self.o_tag_cr,
                                     limit = self.limit,
                                     test_size=self.train_valid_split,
                                     is_model_exists=False,
@@ -105,12 +122,15 @@ class NERP:
         assert os.path.isfile(
             self.existing_model_path), f'File {self.existing_model_path} does not exist.'
 
-        message = training_pipeline(device=self.device, 
+        message = training_pipeline(archi=self.archi,
+                                    device=self.device,
                                     train_data=self.train_data,
+                                    valid_data=self.valid_data,
                                     test_data=self.test_data,
                                     existing_model_path=self.existing_model_path,
                                     existing_tokenizer_path=self.existing_tokenizer_path,
                                     tag_scheme=self.tag_scheme,
+                                    o_tag_cr=self.o_tag_cr,
                                     limit=self.limit,
                                     test_size=self.train_valid_split,
                                     is_model_exists=True,
@@ -126,12 +146,15 @@ class NERP:
         return message
 
     def train_with_kfold(self) -> str:
-        message = training_pipeline(device=self.device, 
+        message = training_pipeline(archi=self.archi,
+                                    device=self.device,
                                     train_data=self.train_data,
+                                    valid_data=self.valid_data,
                                     test_data=self.test_data,
                                     existing_model_path=None,
                                     existing_tokenizer_path=None,
                                     tag_scheme=self.tag_scheme,
+                                    o_tag_cr=self.o_tag_cr,
                                     limit=self.limit,
                                     test_size=self.train_valid_split,
                                     is_model_exists=False,
@@ -149,12 +172,15 @@ class NERP:
     def train_with_kfold_after_load_network(self) -> str:
         assert os.path.isfile(
             self.existing_model_path), f'File {self.existing_model_path} does not exist.'
-        message = training_pipeline(device=self.device, 
+        message = training_pipeline(archi=self.archi,
+                                    device=self.device,
                                     train_data=self.train_data,
+                                    valid_data=self.valid_data,
                                     test_data=self.test_data,
                                     existing_model_path=self.existing_model_path,
                                     existing_tokenizer_path=self.existing_tokenizer_path,
                                     tag_scheme=self.tag_scheme,
+                                    o_tag_cr=self.o_tag_cr,
                                     limit=self.limit,
                                     test_size=self.train_valid_split,
                                     is_model_exists=True,
@@ -173,19 +199,42 @@ class NERP:
         assert os.path.isfile(
             self.model_path), f'File {self.model_path} does not exist.'
 
-        output, message = inference_pipeline(device=self.device, 
-                                    model_path=self.model_path,
-                                    tokenizer_path = self.tokenizer_path,
-                                    out_file_path = None,
-                                    in_file_path=None,
-                                    pretrained = self.pretrained,
-                                    is_bulk = False,
-                                    text=self.text,
-                                    tag_scheme=self.tag_scheme, 
-                                    hyperparameters=self.hyperparameters,
-                                    tokenizer_parameters=self.tokenizer_parameters,
-                                    max_len=self.infer_max_len)
+        output, message = inference_pipeline(archi=self.archi, 
+                                             device=self.device,
+                                            model_path=self.model_path,
+                                            tokenizer_path = self.tokenizer_path,
+                                            out_file_path = None,
+                                            in_file_path=None,
+                                            pretrained = self.pretrained,
+                                            is_bulk = False,
+                                            text=self.text,
+                                            tag_scheme=self.tag_scheme, 
+                                            hyperparameters=self.hyperparameters,
+                                            tokenizer_parameters=self.tokenizer_parameters,
+                                            max_len=self.infer_max_len)
         
+        return output
+    
+    def predict(self, text) -> str:
+        assert os.path.isfile(
+            self.model_path), f'File {self.model_path} does not exist.'
+
+        assert text != None, "Please input a text!"
+
+        output, message = inference_pipeline(archi=self.archi, 
+                                             device=self.device,
+                                             model_path=self.model_path,
+                                             tokenizer_path=self.tokenizer_path,
+                                             out_file_path=None,
+                                             in_file_path=None,
+                                             pretrained=self.pretrained,
+                                             is_bulk=False,
+                                             text=text,
+                                             tag_scheme=self.tag_scheme,
+                                             hyperparameters=self.hyperparameters,
+                                             tokenizer_parameters=self.tokenizer_parameters,
+                                             max_len=self.infer_max_len)
+
         return output
     
     def inference_bulk(self) -> str:
@@ -194,7 +243,8 @@ class NERP:
         assert os.path.isfile(
             self.in_file_path), f'File {self.in_file_path} does not exist.'
             
-        output, message = inference_pipeline(device=self.device, 
+        output, message = inference_pipeline(archi=self.archi, 
+                                             device=self.device,
                                              model_path=self.model_path,
                                              tokenizer_path=self.tokenizer_path,
                                              out_file_path=self.out_file_path,
