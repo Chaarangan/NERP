@@ -14,7 +14,7 @@ NERP (Named Entity Recognition Pipeline) is a python package that offers an easy
 - Prediction on a CSV file
 
 
-## **Config**
+## Config
 
 The user interface consists of only one file config as a YAML. Change it to create the desired configuration.
 
@@ -111,7 +111,7 @@ inference:
  
 ---
 
-### **Data Format**
+### Data Format
 
 Pipeline works with CSV files containing separated tokens and labels on each line. Sentences can be found in the `Sentence #` column. Labels should already be in the necessary format, e.g. IO, BIO, BILUO, ... The CSV file must contain the last three columns as same as below.
 
@@ -126,7 +126,7 @@ Pipeline works with CSV files containing separated tokens and labels on each lin
 
 ---
 
-### **Output**
+### Output
 
 After training the model, the pipeline will return the following files in the output directory:
 
@@ -137,7 +137,7 @@ After training the model, the pipeline will return the following files in the ou
 
 ---
 
-### **Models**
+### Models
 
 All huggingface transformer-based models are allowed.
 
