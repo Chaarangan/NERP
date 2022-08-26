@@ -15,6 +15,7 @@ This script will prepare the sentences and entities from the input BIO format
 import os
 import pandas as pd
 from NERP.utils import SentenceGetter
+from sklearn.model_selection import train_test_split
 
 def prepare_data(limit: int = 0, file_path: str = None):
     """This function will prepare the sentences and entities from the input BIO format 

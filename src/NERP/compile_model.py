@@ -13,7 +13,6 @@ This script will prepare training and validation datasets and compile the model
 '''
 
 from NERDA_framework.models import NERDA
-from sklearn.model_selection import train_test_split
 from NERP.prepare_data import prepare_data
 
 def compile_model(archi, device, training, validation, tag_scheme, o_tag_cr, hyperparameters, tokenizer_parameters, max_len, dropout, pretrained):
