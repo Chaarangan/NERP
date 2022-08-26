@@ -203,14 +203,19 @@ def training_pipeline(archi,
 
                 train_data = os.path.join(
                     dataset_dir, "train-{n}.csv".format(n=k_fold_step))
-                test_data = os.path.join(
-                    dataset_dir, "test-{n}.csv".format(n=k_fold_step))
                 train_df.to_csv(train_data, index=False)
-                test_df.to_csv(test_data, index=False)
                 
                 if(test_on_original):
                     valid_data = test_data
                     test_data = test_data_path
+                    
+                    test_data = os.path.join(
+                        dataset_dir, "valid-{n}.csv".format(n=k_fold_step))
+                    test_df.to_csv(test_data, index=False)
+                else:  
+                    test_data = os.path.join(
+                        dataset_dir, "test-{n}.csv".format(n=k_fold_step))
+                    test_df.to_csv(test_data, index=False)
 
                 do_train(archi, device, train_data, valid_data, test_data, limit, tag_scheme, o_tag_cr, hyperparameters, tokenizer_parameters, max_len,
                          dropout, pretrained, test_size, is_model_exists, existing_model_path, existing_tokenizer_path, os.path.join(model_dir, k_fold_step), results, True)
