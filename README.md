@@ -75,6 +75,7 @@ train:
 kfold: 
   splits: 2
   seed: 42
+  test_on_original: False
 
 inference:
   archi: "bilstm-crf"

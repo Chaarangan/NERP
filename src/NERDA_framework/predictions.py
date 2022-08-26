@@ -11,6 +11,7 @@ from nltk.tokenize import sent_tokenize, word_tokenize
 from typing import List, Callable
 import transformers
 import sklearn.preprocessing
+nltk.download('punkt')
 
 def sigmoid_transform(x):
     prob = 1/(1 + np.exp(-x))
