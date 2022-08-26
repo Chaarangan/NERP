@@ -4,7 +4,7 @@ Project: NERP
 Created Date: Tuesday, May 24th 2022
 Author: Charangan Vasantharajan
 -----
-Last Modified: Sunday, July 31st 2022
+Last Modified: Friday, Aug 26th 2022
 Modified By: Charangan Vasantharajan
 -----
 Copyright (c) 2022
@@ -50,6 +50,17 @@ def prepare_data(limit: int = 0, file_path: str = None):
 
 
 def prepare_train_valid_data(train_data, valid_data, limit, test_size):
+    """This function will create training and validation dictionaries from train and valid csv files
+
+    Args:
+        train_data (str): Train csv file  path
+        valid_data (str): Valid csv file
+        limit (int): Limit the number of observations to be returned from a given split. Defaults to 0, which implies that the entire data split is returned.
+        test_size (float): train/valid split ratio if valid data not exists
+
+    Returns:
+        dict: Two dictionaries (training and validation)
+    """
     if (valid_data == None):
         print("Valid data is None and created from train data!")
         data = prepare_data(limit, train_data)
@@ -80,6 +91,15 @@ def prepare_train_valid_data(train_data, valid_data, limit, test_size):
 
 
 def prepare_test_data(test_data, limit):
+    """The function will create a dictionary of sentences and tags for test set
+
+    Args:
+        test_data (str): Test csv file
+        limit (int): Limit the number of observations to be returned from a given split. Defaults to 0, which implies that the entire data split is returned.
+
+    Returns:
+        dict: a dictioanry of sentences and tags
+    """
     test = prepare_data(limit, test_data)
     print("Test: ({a}, {b})".format(
         a=str(len(test["sentences"])), b=str(len(test["tags"]))))
@@ -89,6 +109,18 @@ def prepare_test_data(test_data, limit):
 
 
 def prepare_kfold_data(train_data, valid_data, test_data, limit, test_on_original):
+    """This function will prepare training dictionary for kfold
+
+    Args:
+        train_data (str): Train csv file  path
+        valid_data (str): Valid csv file  path
+        test_data (str): Test csv file  path
+        limit (int): Limit the number of observations to be returned from a given split. Defaults to 0, which implies that the entire data split is returned.
+        test_on_original (bool): True, if you need to test on the original test set for each iteration
+
+    Returns:
+        dict: a dictioanry of sentences and tags
+    """
     sentences = []
     tags = []
 
@@ -115,6 +147,15 @@ def prepare_kfold_data(train_data, valid_data, test_data, limit, test_on_origina
 
 
 def prepare_kfold_train_valid_data(training, test_size):
+    """This function will create training and validation dictionaries from train and valid csv files for kfold
+
+    Args:
+        training (dict): A dictioanry of sentences and tags from training set
+        test_size (float): train/valid split ratio if valid data not exists
+
+    Returns:
+        dict: Two dictionaries (training and validation)
+    """
     train_sentences, val_sentences, train_entities, val_entities = train_test_split(
         training["sentences"], training["tags"], test_size=test_size
     )

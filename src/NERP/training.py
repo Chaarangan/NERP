@@ -4,7 +4,7 @@ Project: NERP
 Created Date: Tuesday, May 24th 2022
 Author: Charangan Vasantharajan
 -----
-Last Modified: Sunday, July 31st 2022
+Last Modified: Friday, Aug 26th 2022
 Modified By: Charangan Vasantharajan
 -----
 Copyright (c) 2022
@@ -28,10 +28,9 @@ def do_train(archi, device, training, validation, testing, tag_scheme, o_tag_cr,
     Args:
         archi (str): the desired architecture for the model
         device (str): the desired device to use for computation
-        train_data (str): Train csv file path
-        valid_data (str): Valid csv file path
-        test_data (str): Test csv file path
-        limit (int): Limit the number of observations to be returned from a given split. Defaults to None, which implies that the entire data split is returned
+        training (str): Training dictionary
+        validation (str): Validation dictionary
+        testing (str): Testing dictionary
         tag_scheme (List[str]): All available NER tags for the given data set EXCLUDING the special outside tag, that is handled separately
         o_tag_cr (bool): To include O tag in the classification report
         hyperparameters (dict): Hyperparameters for the model
@@ -39,7 +38,6 @@ def do_train(archi, device, training, validation, testing, tag_scheme, o_tag_cr,
         max_len (int):  The maximum sentence length
         dropout (float): dropout probability
         pretrained (str): which pretrained 'huggingface' transformer to use
-        test_size (float):  train/test split ratio
         isModelExists (bool): True if trained model exist and want to retrain on its weights, otherwise False.
         model_path (str): Trained model path if isModelExist is True, otherwise leave it as empty.
         tokenizer_path (str): Existing tokenizer path if isModelExist is True, otherwise leave it as empty.
