@@ -11,7 +11,6 @@ Copyright (c) 2022
 ------------------------------------
 This script contains a class to create sentences from samples using sentence numbers
 '''
-
 class SentenceGetter(object):
     """This class will group samples using its sentence number and make it as a sentence
 

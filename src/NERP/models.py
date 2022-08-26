@@ -4,7 +4,7 @@ Project: NERP
 Created Date: Tuesday, May 24th 2022
 Author: Charangan Vasantharajan
 -----
-Last Modified: Sunday, July 31st 2022
+Last Modified: Friday, Aug 26th 2022
 Modified By: Charangan Vasantharajan
 -----
 Copyright (c) 2022
@@ -80,6 +80,9 @@ class NERP:
         self.seed = dictionary["kfold"]["seed"]
         if self.seed == None:
             self.seed = 42
+        self.test_on_original = dictionary["kfold"]["test_on_original"]
+        if(self.test_on_original == None):
+            self.test_on_original = False
         self.pretrained = dictionary["inference"]["pretrained"]
         self.model_path = dictionary["inference"]["model_path"]
         self.tokenizer_path = dictionary["inference"]["tokenizer_path"]
@@ -114,7 +117,8 @@ class NERP:
                                     max_len=self.max_len,
                                     dropout=self.dropout,
                                     kfold = 0,
-                                    seed=42)
+                                    seed=42,
+                                    test_on_original=False)
         
         return message
     
@@ -141,11 +145,14 @@ class NERP:
                                     max_len=self.max_len,
                                     dropout=self.dropout,
                                     kfold=0,
-                                    seed=42)
+                                    seed=42,
+                                    test_on_original=False)
 
         return message
 
     def train_with_kfold(self) -> str:
+        assert self.kfold>=2, f'Number of splits are {self.kfold}. Should be greater or equal to 2.'
+                
         message = training_pipeline(archi=self.archi,
                                     device=self.device,
                                     train_data=self.train_data,
@@ -165,13 +172,16 @@ class NERP:
                                     max_len=self.max_len,
                                     dropout=self.dropout,
                                     kfold=self.kfold,
-                                    seed=self.seed)
+                                    seed=self.seed,
+                                    test_on_original=self.test_on_original)
 
         return message
     
     def train_with_kfold_after_load_network(self) -> str:
         assert os.path.isfile(
             self.existing_model_path), f'File {self.existing_model_path} does not exist.'
+        assert self.kfold >= 2, f'Number of splits are {self.kfold}. Should be greater or equal to 2.'
+        
         message = training_pipeline(archi=self.archi,
                                     device=self.device,
                                     train_data=self.train_data,
@@ -191,7 +201,8 @@ class NERP:
                                     max_len=self.max_len,
                                     dropout=self.dropout,
                                     kfold=self.kfold,
-                                    seed=self.seed)
+                                    seed=self.seed,
+                                    test_on_original=self.test_on_original)
 
         return message
     

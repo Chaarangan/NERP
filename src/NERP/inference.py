@@ -4,7 +4,7 @@ Project: NERP
 Created Date: Tuesday, May 24th 2022
 Author: Charangan Vasantharajan
 -----
-Last Modified: Sunday, July 31st 2022
+Last Modified: Friday, Aug 26th 2022
 Modified By: Charangan Vasantharajan
 -----
 Copyright (c) 2022
@@ -42,7 +42,6 @@ def load_model(archi, device, tag_scheme, pretrained, max_len, model_path, token
         tag_scheme=tag_scheme,
         tag_outside='O',
         transformer=pretrained,
-        dropout=dropout,
         max_len=max_len,
         hyperparameters=hyperparameters,
         tokenizer_parameters=tokenizer_parameters
@@ -122,7 +121,7 @@ def inference_pipeline(archi,
                        tokenizer_parameters: dict = {"do_lower_case": True},
                        max_len: int = 128):
 
-    model = load_model(archi, evice, tag_scheme, pretrained, max_len,
+    model = load_model(archi, device, tag_scheme, pretrained, max_len,
                        model_path, tokenizer_path, hyperparameters, tokenizer_parameters)
 
     if(is_bulk):
