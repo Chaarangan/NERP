@@ -13,8 +13,30 @@ NERP (Named Entity Recognition Pipeline) is a python package that offers an easy
 - Prediction on a single text
 - Prediction on a CSV file
 
+## Package Diagram
 
-## Config
+<table>
+  <tr>
+    <td>NERP Main Component</td>
+  </tr>
+  <tr>
+    <td><img alt="NERP Main Component" src="https://github.com/Chaarangan/NERP/blob/master/diagrams/1.png"/></td>
+  </tr>
+  <tr>
+    <td>Component of NERP K-Fold Cross Validation</td>
+  </tr>
+  <tr>
+    <td><img align="left" alt="Component of NERP K-Fold Cross Validation" src="https://github.com/Chaarangan/NERP/blob/master/diagrams/2.png" height="200"/></td>
+  </tr>
+  <tr>
+    <td>Component of NERP Inference</td>
+  </tr>
+  <tr>
+    <td><img align="left" alt="Component of NERP Inference" src="https://github.com/Chaarangan/NERP/blob/master/diagrams/3.png" height="200"/></td>
+  </tr>
+ </table>
+
+## **Config**
 
 The user interface consists of only one file config as a YAML. Change it to create the desired configuration.
 
@@ -53,6 +75,7 @@ train:
 kfold: 
   splits: 2
   seed: 42
+  test_on_original: False
 
 inference:
   archi: "bilstm-crf"
@@ -68,50 +91,48 @@ inference:
 ```
 
 
-### Training Parameters
+#### Training Parameters
+| Parameters | Description | Default | Type |
+| ------------- | ------------- | ------------- | ------------- |
+| device |device: the desired device to use for computation. If not provided by the user, we take a guess. | ```cuda``` or ```cpu```| optional | 
+| train_data | path to training csv file | | required |
+| valid_data | path to validation csv file | | optional |
+| train_valid_split | train/valid split ratio if valid data not exists | 0.2 | optional | 
+| test_data | path to testing csv file | | required |
+| limit | Limit the number of observations to be returned from a given split. Defaults to None, which implies that the entire data split is returned. (it shoud be a ```int```) | 0 (whole data) | optional |
+| tag_scheme | All available NER tags for the given data set EXCLUDING the special outside tag, that is handled separately | | required |
+| archi | The desired architecture for the model (baseline, bilstm-crf, bilstm, crf) (str) | baseline | optional |
+| o_tag_cr | To include O tag in the classification report (bool) | True | optional |
+| max_len | the maximum sentence length (number of tokens after applying the transformer tokenizer) | 128 | optional |
+| dropout | dropout probability (float) | 0.1 | optional |
+| epochs | number of epochs (int) | 5 | optional |
+| warmup_steps | number of learning rate warmup steps (int) | 500 | optional |
+| train_batch_size | batch Size for DataLoader (int) | 64 | optional |
+| learning_rate | learning rate (float) | 0.0001 | optional |
+| tokenizer_parameters | list of hyperparameters for tokenizer (dict) | do_lower_case: True | optional |
+| pretrained_models | 'huggingface' transformer model (str) | roberta-base | required |
+| existing_model_path | model derived from the transformer (str) | | optional |
+| existing_tokenizer_path | tokenizer derived from the transformer (str) | | optional |
+| output_dir | path to output directory (str) | models/ | optional |
+| kfold | number of splits | 0 (no k-fold) (int) | optional |
+| seed | random state value for k-fold (int) | 42 | optional |
+| test_on_original | True, if you need to test on the original test set for each iteration (bool) | False | optional |
 
- Parameters | Description | Default | Type 
- ------------- | ------------- | ------------- | ------------- 
- device |device: the desired device to use for computation. If not provided by the user, we take a guess. | ```cuda``` or ```cpu```| optional 
- train_data | path to training csv file | | required 
- valid_data | path to validation csv file | | optional 
- train_valid_split | train/valid split ratio if valid data not exists | 0.2 | optional 
- test_data | path to testing csv file | | required 
- limit | Limit the number of observations to be returned from a given split. Defaults to None, which implies that the entire data split is returned. (it shoud be a ```int```) | 0 (whole data) | optional 
- tag_scheme | All available NER tags for the given data set EXCLUDING the special outside tag, that is handled separately | | required 
- archi | The desired architecture for the model (baseline, bilstm-crf, bilstm, crf) (str) | baseline | optional 
- o_tag_cr | To include O tag in the classification report (bool) | True | optional 
- max_len | the maximum sentence length (number of tokens after applying the transformer tokenizer) | 128 | optional 
- dropout | dropout probability (float) | 0.1 | optional 
- epochs | number of epochs (int) | 5 | optional 
- warmup_steps | number of learning rate warmup steps (int) | 500 | optional 
- train_batch_size | batch Size for DataLoader (int) | 64 | optional 
- learning_rate | learning rate (float) | 0.0001 | optional 
- tokenizer_parameters | list of hyperparameters for tokenizer | do_lower_case: True | optional 
- pretrained_models | 'huggingface' transformer model | roberta-base | required 
- existing_model_path | model derived from the transformer | | optional 
- existing_tokenizer_path | tokenizer derived from the transformer | | optional 
- output_dir | path to output directory | models/ | optional 
- kfold | number of splits | 0 (no k-fold) | optional 
- seed | random state value for k-fold | 42 | optional 
-
-### Inference Parameters
-
- Parameters | Description | Default | Type 
- ------------- | ------------- | ------------- | ------------- 
- archi | The architecture for the trained model (baseline, bilstm-crf, bilstm, crf) (str) | baseline | optional 
- max_len | the maximum sentence length (number of tokens after applying the transformer tokenizer) | 128 | optional 
- pretrained | 'huggingface' transformer model | roberta-base | required 
- model_path | path to trained model | | required  
- tokenizer_path | path to saved tokenizer folder | | optional 
- tag_scheme | All available NER tags for the given data set EXCLUDING the special outside tag, that is handled separately | | required 
- in_file_path | path to inference file otherwise leave it as empty | | optional 
- out_file_path | path to the output file if the input is a file, otherwise leave it as empty | | optional 
- text | sample inference text for individual prediction | "Hello from NERP" | optional 
- 
+#### Inference Parameters
+| Parameters | Description | Default | Type |
+| ------------- | ------------- | ------------- | ------------- |
+| archi | The architecture for the trained model (baseline, bilstm-crf, bilstm, crf) (str) | baseline | optional |
+| max_len | the maximum sentence length (number of tokens after applying the transformer tokenizer) | 128 | optional |
+| pretrained | 'huggingface' transformer model | roberta-base | required |
+| model_path | path to trained model | | required  |
+| tokenizer_path | path to saved tokenizer folder | | optional |
+| tag_scheme | All available NER tags for the given data set EXCLUDING the special outside tag, that is handled separately | | required |
+| in_file_path | path to inference file otherwise leave it as empty | | optional |
+| out_file_path | path to the output file if the input is a file, otherwise leave it as empty | | optional |
+| text | sample inference text for individual prediction | "Hello from NERP" | optional |
 ---
 
-### Data Format
+### **Data Format**
 
 Pipeline works with CSV files containing separated tokens and labels on each line. Sentences can be found in the `Sentence #` column. Labels should already be in the necessary format, e.g. IO, BIO, BILUO, ... The CSV file must contain the last three columns as same as below.
 
@@ -126,7 +147,7 @@ Pipeline works with CSV files containing separated tokens and labels on each lin
 
 ---
 
-### Output
+### **Output**
 
 After training the model, the pipeline will return the following files in the output directory:
 
@@ -137,7 +158,7 @@ After training the model, the pipeline will return the following files in the ou
 
 ---
 
-### Models
+### **Models**
 
 All huggingface transformer-based models are allowed.
 
@@ -149,12 +170,12 @@ All huggingface transformer-based models are allowed.
 2. Install NERP
 - via pip
 ```bash
-pip install NERP==1.0.2
+pip install NERP==1.0.2.1
 ```
 
 - via repository
 ```bash
-git clone --branch v1.0.2 https://github.com/Chaarangan/NERP.git
+git clone --branch v1.0.2.1 https://github.com/Chaarangan/NERP.git
 cd NERP & pip install -e .
 ```
 
