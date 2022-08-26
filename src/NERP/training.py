@@ -175,13 +175,12 @@ def training_pipeline(archi,
             for train_index, test_index in kf.split(data["sentences"]):
                 k_fold_step = str(len(results) + 1)
                 print("K-Fold Step: " + k_fold_step)
-                
-                print(train_index, test_index)
 
                 # splitting Dataframe (dataset not included)
-                training = {"sentences": data["sentences"].iloc[train_index], "tags": data["tags"].iloc[train_index]}
+                training = {"sentences": [data["sentences"][i] for i in train_index], "tags": [
+                    data["tags"][i] for i in train_index]}
                 testing = {
-                    "sentences": data["sentences"].iloc[test_index], "tags": data["tags"].iloc[test_index]}
+                    "sentences": [data["sentences"][i] for i in test_index], "tags": [data["tags"][i] for i in test_index]}
 
                 df_train = pd.DataFrame(training, columns = ["sentences", "tags"])
                 df_train.to_csv(os.path.join(dataset_dir, "train-{n}.csv".format(n=k_fold_step)), index=False)
