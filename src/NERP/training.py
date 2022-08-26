@@ -166,13 +166,16 @@ def training_pipeline(archi,
             df_train = pd.read_csv(train_data)
             frames.append(df_train)
             if (valid_data != None):
+                print("Valid data is combined with training set!")
                 df_valid = pd.read_csv(valid_data)
                 frames.append(df_valid)
                 
             df_test = pd.read_csv(test_data)
             if(not test_on_original):
+                print("Test data is combined with training set!")
                 frames.append(df_test)
             else:
+                print("Test data is ignored from training set!")
                 test_data_path = test_data
                 
             df = pd.concat(frames)
