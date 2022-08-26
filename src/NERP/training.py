@@ -20,7 +20,7 @@ import pandas as pd
 from sklearn.model_selection import KFold
 import torch
 from NERP.compile_model import compile_model
-from NERP.prepare_data import prepare_data, prepare_train_valid_data, prepare_kfold_data, prepare_test_data
+from NERP.prepare_data import prepare_data, prepare_train_valid_data, prepare_kfold_data, prepare_test_data, prepare_kfold_train_valid_data
 
 def do_train(archi, device, training, validation, testing, tag_scheme, o_tag_cr, hyperparameters, tokenizer_parameters, max_len, dropout, pretrained, isModelExists, model_path, tokenizer_path, model_dir, results, return_accuracy):
     """This function will initiate/load model, do the training and write the classification report
@@ -189,6 +189,11 @@ def training_pipeline(archi,
                 else:  
                     training, validation = prepare_kfold_train_valid_data(
                         training, test_size)
+                    
+                    df_test = pd.DataFrame(
+                        testing, columns=["sentences", "tags"])
+                    df_test.to_csv(os.path.join(
+                        dataset_dir, "test-{n}.csv".format(n=k_fold_step)), index=False)
 
                 df_train = pd.DataFrame(
                         training, columns=["sentences", "tags"])
@@ -198,12 +203,7 @@ def training_pipeline(archi,
                 df_valid = pd.DataFrame(
                     validation, columns=["sentences", "tags"])
                 df_valid.to_csv(os.path.join(
-                    dataset_dir, "valid-{n}.csv".format(n=k_fold_step)), index=False)
-                
-                df_test = pd.DataFrame(
-                    testing, columns=["sentences", "tags"])
-                df_test.to_csv(os.path.join(
-                    dataset_dir, "test-{n}.csv".format(n=k_fold_step)), index=False)                
+                    dataset_dir, "valid-{n}.csv".format(n=k_fold_step)), index=False)               
                 
                 do_train(archi, device, training, validation, testing, tag_scheme, o_tag_cr, hyperparameters, tokenizer_parameters, max_len,
                          dropout, pretrained, is_model_exists, existing_model_path, existing_tokenizer_path, os.path.join(model_dir, k_fold_step), results, True)
