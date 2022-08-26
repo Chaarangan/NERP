@@ -16,7 +16,7 @@ from NERDA_framework.models import NERDA
 from sklearn.model_selection import train_test_split
 from NERP.prepare_data import prepare_data
 
-def compile_model(archi, device, train_data, valid_data, limit, tag_scheme, o_tag_cr, hyperparameters, tokenizer_parameters, max_len, dropout, pretrained, test_size):
+def compile_model(archi, device, training, validation, tag_scheme, o_tag_cr, hyperparameters, tokenizer_parameters, max_len, dropout, pretrained):
     """This function will prepare training and validation datasets and compile the model
 
     Args:
@@ -37,32 +37,6 @@ def compile_model(archi, device, train_data, valid_data, limit, tag_scheme, o_ta
     Returns:
         object: compiled model
     """
-
-    if (valid_data == None):
-        print("Valid data is None and created from train data!")
-        data = prepare_data(limit, train_data)
-        train_sentences, val_sentences, train_entities, val_entities = train_test_split(
-            data["sentences"], data["tags"], test_size=test_size
-        )
-        training = {"sentences": train_sentences, "tags": train_entities}
-        validation = {"sentences": val_sentences, "tags": val_entities}
-
-        print("Training: ({a}, {b})".format(
-            a=str(len(training["sentences"])), b=str(len(training["tags"]))))
-        print("Validation: ({a}, {b}".format(
-            a=str(len(validation["sentences"])), b=str(len(validation["tags"]))))
-
-    else:
-        print("Valid data exists!")
-        training = prepare_data(limit, train_data)
-        validation = prepare_data(limit, valid_data)
-
-        print("Training: ({a}, {b})".format(
-            a=str(len(training["sentences"])), b=str(len(training["tags"]))))
-        print("Validation: ({a}, {b}".format(
-            a=str(len(validation["sentences"])), b=str(len(validation["tags"]))))
-
-    print("Train and Valid datasets are prepared!")
 
     model = NERDA(
         archi=archi,

@@ -17,13 +17,13 @@ This section covers functionality for training Named Entity Recognition models.
 from typing import List
 import os
 import pandas as pd
-from sklearn.model_selection import StratifiedKFold
+from sklearn.model_selection import KFold
 import torch
 from NERP.compile_model import compile_model
 from NERP.prepare_data import prepare_data
+from NERP.utils import prepare_train_valid_data, prepare_kfold_data, prepare_test_data
 
-
-def do_train(archi, device, train_data, valid_data, test_data, limit, tag_scheme, o_tag_cr, hyperparameters, tokenizer_parameters, max_len, dropout, pretrained, test_size, isModelExists, model_path, tokenizer_path, model_dir, results, return_accuracy):
+def do_train(archi, device, training, validation, testing, tag_scheme, o_tag_cr, hyperparameters, tokenizer_parameters, max_len, dropout, pretrained, isModelExists, model_path, tokenizer_path, model_dir, results, return_accuracy):
     """This function will initiate/load model, do the training and write the classification report
 
     Args:
@@ -48,8 +48,8 @@ def do_train(archi, device, train_data, valid_data, test_data, limit, tag_scheme
         results (List[float]): A list of accuracy scores
         return_accuracy (bool): To return accuracy during training
     """
-    model = compile_model(archi, device, train_data, valid_data, limit, tag_scheme, o_tag_cr,
-                          hyperparameters, tokenizer_parameters, max_len, dropout, pretrained, test_size)
+    model = compile_model(archi, device, training, validation, tag_scheme, o_tag_cr,
+                          hyperparameters, tokenizer_parameters, max_len, dropout, pretrained)
     if(isModelExists):
       print("Model weights loading..")
       if(tokenizer_path != None):
@@ -67,13 +67,8 @@ def do_train(archi, device, train_data, valid_data, test_data, limit, tag_scheme
     print("Model stored!")
 
     # evaluate on test set
-    test = prepare_data(limit, test_data)
-    print("Test: ({a}, {b})".format(
-        a=str(len(test["sentences"])), b=str(len(test["tags"]))))
-    print("Test dataset is prepared!")
-
     c_report = model.evaluate_performance(
-        test, return_accuracy=return_accuracy)
+        testing, return_accuracy=return_accuracy)
 
     # write logs
     report_name = os.path.join(model_dir, "classification_report-" + str(len(results)) +
@@ -162,23 +157,8 @@ def training_pipeline(archi,
                     model_dir=model_dir))
 
             # create df
-            frames = []
-            df_train = pd.read_csv(train_data)
-            frames.append(df_train)
-            if (valid_data != None):
-                print("Valid data is combined with training set!")
-                df_valid = pd.read_csv(valid_data)
-                frames.append(df_valid)
-                
-            df_test = pd.read_csv(test_data)
-            if(not test_on_original):
-                print("Test data is combined with training set!")
-                frames.append(df_test)
-            else:
-                print("Test data is ignored from training set!")
-                test_data_path = test_data
-                
-            df = pd.concat(frames)
+            data = prepare_kfold_data(
+                train_data, valid_data, test_data, limit, test_on_original)
 
             # Creating dataset directory if not exists
             dataset_dir = os.path.join(model_dir, "datasets")
@@ -190,42 +170,49 @@ def training_pipeline(archi,
                     dataset_dir=dataset_dir))
 
             # prepare cross validation
-            kf = StratifiedKFold(n_splits=kfold, random_state=seed)
+            kf = KFold(n_splits=kfold, random_state=seed, shuffle=True)
 
             results = []
-            for train_index, val_index in kf.split(df):
+            for train_index, test_index in kf.split(data["sentences"]):
                 k_fold_step = str(len(results) + 1)
                 print("K-Fold Step: " + k_fold_step)
 
                 # splitting Dataframe (dataset not included)
-                train_df = df.iloc[train_index]
-                test_df = df.iloc[val_index]
+                training = {"sentences": data["sentences"].iloc[train_index], "tags": data["tags"].iloc[train_index]}
+                testing = {
+                    "sentences": data["sentences"].iloc[test_index], "tags": data["tags"].iloc[test_index]}
 
-                train_data = os.path.join(
-                    dataset_dir, "train-{n}.csv".format(n=k_fold_step))
-                train_df.to_csv(train_data, index=False)
+                df_train = pd.DataFrame(training, columns = ["sentences", "tags"])
+                df_train.to_csv(os.path.join(dataset_dir, "train-{n}.csv".format(n=k_fold_step)), index=False)
                 
                 if(test_on_original):
-                    valid_data = test_data
-                    test_data = test_data_path
+                    validation = testing
+                    testing = prepare_test_data(test_data, limit)
                     
-                    test_data = os.path.join(
-                        dataset_dir, "valid-{n}.csv".format(n=k_fold_step))
-                    test_df.to_csv(test_data, index=False)
+                    df_valid = pd.DataFrame(
+                        validation, columns=["sentences", "tags"])
+                    df_valid.to_csv(os.path.join(
+                    dataset_dir, "valid-{n}.csv".format(n=k_fold_step)), index=False)
+        
                 else:  
-                    test_data = os.path.join(
-                        dataset_dir, "test-{n}.csv".format(n=k_fold_step))
-                    test_df.to_csv(test_data, index=False)
+                    validation = None
+                    df_test = pd.DataFrame(
+                        testing, columns=["sentences", "tags"])
+                    df_test.to_csv(os.path.join(
+                        dataset_dir, "test-{n}.csv".format(n=k_fold_step)), index=False)
 
-                do_train(archi, device, train_data, valid_data, test_data, limit, tag_scheme, o_tag_cr, hyperparameters, tokenizer_parameters, max_len,
-                         dropout, pretrained, test_size, is_model_exists, existing_model_path, existing_tokenizer_path, os.path.join(model_dir, k_fold_step), results, True)
+                do_train(archi, device, training, validation, testing, tag_scheme, o_tag_cr, hyperparameters, tokenizer_parameters, max_len,
+                         dropout, pretrained, is_model_exists, existing_model_path, existing_tokenizer_path, os.path.join(model_dir, k_fold_step), results, True)
 
             # write accuracy file
             write_accuracy_file(model_dir, results)
 
         else:
+            training, validation = prepare_train_valid_data(train_data, valid_data, limit, test_size)
+            testing = prepare_test_data(test_data, limit)
+            
             print("Training {model} without K-Fold!".format(model=pretrained))
-            do_train(archi, device, train_data, valid_data, test_data, limit, tag_scheme, o_tag_cr, hyperparameters, tokenizer_parameters, max_len,
-                     dropout, pretrained, test_size, is_model_exists, existing_model_path, existing_tokenizer_path,  model_dir, [0], False)
+            do_train(archi, device, training, validation, testing, tag_scheme, o_tag_cr, hyperparameters, tokenizer_parameters, max_len,
+                     dropout, pretrained, is_model_exists, existing_model_path, existing_tokenizer_path,  model_dir, [0], False)
 
     return "Training finished successfully!"
