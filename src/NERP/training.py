@@ -17,7 +17,7 @@ This section covers functionality for training Named Entity Recognition models.
 from typing import List
 import os
 import pandas as pd
-from sklearn.model_selection import KFold
+from sklearn.model_selection import StratifiedKFold
 import torch
 from NERP.compile_model import compile_model
 from NERP.prepare_data import prepare_data
@@ -190,7 +190,7 @@ def training_pipeline(archi,
                     dataset_dir=dataset_dir))
 
             # prepare cross validation
-            kf = KFold(n_splits=kfold, random_state=seed, shuffle=True)
+            kf = StratifiedKFold(n_splits=kfold, random_state=seed)
 
             results = []
             for train_index, val_index in kf.split(df):
