@@ -112,3 +112,21 @@ def prepare_kfold_data(train_data, valid_data, test_data, limit, test_on_origina
         print("Test data is ignored from training set!")
 
     return {"sentences": sentences, "tags": tags}
+
+
+def prepare_kfold_train_valid_data(training, test_size):
+    train_sentences, val_sentences, train_entities, val_entities = train_test_split(
+        training["sentences"], training["tags"], test_size=test_size
+    )
+    training = {"sentences": train_sentences, "tags": train_entities}
+    validation = {"sentences": val_sentences, "tags": val_entities}
+
+    print("Training: ({a}, {b})".format(
+            a=str(len(training["sentences"])), b=str(len(training["tags"]))))
+    print("Validation: ({a}, {b}".format(
+            a=str(len(validation["sentences"])), b=str(len(validation["tags"]))))
+
+
+    print("Train and Valid datasets are prepared!")
+
+    return training, validation

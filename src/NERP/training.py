@@ -181,26 +181,30 @@ def training_pipeline(archi,
                     data["tags"][i] for i in train_index]}
                 testing = {
                     "sentences": [data["sentences"][i] for i in test_index], "tags": [data["tags"][i] for i in test_index]}
-
-                df_train = pd.DataFrame(training, columns = ["sentences", "tags"])
-                df_train.to_csv(os.path.join(dataset_dir, "train-{n}.csv".format(n=k_fold_step)), index=False)
                 
                 if(test_on_original):
                     validation = testing
-                    testing = prepare_test_data(test_data, limit)
-                    
-                    df_valid = pd.DataFrame(
-                        validation, columns=["sentences", "tags"])
-                    df_valid.to_csv(os.path.join(
-                    dataset_dir, "valid-{n}.csv".format(n=k_fold_step)), index=False)
+                    testing = prepare_test_data(test_data, limit)  
         
                 else:  
-                    validation = None
-                    df_test = pd.DataFrame(
-                        testing, columns=["sentences", "tags"])
-                    df_test.to_csv(os.path.join(
-                        dataset_dir, "test-{n}.csv".format(n=k_fold_step)), index=False)
+                    training, validation = prepare_kfold_train_valid_data(
+                        training, test_size)
 
+                df_train = pd.DataFrame(
+                        training, columns=["sentences", "tags"])
+                df_train.to_csv(os.path.join(
+                    dataset_dir, "train-{n}.csv".format(n=k_fold_step)), index=False)
+                
+                df_valid = pd.DataFrame(
+                    validation, columns=["sentences", "tags"])
+                df_valid.to_csv(os.path.join(
+                    dataset_dir, "valid-{n}.csv".format(n=k_fold_step)), index=False)
+                
+                df_test = pd.DataFrame(
+                    testing, columns=["sentences", "tags"])
+                df_test.to_csv(os.path.join(
+                    dataset_dir, "test-{n}.csv".format(n=k_fold_step)), index=False)                
+                
                 do_train(archi, device, training, validation, testing, tag_scheme, o_tag_cr, hyperparameters, tokenizer_parameters, max_len,
                          dropout, pretrained, is_model_exists, existing_model_path, existing_tokenizer_path, os.path.join(model_dir, k_fold_step), results, True)
 
