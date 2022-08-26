@@ -94,6 +94,7 @@ def write_accuracy_file(model_dir, results):
 
     print(results)
     print(f"Mean-Accuracy: {sum(results) / len(results)}")
+    print("Accuracy file stored!")
 
 
 def training_pipeline(archi,
