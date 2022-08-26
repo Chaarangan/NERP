@@ -185,10 +185,6 @@ def training_pipeline(archi,
                 if(test_on_original):
                     validation = testing
                     testing = prepare_test_data(test_data, limit)  
-                    
-                    print("Test: ({a}, {b})".format(
-                        a=str(len(testing["sentences"])), b=str(len(testing["tags"]))))
-                    print("Test dataset is prepared!")
         
                 else:  
                     training, validation = prepare_kfold_train_valid_data(
