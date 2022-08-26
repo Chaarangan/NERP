@@ -151,6 +151,8 @@ class NERP:
         return message
 
     def train_with_kfold(self) -> str:
+        assert self.kfold>=2, f'Number of splits are {self.kfold}. Should be greater or equal to 2.'
+                
         message = training_pipeline(archi=self.archi,
                                     device=self.device,
                                     train_data=self.train_data,
@@ -178,6 +180,8 @@ class NERP:
     def train_with_kfold_after_load_network(self) -> str:
         assert os.path.isfile(
             self.existing_model_path), f'File {self.existing_model_path} does not exist.'
+        assert self.kfold >= 2, f'Number of splits are {self.kfold}. Should be greater or equal to 2.'
+        
         message = training_pipeline(archi=self.archi,
                                     device=self.device,
                                     train_data=self.train_data,
