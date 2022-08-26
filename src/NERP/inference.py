@@ -42,7 +42,6 @@ def load_model(archi, device, tag_scheme, pretrained, max_len, model_path, token
         tag_scheme=tag_scheme,
         tag_outside='O',
         transformer=pretrained,
-        dropout=dropout,
         max_len=max_len,
         hyperparameters=hyperparameters,
         tokenizer_parameters=tokenizer_parameters
@@ -122,7 +121,7 @@ def inference_pipeline(archi,
                        tokenizer_parameters: dict = {"do_lower_case": True},
                        max_len: int = 128):
 
-    model = load_model(archi, evice, tag_scheme, pretrained, max_len,
+    model = load_model(archi, device, tag_scheme, pretrained, max_len,
                        model_path, tokenizer_path, hyperparameters, tokenizer_parameters)
 
     if(is_bulk):

@@ -80,6 +80,9 @@ class NERP:
         self.seed = dictionary["kfold"]["seed"]
         if self.seed == None:
             self.seed = 42
+        self.test_on_original = dictionary["kfold"]["test_on_original"]
+        if(self.test_on_original == None):
+            self.test_on_original = False
         self.pretrained = dictionary["inference"]["pretrained"]
         self.model_path = dictionary["inference"]["model_path"]
         self.tokenizer_path = dictionary["inference"]["tokenizer_path"]
@@ -114,7 +117,8 @@ class NERP:
                                     max_len=self.max_len,
                                     dropout=self.dropout,
                                     kfold = 0,
-                                    seed=42)
+                                    seed=42,
+                                    test_on_original=False)
         
         return message
     
@@ -141,7 +145,8 @@ class NERP:
                                     max_len=self.max_len,
                                     dropout=self.dropout,
                                     kfold=0,
-                                    seed=42)
+                                    seed=42,
+                                    test_on_original=False)
 
         return message
 
@@ -165,7 +170,8 @@ class NERP:
                                     max_len=self.max_len,
                                     dropout=self.dropout,
                                     kfold=self.kfold,
-                                    seed=self.seed)
+                                    seed=self.seed,
+                                    test_on_original=self.test_on_original)
 
         return message
     
@@ -191,7 +197,8 @@ class NERP:
                                     max_len=self.max_len,
                                     dropout=self.dropout,
                                     kfold=self.kfold,
-                                    seed=self.seed)
+                                    seed=self.seed,
+                                    test_on_original=self.test_on_original)
 
         return message
     

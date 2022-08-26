@@ -135,7 +135,8 @@ def training_pipeline(archi,
                       max_len: int = 128,
                       dropout: float = 0.1,
                       kfold: int = 0,
-                      seed: int = 42) -> str:
+                      seed: int = 42,
+                      test_on_original: bool = False) -> str:
 
     # getting vars
     for pretrained in pretrained_models:
@@ -167,8 +168,13 @@ def training_pipeline(archi,
             if (valid_data != None):
                 df_valid = pd.read_csv(valid_data)
                 frames.append(df_valid)
+                
             df_test = pd.read_csv(test_data)
-            frames.append(df_test)
+            if(not test_on_original):
+                frames.append(df_test)
+            else:
+                test_data_path = test_data
+                
             df = pd.concat(frames)
 
             # Creating dataset directory if not exists
@@ -198,6 +204,10 @@ def training_pipeline(archi,
                     dataset_dir, "test-{n}.csv".format(n=k_fold_step))
                 train_df.to_csv(train_data, index=False)
                 test_df.to_csv(test_data, index=False)
+                
+                if(test_on_original):
+                    valid_data = test_data
+                    test_data = test_data_path
 
                 do_train(archi, device, train_data, valid_data, test_data, limit, tag_scheme, o_tag_cr, hyperparameters, tokenizer_parameters, max_len,
                          dropout, pretrained, test_size, is_model_exists, existing_model_path, existing_tokenizer_path, os.path.join(model_dir, k_fold_step), results, True)
