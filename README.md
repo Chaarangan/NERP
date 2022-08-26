@@ -109,13 +109,14 @@ inference:
 | warmup_steps | number of learning rate warmup steps (int) | 500 | optional |
 | train_batch_size | batch Size for DataLoader (int) | 64 | optional |
 | learning_rate | learning rate (float) | 0.0001 | optional |
-| tokenizer_parameters | list of hyperparameters for tokenizer | do_lower_case: True | optional |
-| pretrained_models | 'huggingface' transformer model | roberta-base | required |
-| existing_model_path | model derived from the transformer | | optional |
-| existing_tokenizer_path | tokenizer derived from the transformer | | optional |
-| output_dir | path to output directory | models/ | optional |
-| kfold | number of splits | 0 (no k-fold) | optional |
-| seed | random state value for k-fold | 42 | optional |
+| tokenizer_parameters | list of hyperparameters for tokenizer (dict) | do_lower_case: True | optional |
+| pretrained_models | 'huggingface' transformer model (str) | roberta-base | required |
+| existing_model_path | model derived from the transformer (str) | | optional |
+| existing_tokenizer_path | tokenizer derived from the transformer (str) | | optional |
+| output_dir | path to output directory (str) | models/ | optional |
+| kfold | number of splits | 0 (no k-fold) (int) | optional |
+| seed | random state value for k-fold (int) | 42 | optional |
+| test_on_original | True, if you need to test on the original test set for each iteration (bool) | False | optional |
 
 #### Inference Parameters
 | Parameters | Description | Default | Type |
@@ -169,12 +170,12 @@ All huggingface transformer-based models are allowed.
 2. Install NERP
 - via pip
 ```bash
-pip install NERP==1.0.2
+pip install NERP==1.0.2.1
 ```
 
 - via repository
 ```bash
-git clone --branch v1.0.2 https://github.com/Chaarangan/NERP.git
+git clone --branch v1.0.2.1 https://github.com/Chaarangan/NERP.git
 cd NERP & pip install -e .
 ```
 
