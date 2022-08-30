@@ -92,7 +92,6 @@ def write_accuracy_file(model_dir, results):
         wf.write("\n")
         wf.write(f"Mean-Accuracy: {sum(results) / len(results)}")
 
-    print(results)
     print(f"Mean-Accuracy: {sum(results) / len(results)}")
     print("Accuracy file stored!")
 
