@@ -13,29 +13,6 @@ NERP (Named Entity Recognition Pipeline) is a python package that offers an easy
 - Prediction on a single text
 - Prediction on a CSV file
 
-## Package Diagram
-
-<table>
-  <tr>
-    <td>NERP Main Component</td>
-  </tr>
-  <tr>
-    <td><img alt="NERP Main Component" src="https://github.com/Chaarangan/NERP/blob/master/diagrams/1.png"/></td>
-  </tr>
-  <tr>
-    <td>Component of NERP K-Fold Cross Validation</td>
-  </tr>
-  <tr>
-    <td><img align="left" alt="Component of NERP K-Fold Cross Validation" src="https://github.com/Chaarangan/NERP/blob/master/diagrams/2.png" height="200"/></td>
-  </tr>
-  <tr>
-    <td>Component of NERP Inference</td>
-  </tr>
-  <tr>
-    <td><img align="left" alt="Component of NERP Inference" src="https://github.com/Chaarangan/NERP/blob/master/diagrams/3.png" height="200"/></td>
-  </tr>
- </table>
-
 ## **Config**
 
 The user interface consists of only one file config as a YAML. Change it to create the desired configuration.
@@ -170,13 +147,13 @@ All huggingface transformer-based models are allowed.
 2. Install NERP
 - via pip
 ```bash
-pip install NERP==1.0.2.1
+pip install NERP==1.0.2.2
 ```
 
 - via repository
 ```bash
-git clone --branch v1.0.2.1 https://github.com/Chaarangan/NERP.git
-cd NERP & pip install -e .
+git clone --branch v1.0.2.2 https://github.com/Chaarangan/NERP.git
+cd NERP && pip install -e .
 ```
 
 ### Initialize NERP
