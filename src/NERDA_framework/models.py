@@ -403,14 +403,14 @@ class NERDA:
         else:
             labels = self.tag_scheme
             
-        f1 = compute_f1_scores(y_pred=tags_predicted,
+        f1, y_true = compute_f1_scores(y_pred=tags_predicted,
                                y_true=dataset.get('tags'),
                                labels=labels)
 
         # compute and return accuracy if desired
-        if return_accuracy:
+        if return_accuracy:    
             accuracy = accuracy_score(y_pred = flatten(tags_predicted), 
-                                      y_true = flatten(dataset.get('tags')))
+                                      y_true=y_true)
             return {'f1':f1, 'accuracy': accuracy}
       
         return {"f1": f1}
