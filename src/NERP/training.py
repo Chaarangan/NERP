@@ -63,6 +63,7 @@ def do_train(archi, device, training, validation, testing, tag_scheme, o_tag_cr,
     model.save_network(output_dir=model_dir)
     print("Model stored!")
 
+    print("Evaluating performance on testing dataset...!")
     # evaluate on test set
     c_report = model.evaluate_performance(
         testing, return_accuracy=return_accuracy)
