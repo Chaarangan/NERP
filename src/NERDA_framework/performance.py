@@ -47,4 +47,4 @@ def compute_f1_scores(y_pred: List[List[str]],
     y_true = flatten(y_true) 
 
     f1_scores = classification_report(y_true, y_pred, labels=labels, digits=4)
-    return f1_scores
+    return f1_scores, y_true
