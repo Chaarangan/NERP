@@ -96,6 +96,7 @@ inference:
 | seed | random state value for k-fold (int) | 42 | optional |
 | test_on_original | True, if you need to test on the original test set for each iteration (bool) | False | optional |
 
+
 #### Inference Parameters
 
 | Parameters | Description | Default | Type |
@@ -109,7 +110,7 @@ inference:
 | in_file_path | path to inference file otherwise leave it as empty | | optional |
 | out_file_path | path to the output file if the input is a file, otherwise leave it as empty | | optional |
 | text | sample inference text for individual prediction | "Hello from NERP" | optional |
----
+
 
 ### **Data Format**
 
