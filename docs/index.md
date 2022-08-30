@@ -69,6 +69,7 @@ inference:
 
 
 #### Training Parameters
+
 | Parameters | Description | Default | Type |
 | ------------- | ------------- | ------------- | ------------- |
 | device |device: the desired device to use for computation. If not provided by the user, we take a guess. | ```cuda``` or ```cpu```| optional | 
@@ -96,6 +97,7 @@ inference:
 | test_on_original | True, if you need to test on the original test set for each iteration (bool) | False | optional |
 
 #### Inference Parameters
+
 | Parameters | Description | Default | Type |
 | ------------- | ------------- | ------------- | ------------- |
 | archi | The architecture for the trained model (baseline, bilstm-crf, bilstm, crf) (str) | baseline | optional |
