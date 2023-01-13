@@ -22,7 +22,7 @@ import torch
 from NERP.compile_model import compile_model
 from NERP.prepare_data import prepare_data, prepare_train_valid_data, prepare_kfold_data, prepare_test_data, prepare_kfold_train_valid_data
 
-def do_train(archi, device, training, validation, testing_1, testing_2, testing_3, tag_scheme, o_tag_cr, hyperparameters, tokenizer_parameters, max_len, dropout, pretrained, isModelExists, model_path, tokenizer_path, model_dir, results, return_accuracy):
+def do_train(archi, device, training, validation, testing, tag_scheme, o_tag_cr, hyperparameters, tokenizer_parameters, max_len, dropout, pretrained, isModelExists, model_path, tokenizer_path, model_dir, results, return_accuracy):
     """This function will initiate/load model, do the training and write the classification report
 
     Args:
@@ -65,30 +65,25 @@ def do_train(archi, device, training, validation, testing_1, testing_2, testing_
 
     print("Evaluating performance on testing dataset...!")
     # evaluate on test set
-    c_report_1 = model.evaluate_performance(
-        testing_1, return_accuracy=return_accuracy)
-    c_report_2 = model.evaluate_performance(
-        testing_2, return_accuracy=return_accuracy)
-    c_report_3 = model.evaluate_performance(
-        testing_3, return_accuracy=return_accuracy)
-
-    # write logs
-    report_name_1 = os.path.join(model_dir, "classification_report-" + str(len(results)) +
-                               ".txt") if len(results) == 0 else os.path.join(model_dir, "classification_report_1.txt")
-    report_name_2 = os.path.join(model_dir, "classification_report-" + str(len(results)) +
-                               ".txt") if len(results) == 0 else os.path.join(model_dir, "classification_report_2.txt")
-    report_name_3 = os.path.join(model_dir, "classification_report-" + str(len(results)) +
-                               ".txt") if len(results) == 0 else os.path.join(model_dir, "classification_report_3.txt")
+    c_reports = [
+        model.evaluate_performance(
+            t, return_accuracy=return_accuracy
+        ) for t in testing
+    ]
     
-    with open(report_name_1, "w") as wf:
-      wf.write(c_report_1["f1"])
-    with open(report_name_2, "w") as wf:
-      wf.write(c_report_2["f1"])
-    with open(report_name_3, "w") as wf:
-      wf.write(c_report_3["f1"])
+    # write logs
+    report_names = [
+        os.path.join(model_dir, "classification_report-" + str(len(results)) +
+                               ".txt") if len(results) == 0 else os.path.join(model_dir, f"classification_report_{i+1}.txt")
+        for i, c in enumerate(c_reports)
+    ]
+    
+    for i, r in enumerate(report_names):
+        with open(r, "w") as wf:
+          wf.write(c_reports[i]["f1"])
 
     if(return_accuracy):
-        results.append(c_report_1["accuracy"])
+        results.append(c_reports[0]["accuracy"])
     print("Evaluation metrics stored!")
 
 def write_accuracy_file(model_dir, results):
@@ -114,9 +109,7 @@ def training_pipeline(archi,
                       device,
                       train_data,
                       valid_data,
-                      test_data_1,
-                      test_data_2,
-                      test_data_3,
+                      test_data,
                       existing_model_path,
                       existing_tokenizer_path,
                       tag_scheme: List[str] = [
@@ -231,12 +224,10 @@ def training_pipeline(archi,
 
         else:
             training, validation = prepare_train_valid_data(train_data, valid_data, limit, test_size)
-            testing_1 = prepare_test_data(test_data_1, limit)
-            testing_2 = prepare_test_data(test_data_2, limit)
-            testing_3 = prepare_test_data(test_data_3, limit)
+            testing = [prepare_test_data(t, limit) for t in test_data]
             
             print("Training {model} without K-Fold!".format(model=pretrained))
-            do_train(archi, device, training, validation, testing_1, testing_2, testing_3, tag_scheme, o_tag_cr, hyperparameters, tokenizer_parameters, max_len,
+            do_train(archi, device, training, validation, testing, tag_scheme, o_tag_cr, hyperparameters, tokenizer_parameters, max_len,
                      dropout, pretrained, is_model_exists, existing_model_path, existing_tokenizer_path,  model_dir, [0], False)
 
     return "Training finished successfully!"
