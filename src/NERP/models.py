@@ -65,9 +65,7 @@ class NERP:
         self.train_valid_split = dictionary["data"]["train_valid_split"]
         if self.train_valid_split == None:
             self.train_valid_split = 0.2
-        self.test_data_1 = dictionary["data"]["test_data_1"]
-        self.test_data_2 = dictionary["data"]["test_data_2"]
-        self.test_data_3 = dictionary["data"]["test_data_3"]
+        self.test_data = dictionary["data"]["test_data"]
         self.limit = dictionary["data"]["limit"]
         if self.limit == None:
             self.limit = 0
@@ -134,9 +132,7 @@ class NERP:
                                     device=self.device,
                                     train_data=self.train_data,
                                     valid_data=self.valid_data,
-                                    test_data_1 = self.test_data_1,
-                                    test_data_2 = self.test_data_2,
-                                    test_data_3 = self.test_data_3,
+                                    test_data = self.test_data,
                                     existing_model_path=self.existing_model_path,
                                     existing_tokenizer_path=self.existing_tokenizer_path,
                                     tag_scheme=self.tag_scheme,
