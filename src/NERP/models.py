@@ -59,7 +59,7 @@ class NERP:
         if self.pretrained_models == [None]:
             self.pretrained_models = ["roberta-base"]
         self.train_data = dictionary["data"]["train_data"]
-        self.train_data_parameters = dictionary["data"]["train_data"]["train_data_parameters"]
+        self.train_data_parameters = dictionary["data"]["train_data_parameters"]
         if(self.train_data_parameters["train_sep"] == None):
             self.train_data_parameters["train_sep"] = '\t'
         if(self.train_data_parameters["train_quoting"] == None):
