@@ -46,10 +46,6 @@ class NERP:
         self.tokenizer_parameters = dictionary["model"]["tokenizer_parameters"]
         if(self.tokenizer_parameters["do_lower_case"] == None):
             self.tokenizer_parameters["do_lower_case"] = True
-        if(self.tokenizer_parameters["train_sep"] == None):
-            self.tokenizer_parameters["train_sep"] = '\t'
-        if(self.tokenizer_parameters["train_quoting"] == None):
-            self.tokenizer_parameters["train_quoting"] = False
         self.archi = dictionary["model"]["archi"]
         if self.archi == None:
             self.archi = "baseline"
@@ -63,6 +59,11 @@ class NERP:
         if self.pretrained_models == [None]:
             self.pretrained_models = ["roberta-base"]
         self.train_data = dictionary["data"]["train_data"]
+        self.train_data_parameters = dictionary["data"]["train_data"]["train_data_parameters"]
+        if(self.train_data_parameters["train_sep"] == None):
+            self.train_data_parameters["train_sep"] = '\t'
+        if(self.train_data_parameters["train_quoting"] == None):
+            self.train_data_parameters["train_quoting"] = False
         self.valid_data = dictionary["data"]["valid_data"]
         if self.valid_data == "":
             self.valid_data = None
@@ -118,6 +119,7 @@ class NERP:
                                     pretrained_models=self.pretrained_models,
                                     hyperparameters=self.hyperparameters,
                                     tokenizer_parameters=self.tokenizer_parameters,
+                                    train_data_parameters=self.train_data_parameters
                                     max_len=self.max_len,
                                     dropout=self.dropout,
                                     kfold = 0,
