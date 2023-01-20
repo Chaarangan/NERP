@@ -125,6 +125,7 @@ def training_pipeline(archi,
                                                "train_batch_size": 64,
                                                "learning_rate": 0.0001},
                       tokenizer_parameters: dict = {"do_lower_case": True},
+                      train_data_paramters: dict = {"train_sep": '\t', "train_quoting": False}
                       max_len: int = 128,
                       dropout: float = 0.1,
                       kfold: int = 0,
@@ -215,7 +216,7 @@ def training_pipeline(archi,
             write_accuracy_file(model_dir, results)
 
         else:
-            training, validation = prepare_train_valid_data(train_data, valid_data, limit, test_size)
+            training, validation = prepare_train_valid_data(train_data, valid_data, limit, test_size, train_data_parameters=train_data_parameters)
             testing = prepare_test_data(test_data, limit)
             
             print("Training {model} without K-Fold!".format(model=pretrained))
