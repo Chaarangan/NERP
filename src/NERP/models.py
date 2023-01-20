@@ -119,7 +119,7 @@ class NERP:
                                     pretrained_models=self.pretrained_models,
                                     hyperparameters=self.hyperparameters,
                                     tokenizer_parameters=self.tokenizer_parameters,
-                                    train_data_parameters=self.train_data_parameters
+                                    train_data_parameters=self.train_data_parameters,
                                     max_len=self.max_len,
                                     dropout=self.dropout,
                                     kfold = 0,
