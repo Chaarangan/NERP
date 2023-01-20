@@ -46,6 +46,10 @@ class NERP:
         self.tokenizer_parameters = dictionary["model"]["tokenizer_parameters"]
         if(self.tokenizer_parameters["do_lower_case"] == None):
             self.tokenizer_parameters["do_lower_case"] = True
+        if(self.tokenizer_parameters["train_sep"] == None):
+            self.tokenizer_parameters["train_sep"] = '\t'
+        if(self.tokenizer_parameters["train_quoting"] == None):
+            self.tokenizer_parameters["train_quoting"] = False
         self.archi = dictionary["model"]["archi"]
         if self.archi == None:
             self.archi = "baseline"
