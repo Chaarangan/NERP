@@ -18,7 +18,7 @@ from NERP.utils import SentenceGetter
 from sklearn.model_selection import train_test_split
 import csv
 
-def prepare_data(limit: int = 0, file_path: str = None, sep=',', quoting=0):
+def prepare_data(limit: int = 0, file_path: str = None, sep=',', quoting=True):
     """This function will prepare the sentences and entities from the input BIO format 
 
     Args:
@@ -31,7 +31,11 @@ def prepare_data(limit: int = 0, file_path: str = None, sep=',', quoting=0):
     file_path = os.path.join(file_path)
     assert os.path.isfile(file_path), f'File {file_path} does not exist.'
 
-    data = pd.read_csv(file_path, sep=sep, quoting=quoting)
+    data = None
+    if quoting:
+        data = pd.read_csv(file_path, sep=sep)
+    else:
+        data = pd.read_csv(file_path, sep=sep, quoting=csv.QUOTE_NONE)
     data = data.fillna(method="ffill")
 
     getter = SentenceGetter(data)
@@ -78,10 +82,7 @@ def prepare_train_valid_data(train_data, valid_data, limit, test_size, train_dat
 
     else:
         print("Valid data exists!")
-        if train_data_parameters.train_quoting:
-            training = prepare_data(limit, train_data, sep=train_data_parameters.train_sep)
-        else:
-            training = prepare_data(limit, train_data, sep=train_data_parameters.train_sep, quoting=csv.QUOTE_NONE)
+        training = prepare_data(limit, train_data, sep=train_data_parameters.train_sep, quoting=train_data_parameters.train_quoting)
         validation = prepare_data(limit, valid_data)
 
         print("Training: ({a}, {b})".format(
