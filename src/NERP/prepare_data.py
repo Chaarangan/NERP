@@ -50,7 +50,7 @@ def prepare_data(limit: int = 0, file_path: str = None, sep=',', quoting=0):
     return {'sentences': sentences, 'tags': entities}
 
 
-def prepare_train_valid_data(train_data, valid_data, limit, test_size):
+def prepare_train_valid_data(train_data, valid_data, limit, test_size, train_data_parameters):
     """This function will create training and validation dictionaries from train and valid csv files
 
     Args:
@@ -78,7 +78,10 @@ def prepare_train_valid_data(train_data, valid_data, limit, test_size):
 
     else:
         print("Valid data exists!")
-        training = prepare_data(limit, train_data, sep='\t', quoting=csv.QUOTE_NONE)
+        if train_data_parameters.train_quoting:
+            training = prepare_data(limit, train_data, sep=train_data_parameters.train_sep)
+        else:
+            training = prepare_data(limit, train_data, sep=train_data_parameters.train_sep, quoting=csv.QUOTE_NONE)
         validation = prepare_data(limit, valid_data)
 
         print("Training: ({a}, {b})".format(
