@@ -224,7 +224,7 @@ def training_pipeline(archi,
             write_accuracy_file(model_dir, results)
 
         else:
-            training, validation = prepare_train_valid_data(train_data, valid_data, limit, test_size, train_data_parameters=self.train_data_parameters)
+            training, validation = prepare_train_valid_data(train_data, valid_data, limit, test_size, train_data_parameters=train_data_parameters)
             testing = [prepare_test_data(t, limit) for t in test_data]
             
             print("Training {model} without K-Fold!".format(model=pretrained))
