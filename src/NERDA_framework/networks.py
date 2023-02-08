@@ -4,6 +4,30 @@ import torch.nn as nn
 from transformers import AutoConfig
 from .utils import match_kwargs
 from TorchCRF import CRF
+import random
+import numpy as np
+
+def enforce_reproducibility(seed = 42) -> None:
+    """Enforce Reproducibity
+    Enforces reproducibility of models to the furthest 
+    possible extent. This is done by setting fixed seeds for
+    random number generation etcetera. 
+    For atomic operations there is currently no simple way to
+    enforce determinism, as the order of parallel operations
+    is not known.
+    Args:
+        seed (int, optional): Fixed seed. Defaults to 42.  
+    """
+    # Sets seed manually for both CPU and CUDA
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
+    # CUDNN
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
+    # System based
+    random.seed(seed)
+    np.random.seed(seed)
+
 
 class NERDANetwork(nn.Module):
     """A Generic Network for NERDA models.
@@ -26,6 +50,8 @@ class NERDANetwork(nn.Module):
         """
         super(NERDANetwork, self).__init__()
         
+        enforce_reproducibility()
+
         # extract transformer name
         transformer_name = transformer.name_or_path
         # extract AutoConfig, from which relevant parameters can be extracted.
@@ -97,6 +123,8 @@ class TransformerCRF(nn.Module):
             dropout (float, optional): Dropout probability. Defaults to 0.1.
         """
         super(TransformerCRF, self).__init__()
+
+        enforce_reproducibility()
 
         # extract transformer name
         transformer_name = transformer.name_or_path
@@ -178,6 +206,8 @@ class TransformerBiLSTMCRF(nn.Module):
             dropout (float, optional): Dropout probability. Defaults to 0.1.
         """
         super(TransformerBiLSTMCRF, self).__init__()
+
+        enforce_reproducibility()
 
         # extract transformer name
         transformer_name = transformer.name_or_path
@@ -270,6 +300,8 @@ class TransformerBiLSTM(nn.Module):
             dropout (float, optional): Dropout probability. Defaults to 0.1.
         """
         super(TransformerBiLSTM, self).__init__()
+
+        enforce_reproducibility()
 
         # extract transformer name
         transformer_name = transformer.name_or_path

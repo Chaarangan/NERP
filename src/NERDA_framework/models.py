@@ -23,6 +23,7 @@ import sklearn.preprocessing
 from sklearn.metrics import accuracy_score
 from transformers import AutoModel, AutoTokenizer, AutoConfig
 from typing import List
+import random
 
 class NERDA:
     """NERDA model

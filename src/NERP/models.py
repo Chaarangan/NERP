@@ -43,6 +43,8 @@ class NERP:
             self.hyperparameters["train_batch_size"] = 64
         if(self.hyperparameters["learning_rate"] == None):
             self.hyperparameters["learning_rate"] = 0.0001
+        if(self.hyperparameters["fixed_seed"] == None):
+            self.hyperparameters["fixed_seed"] = 42
         self.tokenizer_parameters = dictionary["model"]["tokenizer_parameters"]
         if(self.tokenizer_parameters["do_lower_case"] == None):
             self.tokenizer_parameters["do_lower_case"] = True
@@ -51,10 +53,10 @@ class NERP:
             self.archi = "baseline"
         self.max_len = dictionary["model"]["max_len"]
         if self.max_len == None:
-            self.max_len = 128
+            self.max_len = 256
         self.dropout = dictionary["model"]["dropout"]
         if self.dropout == None:
-            self.dropout = 0.1
+            self.dropout = 0
         self.pretrained_models = dictionary["model"]["pretrained_models"]
         if self.pretrained_models == [None]:
             self.pretrained_models = ["roberta-base"]
