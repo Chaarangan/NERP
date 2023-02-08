@@ -39,7 +39,7 @@ class NERDANetwork(nn.Module):
     the restriction, that it must take the same arguments.
     """
 
-    def __init__(self, transformer: nn.Module, device: str, n_tags: int, dropout: float = 0.1) -> None:
+    def __init__(self, transformer: nn.Module, device: str, n_tags: int, dropout: float = 0.1, fixed_seed=42) -> None:
         """Initialize a NERDA Network
 
         Args:
@@ -113,7 +113,7 @@ class TransformerCRF(nn.Module):
     """Transformer + CRF
     """
 
-    def __init__(self, transformer: nn.Module, device: str, n_tags: int, dropout: float = 0.1) -> None:
+    def __init__(self, transformer: nn.Module, device: str, n_tags: int, dropout: float = 0.1, fixed_seed=42) -> None:
         """Initialize a NERDA Network
 
         Args:
@@ -196,7 +196,7 @@ class TransformerBiLSTMCRF(nn.Module):
     """Transformer + BiLSTM + CRF
     """
 
-    def __init__(self, transformer: nn.Module, device: str, n_tags: int, dropout: float = 0.1) -> None:
+    def __init__(self, transformer: nn.Module, device: str, n_tags: int, dropout: float = 0.1, fixed_seed=42) -> None:
         """Initialize a NERDA Network
 
         Args:
@@ -290,7 +290,7 @@ class TransformerBiLSTM(nn.Module):
     """Transformer + BiLSTM
     """
 
-    def __init__(self, transformer: nn.Module, device: str, n_tags: int, dropout: float = 0.1) -> None:
+    def __init__(self, transformer: nn.Module, device: str, n_tags: int, dropout: float = 0.1, fixed_seed=42) -> None:
         """Initialize a NERDA Network
 
         Args:

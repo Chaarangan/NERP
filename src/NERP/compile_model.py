@@ -15,7 +15,7 @@ This script will prepare training and validation datasets and compile the model
 from NERDA_framework.models import NERDA
 from NERP.prepare_data import prepare_data
 
-def compile_model(archi, device, training, validation, tag_scheme, o_tag_cr, hyperparameters, tokenizer_parameters, max_len, dropout, pretrained):
+def compile_model(archi, device, training, validation, tag_scheme, o_tag_cr, hyperparameters, tokenizer_parameters, max_len, dropout, pretrained, validation_batch_size):
     """This function will prepare training and validation datasets and compile the model
 
     Args:
@@ -47,7 +47,8 @@ def compile_model(archi, device, training, validation, tag_scheme, o_tag_cr, hyp
         dropout=dropout,
         max_len=max_len,
         hyperparameters=hyperparameters,
-        tokenizer_parameters=tokenizer_parameters
+        tokenizer_parameters=tokenizer_parameters,
+        validation_batch_size=validation_batch_size
     )
     print("Model compiled with {archi} architecture!".format(archi=archi))
     return model

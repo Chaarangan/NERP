@@ -22,7 +22,7 @@ import torch
 from NERP.compile_model import compile_model
 from NERP.prepare_data import prepare_data, prepare_train_valid_data, prepare_kfold_data, prepare_test_data, prepare_kfold_train_valid_data
 
-def do_train(archi, device, training, validation, testing, tag_scheme, o_tag_cr, hyperparameters, tokenizer_parameters, max_len, dropout, pretrained, isModelExists, model_path, tokenizer_path, model_dir, results, return_accuracy):
+def do_train(archi, device, training, validation, testing, tag_scheme, o_tag_cr, hyperparameters, tokenizer_parameters, validation_batch_size, max_len, dropout, pretrained, isModelExists, model_path, tokenizer_path, model_dir, results, return_accuracy):
     """This function will initiate/load model, do the training and write the classification report
 
     Args:
@@ -46,7 +46,7 @@ def do_train(archi, device, training, validation, testing, tag_scheme, o_tag_cr,
         return_accuracy (bool): To return accuracy during training
     """
     model = compile_model(archi, device, training, validation, tag_scheme, o_tag_cr,
-                          hyperparameters, tokenizer_parameters, max_len, dropout, pretrained)
+                          hyperparameters, tokenizer_parameters, max_len, dropout, pretrained, validation_batch_size)
     if(isModelExists):
       print("Model weights loading..")
       if(tokenizer_path != None):
@@ -131,13 +131,14 @@ def training_pipeline(archi,
                       hyperparameters: dict = {"epochs": 5,
                                                "warmup_steps": 500,
                                                "train_batch_size": 64,
-                                               "learning_rate": 0.0001},
+                                               "learning_rate": 0.0001
+                                               "fixed_seed": 42},
                       tokenizer_parameters: dict = {"do_lower_case": True},
-                      train_data_parameters: dict = {"train_sep": '\t', "train_quoting": False},
+                      train_data_parameters: dict = {"train_sep": ',', "train_quoting": True, "train_shuffle": True},
+                      validation_batch_size: int = 8,
                       max_len: int = 128,
                       dropout: float = 0.1,
                       kfold: int = 0,
-                      seed: int = 42,
                       test_on_original: bool = False) -> str:
 
     # getting vars
@@ -165,7 +166,7 @@ def training_pipeline(archi,
 
             # create df
             data = prepare_kfold_data(
-                train_data, valid_data, test_data, limit, test_on_original)
+                train_data, valid_data, test_data, limit, test_on_original, train_data_parameters, hyperparameters.fixed_seed)
 
             # Creating dataset directory if not exists
             dataset_dir = os.path.join(model_dir, "datasets")
@@ -177,7 +178,7 @@ def training_pipeline(archi,
                     dataset_dir=dataset_dir))
 
             # prepare cross validation
-            kf = KFold(n_splits=kfold, random_state=seed, shuffle=True)
+            kf = KFold(n_splits=kfold, random_state=hyperparameters.seed, shuffle=True)
 
             results = []
             for train_index, test_index in kf.split(data["sentences"]):
@@ -196,7 +197,7 @@ def training_pipeline(archi,
         
                 else:  
                     training, validation = prepare_kfold_train_valid_data(
-                        training, test_size)
+                        training, test_size, hyperparameters.fixed_seed)
                     
                     print("Test: ({a}, {b})".format(
                         a=str(len(testing["sentences"])), b=str(len(testing["tags"]))))
@@ -217,18 +218,18 @@ def training_pipeline(archi,
                 df_valid.to_csv(os.path.join(
                     dataset_dir, "valid-{n}.csv".format(n=k_fold_step)), index=False)               
                 
-                do_train(archi, device, training, validation, testing, tag_scheme, o_tag_cr, hyperparameters, tokenizer_parameters, max_len,
+                do_train(archi, device, training, validation, testing, tag_scheme, o_tag_cr, hyperparameters, tokenizer_parameters, validation_batch_size, max_len,
                          dropout, pretrained, is_model_exists, existing_model_path, existing_tokenizer_path, os.path.join(model_dir, k_fold_step), results, True)
 
             # write accuracy file
             write_accuracy_file(model_dir, results)
 
         else:
-            training, validation = prepare_train_valid_data(train_data, valid_data, limit, test_size, train_data_parameters=train_data_parameters)
+            training, validation = prepare_train_valid_data(train_data, valid_data, limit, test_size, train_data_parameters=train_data_parameters, fixed_seed=hyperparameters.fixed_seed)
             testing = [prepare_test_data(t, limit) for t in test_data]
             
             print("Training {model} without K-Fold!".format(model=pretrained))
-            do_train(archi, device, training, validation, testing, tag_scheme, o_tag_cr, hyperparameters, tokenizer_parameters, max_len,
+            do_train(archi, device, training, validation, testing, tag_scheme, o_tag_cr, hyperparameters, tokenizer_parameters, validation_batch_size, max_len,
                      dropout, pretrained, is_model_exists, existing_model_path, existing_tokenizer_path,  model_dir, [0], False)
 
     return "Training finished successfully!"

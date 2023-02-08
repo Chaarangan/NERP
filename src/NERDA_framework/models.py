@@ -105,7 +105,8 @@ class NERDA:
                  hyperparameters: dict = {'epochs' : 4,
                                           'warmup_steps' : 500,
                                           'train_batch_size': 13,
-                                          'learning_rate': 0.0001},
+                                          'learning_rate': 0.0001,
+                                          'fixed_seed': 42},
                  tokenizer_parameters: dict = {'do_lower_case' : True},
                  validation_batch_size: int = 8,
                  num_workers: int = 1) -> None:
@@ -181,16 +182,16 @@ class NERDA:
         
         if(archi == "baseline"):
             self.network = NERDANetwork(
-                self.transformer_model, self.device, len(tag_complete), dropout=dropout)
+                self.transformer_model, self.device, len(tag_complete), dropout=dropout, fixed_seed=hyperparameters.fixed_seed)
         elif (archi == "bilstm-crf"):
             self.network = TransformerBiLSTMCRF(
-                self.transformer_model, self.device, len(tag_complete), dropout=dropout)
+                self.transformer_model, self.device, len(tag_complete), dropout=dropout, fixed_seed=hyperparameters.fixed_seed)
         elif (archi == "crf"):
             self.network = TransformerCRF(
-                self.transformer_model, self.device, len(tag_complete), dropout=dropout)
+                self.transformer_model, self.device, len(tag_complete), dropout=dropout, fixed_seed=hyperparameters.fixed_seed)
         elif (archi == "bilstm"):
             self.network = TransformerBiLSTM(
-                self.transformer_model, self.device, len(tag_complete), dropout=dropout)
+                self.transformer_model, self.device, len(tag_complete), dropout=dropout, fixed_seed=hyperparameters.fixed_seed)
         
         self.network.to(self.device)
         self.validation_batch_size = validation_batch_size
@@ -223,6 +224,8 @@ class NERDA:
                                                         max_len = self.max_len,
                                                         device = self.device,
                                                         num_workers = self.num_workers,
+                                                        tag_scheme = self.tag_scheme,
+                                                        o_tag_cr = self.o_tag_cr
                                                         **self.hyperparameters)
         
         # attach as attributes to class

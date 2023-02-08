@@ -4,6 +4,7 @@ from transformers import get_linear_schedule_with_warmup
 import random
 import torch
 from tqdm import tqdm
+from .models import compute_f1_scores
 
 def train(model, data_loader, optimizer, device, scheduler, n_tags):
     """One Iteration of Training"""
@@ -43,9 +44,24 @@ def validate(model, data_loader, device, n_tags):
                             device, 
                             n_tags)
         final_loss += loss.item()
+        for i in range(outputs.shape[0]):
+            # extract prediction and transform.
+            # find max by row.
+            values, indices = outputs[i].max(dim=1)
+            preds = tag_encoder.inverse_transform(indices.cpu().numpy())
+
+            # subset predictions for original word tokens.
+            preds = [prediction for prediction, offset in zip(preds.tolist(), dl.get('offsets')[i]) if offset]        
+            # Remove special tokens ('CLS' + 'SEP').
+            preds = preds[1:-1]
+        
+            # make sure resulting predictions have same length as
+            # original sentence.
+            predictions.append(preds)
+
     
     # Return average loss.
-    return final_loss / len(data_loader)   
+    return (final_loss / len(data_loader), predictions)
 
 def compute_loss(preds, target_tags, masks, device, n_tags):
     
@@ -108,7 +124,9 @@ def train_model(network,
                 learning_rate = 5e-5,
                 device = None,
                 fixed_seed = 42,
-                num_workers = 1):
+                num_workers = 1,
+                tag_scheme,
+                o_tag_cr):
     
     if fixed_seed is not None:
         enforce_reproducibility(fixed_seed)
@@ -146,7 +164,8 @@ def train_model(network,
     )
 
     train_losses = []
-    best_valid_loss = np.inf
+    # best_valid_loss = np.inf
+    best_valid_f1 = 0.0
 
     for epoch in range(epochs):
         
@@ -154,13 +173,26 @@ def train_model(network,
 
         train_loss = train(network, dl_train, optimizer, device, scheduler, n_tags)
         train_losses.append(train_loss)
-        valid_loss = validate(network, dl_validate, device, n_tags)
+        valid_loss, valid_tags_predicted = validate(network, dl_validate, device, n_tags)
+        
+        if(o_tag_cr == True):
+            labels = ["O"] + tag_scheme
+        else:
+            labels = tag_scheme
+            
+        valid_f1, _ = compute_f1_scores(y_pred=valid_tags_predicted,
+                               y_true=dataset_validation.get('tags'),
+                               labels=labels)
 
-        print(f"Train Loss = {train_loss} Valid Loss = {valid_loss}")
+        print(f"Train Loss = {train_loss} Valid Loss = {valid_loss} Valid F1 = {valid_f1})
 
-        if valid_loss < best_valid_loss:
-            best_parameters = network.state_dict()            
-            best_valid_loss = valid_loss
+        # if valid_loss < best_valid_loss:
+        #     best_parameters = network.state_dict()            
+        #     best_valid_loss = valid_loss
+
+        if valid_f1 > best_valid_f1:
+            best_parameters = network.state_dict() 
+            best_valid_f1 = valid_f1           
 
     # return best model
     network.load_state_dict(best_parameters)
