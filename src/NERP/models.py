@@ -45,6 +45,7 @@ class NERP:
             self.hyperparameters["learning_rate"] = 0.0001
         if(self.hyperparameters["fixed_seed"] == None):
             self.hyperparameters["fixed_seed"] = 42
+        self.validation_batch_size = dictionary["model"]["validation_batch_size"]
         if(self.validation_batch_size == None):
             self.validation_batch_size = 8
         self.tokenizer_parameters = dictionary["model"]["tokenizer_parameters"]
@@ -88,9 +89,9 @@ class NERP:
         self.kfold = dictionary["kfold"]["splits"]
         if self.kfold == None:
             self.kfold = 0
-        self.seed = dictionary["kfold"]["seed"]
-        if self.seed == None:
-            self.seed = 42
+        #self.seed = dictionary["kfold"]["seed"]
+        #if self.seed == None:
+        #    self.seed = 42
         self.test_on_original = dictionary["kfold"]["test_on_original"]
         if(self.test_on_original == None):
             self.test_on_original = False
@@ -130,7 +131,6 @@ class NERP:
                                     max_len=self.max_len,
                                     dropout=self.dropout,
                                     kfold = 0,
-                                    seed=42,
                                     test_on_original=False)
         
         return message
@@ -155,12 +155,11 @@ class NERP:
                                     pretrained_models=self.pretrained_models,
                                     hyperparameters=self.hyperparameters,
                                     tokenizer_parameters=self.tokenizer_parameters,
-                                    validation_batch_size=self.validation_batch_size
+                                    validation_batch_size=self.validation_batch_size,
                                     train_data_parameters=self.train_data_parameters,
                                     max_len=self.max_len,
                                     dropout=self.dropout,
                                     kfold=0,
-                                    seed=42,
                                     test_on_original=False)
 
         return message
@@ -189,7 +188,6 @@ class NERP:
                                     max_len=self.max_len,
                                     dropout=self.dropout,
                                     kfold=self.kfold,
-                                    seed=self.seed,
                                     test_on_original=self.test_on_original)
 
         return message
@@ -220,7 +218,6 @@ class NERP:
                                     max_len=self.max_len,
                                     dropout=self.dropout,
                                     kfold=self.kfold,
-                                    seed=self.seed,
                                     test_on_original=self.test_on_original)
 
         return message

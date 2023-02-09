@@ -125,8 +125,8 @@ def train_model(network,
                 device = None,
                 fixed_seed = 42,
                 num_workers = 1,
-                tag_scheme,
-                o_tag_cr):
+                tag_scheme = ['B-PER', 'I-PER', 'B-ORG', 'I-ORG', 'B-LOC', 'I-LOC', 'B-MISC', 'I-MISC'],
+                o_tag_cr = True):
     
     if fixed_seed is not None:
         enforce_reproducibility(fixed_seed)
@@ -184,7 +184,7 @@ def train_model(network,
                                y_true=dataset_validation.get('tags'),
                                labels=labels)
 
-        print(f"Train Loss = {train_loss} Valid Loss = {valid_loss} Valid F1 = {valid_f1})
+        print(f"Train Loss = {train_loss} Valid Loss = {valid_loss} Valid F1 = {valid_f1}")
 
         # if valid_loss < best_valid_loss:
         #     best_parameters = network.state_dict()            

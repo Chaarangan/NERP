@@ -131,7 +131,7 @@ def training_pipeline(archi,
                       hyperparameters: dict = {"epochs": 5,
                                                "warmup_steps": 500,
                                                "train_batch_size": 64,
-                                               "learning_rate": 0.0001
+                                               "learning_rate": 0.0001,
                                                "fixed_seed": 42},
                       tokenizer_parameters: dict = {"do_lower_case": True},
                       train_data_parameters: dict = {"train_sep": ',', "train_quoting": True, "train_shuffle": True},
@@ -166,7 +166,7 @@ def training_pipeline(archi,
 
             # create df
             data = prepare_kfold_data(
-                train_data, valid_data, test_data, limit, test_on_original, train_data_parameters, hyperparameters.fixed_seed)
+                train_data, valid_data, test_data, limit, test_on_original, train_data_parameters, hyperparameters["fixed_seed"])
 
             # Creating dataset directory if not exists
             dataset_dir = os.path.join(model_dir, "datasets")
@@ -197,7 +197,7 @@ def training_pipeline(archi,
         
                 else:  
                     training, validation = prepare_kfold_train_valid_data(
-                        training, test_size, hyperparameters.fixed_seed)
+                        training, test_size, hyperparameters["fixed_seed"])
                     
                     print("Test: ({a}, {b})".format(
                         a=str(len(testing["sentences"])), b=str(len(testing["tags"]))))
@@ -225,7 +225,7 @@ def training_pipeline(archi,
             write_accuracy_file(model_dir, results)
 
         else:
-            training, validation = prepare_train_valid_data(train_data, valid_data, limit, test_size, train_data_parameters=train_data_parameters, fixed_seed=hyperparameters.fixed_seed)
+            training, validation = prepare_train_valid_data(train_data, valid_data, limit, test_size, train_data_parameters=train_data_parameters, fixed_seed=hyperparameters["fixed_seed"])
             testing = [prepare_test_data(t, limit) for t in test_data]
             
             print("Training {model} without K-Fold!".format(model=pretrained))

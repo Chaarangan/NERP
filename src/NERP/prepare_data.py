@@ -39,10 +39,9 @@ def prepare_data(limit: int = 0, file_path: str = None, sep=',', quoting=True, s
 
     data = None
     if quoting:
-        data = pd.read_csv(file_path, sep=sep)
+        data = pd.read_csv(file_path, sep=sep, na_filter=False)
     else:
-        data = pd.read_csv(file_path, sep=sep, quoting=csv.QUOTE_NONE)
-    data = data.fillna(method="ffill")
+        data = pd.read_csv(file_path, sep=sep, quoting=csv.QUOTE_NONE, na_filter=False)
 
     getter = SentenceGetter(data)
     sentences = [[word[0] for word in sentence] for sentence in getter.sentences]
@@ -78,7 +77,7 @@ def prepare_train_valid_data(train_data, valid_data, limit, test_size, train_dat
     """
     if (valid_data == None):
         print("Valid data is None and created from train data!")
-        data = prepare_data(limit, train_data, sep=train_data_parameters["train_sep"], quoting=train_data_parameters["train_quoting"], shuffle=train_data_parameters["train_shuffle"], fixed_seed)
+        data = prepare_data(limit, train_data, sep=train_data_parameters["train_sep"], quoting=train_data_parameters["train_quoting"], shuffle=train_data_parameters["train_shuffle"], fixed_seed=fixed_seed)
         train_sentences, val_sentences, train_entities, val_entities = train_test_split(
             data["sentences"], data["tags"], test_size=test_size, random_state=fixed_seed
         )
@@ -92,7 +91,7 @@ def prepare_train_valid_data(train_data, valid_data, limit, test_size, train_dat
 
     else:
         print("Valid data exists!")
-        training = prepare_data(limit, train_data, sep=train_data_parameters["train_sep"], quoting=train_data_parameters["train_quoting"], shuffle=train_data_parameters["train_shuffle"], fixed_seed)
+        training = prepare_data(limit, train_data, sep=train_data_parameters["train_sep"], quoting=train_data_parameters["train_quoting"], shuffle=train_data_parameters["train_shuffle"], fixed_seed=fixed_seed)
         validation = prepare_data(limit, valid_data)
 
         print("Training: ({a}, {b})".format(
@@ -139,7 +138,7 @@ def prepare_kfold_data(train_data, valid_data, test_data, limit, test_on_origina
     sentences = []
     tags = []
 
-    train_data = prepare_data(limit, train_data, sep=train_data_parameters["train_sep"], quoting=train_data_parameters["train_quoting"], shuffle=train_data_parameters["train_shuffle"], fixed_seed)
+    train_data = prepare_data(limit, train_data, sep=train_data_parameters["train_sep"], quoting=train_data_parameters["train_quoting"], shuffle=train_data_parameters["train_shuffle"], fixed_seed=fixed_seed)
     sentences += train_data["sentences"]
     tags += train_data["tags"]
 
