@@ -125,7 +125,7 @@ def training_pipeline(archi,
                                                "train_batch_size": 64,
                                                "learning_rate": 0.0001},
                       tokenizer_parameters: dict = {"do_lower_case": True},
-                      train_data_paramters: dict = {"train_sep": '\t', "train_quoting": False}
+                      train_data_paramters: dict = {"train_sep": '\t', "train_quoting": False},
                       max_len: int = 128,
                       dropout: float = 0.1,
                       kfold: int = 0,
