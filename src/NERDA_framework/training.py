@@ -4,7 +4,7 @@ from transformers import get_linear_schedule_with_warmup
 import random
 import torch
 from tqdm import tqdm
-from .models import compute_f1_scores
+from .performance import compute_f1_scores
 
 def train(model, data_loader, optimizer, device, scheduler, n_tags):
     """One Iteration of Training"""
@@ -29,12 +29,12 @@ def train(model, data_loader, optimizer, device, scheduler, n_tags):
     # Return average loss
     return final_loss / len(data_loader)
 
-def validate(model, data_loader, device, n_tags):
+def validate(model, data_loader, device, n_tags, tag_encoder):
     """One Iteration of Validation"""
 
     model.eval()
     final_loss = 0.0
-
+    predictions = []
     for dl in tqdm(data_loader, total=len(data_loader)):
         
         outputs = model(**dl)
@@ -173,16 +173,19 @@ def train_model(network,
 
         train_loss = train(network, dl_train, optimizer, device, scheduler, n_tags)
         train_losses.append(train_loss)
-        valid_loss, valid_tags_predicted = validate(network, dl_validate, device, n_tags)
-        
+        valid_loss, valid_tags_predicted = validate(network, dl_validate, device, n_tags, tag_encoder)
+#        print(valid_tags_predicted)
+#        print(dataset_validation.get('tags')) 
         if(o_tag_cr == True):
             labels = ["O"] + tag_scheme
         else:
             labels = tag_scheme
             
-        valid_f1, _ = compute_f1_scores(y_pred=valid_tags_predicted,
+        report, _ = compute_f1_scores(y_pred=valid_tags_predicted,
                                y_true=dataset_validation.get('tags'),
                                labels=labels)
+        valid_f1 = report.split('\n')[len(labels) + 4].split()[3]
+        valid_f1 = float(valid_f1)
 
         print(f"Train Loss = {train_loss} Valid Loss = {valid_loss} Valid F1 = {valid_f1}")
 
@@ -197,7 +200,7 @@ def train_model(network,
     # return best model
     network.load_state_dict(best_parameters)
 
-    return network, train_losses, best_valid_loss
+    return network, train_losses, best_valid_f1
 
 
         

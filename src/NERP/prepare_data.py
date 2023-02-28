@@ -17,12 +17,14 @@ import pandas as pd
 from NERP.utils import SentenceGetter
 from sklearn.model_selection import train_test_split
 import csv
-import numpy as np
+import random
 
 def unison_shuffled_copies(a, b):
     assert len(a) == len(b)
-    p = np.random.permutation(len(a))
-    return a[p], b[p]
+    c = list(zip(a, b))
+    random.shuffle(c)
+    a_, b_ = zip(*c)
+    return a_, b_
 
 def prepare_data(limit: int = 0, file_path: str = None, sep=',', quoting=True, shuffle=False, fixed_seed=42):
     """This function will prepare the sentences and entities from the input BIO format
@@ -57,9 +59,9 @@ def prepare_data(limit: int = 0, file_path: str = None, sep=',', quoting=True, s
         entities), f"Sentences and entities are having different length."
 
     if shuffle:
-        np.random.seed(fixed_seed)
+        random.seed(fixed_seed)
         sentences, entities = unison_shuffled_copies(sentences, entities)
-
+        
     return {'sentences': sentences, 'tags': entities}
 
 
