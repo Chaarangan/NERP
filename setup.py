@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="NERP",
-    version="1.0.2.2",
+    version="1.1",
     license='LICENSE.txt',
     author="Charangan Vasantharajan",
     author_email="chaanuv@gmail.com",
@@ -19,17 +19,14 @@ setuptools.setup(
     install_requires=[
         'torch',
         'transformers',
-        'joblib',
         'nltk',
         'pandas',
-        'progressbar',
         'pyconll',
         'PyYAML',
-        'scipy',
         'sentencepiece',
-        'threadpoolctl',
         'scikit-learn',
-        'TorchCRF'
+        'TorchCRF',
+        'loguru'
     ],
     tests_require=['pytest',
                    'pytest-cov'],
