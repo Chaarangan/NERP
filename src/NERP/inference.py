@@ -1,22 +1,16 @@
-'''
-File: NERP/inference.py
-Project: NERP
-Created Date: Tuesday, May 24th 2022
-Author: Charangan Vasantharajan
------
-Last Modified: Friday, Aug 26th 2022
-Modified By: Charangan Vasantharajan
------
-Copyright (c) 2022
-------------------------------------
+"""
 This script will compute predictions for a single text input as well as CSV file input
-'''
+"""
 
-from NERDA_framework.models import NERDA
-from NERP.utils import SentenceGetter
-import pandas as  pd
+import pandas as pd
 import os
+
 from typing import List
+from loguru import logger
+
+from .trainer import Trainer
+from .utils import SentenceGetter
+
 
 def load_model(archi, device, tag_scheme, pretrained, max_len, model_path, tokenizer_path, hyperparameters, tokenizer_parameters):
     """This function will load the trained model with tokenizer if exists
@@ -36,7 +30,7 @@ def load_model(archi, device, tag_scheme, pretrained, max_len, model_path, token
         object: compiled model
     """
     # compile model
-    model = NERDA(
+    model = Trainer(
         archi=archi,
         device=device,
         tag_scheme=tag_scheme,
@@ -51,11 +45,13 @@ def load_model(archi, device, tag_scheme, pretrained, max_len, model_path, token
     assert os.path.isfile(model_path), f'File {model_path} does not exist.'
 
     if(tokenizer_path != None):
-        model.load_network_from_file(model_path=model_path, tokenizer_path=tokenizer_path)
+        model.load_network_from_file(
+            model_path=model_path, tokenizer_path=tokenizer_path)
     else:
         model.load_network_from_file(model_path=model_path)
-    print("Model weights loaded!")
+    logger.success("Model weights loaded!")
     return model
+
 
 def predict_bulk(model, in_file_path, out_file_path):
     """This function will make predictions on the CSV input file
@@ -77,8 +73,8 @@ def predict_bulk(model, in_file_path, out_file_path):
     tags = []
     i = 0
     for sentence in sentences:
-        print(
-            "Predicted on sentence no: {no} - {sentence}".format(no=i, sentence=sentence))
+        logger.info(
+            "Prediction on sentence no: {no}".format(no=i))
         results = model.predict_text(sentence)
         words += results[0][0]
         tags += results[1][0]
@@ -95,17 +91,17 @@ def predict_bulk(model, in_file_path, out_file_path):
     df = pd.DataFrame({"Sentence #": sentence_no,
                        "Word": words, "Tag": tags})
     df.to_csv(out_file_path)
-    print("Predictions stored!")
+    logger.success("Predictions stored!")
 
 
 def inference_pipeline(archi,
-                       device, 
+                       device,
                        model_path,
                        tokenizer_path,
-                       out_file_path, 
+                       out_file_path,
                        in_file_path,
-                       pretrained: str = "roberta-base",                       
-                       is_bulk: bool = False,                       
+                       pretrained: str = "roberta-base",
+                       is_bulk: bool = False,
                        text: str = "Hello from NERP",
                        tag_scheme: List[str] = [
                            'B-PER',
@@ -125,11 +121,12 @@ def inference_pipeline(archi,
                        model_path, tokenizer_path, hyperparameters, tokenizer_parameters)
 
     if(is_bulk):
-        print("Bulk Mode!")
+        logger.info("Bulk Mode!")
         predict_bulk(model, in_file_path, out_file_path)
 
-        return None, "Predictions are stored successfully!"
+        logger.success("Predictions are stored successfully!")
 
     else:
-        return model.predict_text(text), "Predicted successfully!"
-    
+        output = model.predict_text(text)
+        logger.success("Predicted successfully! - " + str(output))
+        return output

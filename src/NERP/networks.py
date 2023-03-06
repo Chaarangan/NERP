@@ -1,46 +1,25 @@
-"""This section covers `torch` networks for `NERDA`"""
+"""
+This section covers `torch` networks for `NERP`
+"""
 import torch
 import torch.nn as nn
+
 from transformers import AutoConfig
-from .utils import match_kwargs
 from TorchCRF import CRF
-import random
-import numpy as np
 
-def enforce_reproducibility(seed = 42) -> None:
-    """Enforce Reproducibity
-    Enforces reproducibility of models to the furthest 
-    possible extent. This is done by setting fixed seeds for
-    random number generation etcetera. 
-    For atomic operations there is currently no simple way to
-    enforce determinism, as the order of parallel operations
-    is not known.
-    Args:
-        seed (int, optional): Fixed seed. Defaults to 42.  
-    """
-    # Sets seed manually for both CPU and CUDA
-    torch.manual_seed(seed)
-    torch.cuda.manual_seed_all(seed)
-    # CUDNN
-    torch.backends.cudnn.deterministic = True
-    torch.backends.cudnn.benchmark = False
-    # System based
-    random.seed(seed)
-    np.random.seed(seed)
+from .utils import match_kwargs
+from .utils import enforce_reproducibility
 
 
-class NERDANetwork(nn.Module):
-    """A Generic Network for NERDA models.
-
-    The network has an analogous architecture to the models in
-    [Hvingelby et al. 2020](http://www.lrec-conf.org/proceedings/lrec2020/pdf/2020.lrec-1.565.pdf).
+class NERPNetwork(nn.Module):
+    """A Generic Network for NERP models.
 
     Can be replaced with a custom user-defined network with 
     the restriction, that it must take the same arguments.
     """
 
     def __init__(self, transformer: nn.Module, device: str, n_tags: int, dropout: float = 0.1, fixed_seed=42) -> None:
-        """Initialize a NERDA Network
+        """Initialize a NERP Network
 
         Args:
             transformer (nn.Module): huggingface `torch` transformer.
@@ -49,7 +28,7 @@ class NERDANetwork(nn.Module):
             dropout (float, optional): Dropout probability. Defaults to 0.1.
         """
         super(NERDANetwork, self).__init__()
-        
+
         enforce_reproducibility()
 
         # extract transformer name
@@ -64,11 +43,11 @@ class NERDANetwork(nn.Module):
 
     # NOTE: 'offsets 'are not used in model as-is, but they are expected as output
     # down-stream. So _DON'T_ remove! :)
-    def forward(self, 
-                input_ids: torch.Tensor, 
-                masks: torch.Tensor, 
-                token_type_ids: torch.Tensor, 
-                target_tags: torch.Tensor, 
+    def forward(self,
+                input_ids: torch.Tensor,
+                masks: torch.Tensor,
+                token_type_ids: torch.Tensor,
+                target_tags: torch.Tensor,
                 offsets: torch.Tensor) -> torch.Tensor:
         """Model Forward Iteration
 
@@ -93,17 +72,13 @@ class NERDANetwork(nn.Module):
             'input_ids': input_ids.to(self.device),
             'masks': masks.to(self.device),
             'token_type_ids': token_type_ids.to(self.device)
-            }
-        
+        }
+
         # match args with transformer
-        transformer_inputs = match_kwargs(self.transformer.forward, **transformer_inputs)
-           
+        transformer_inputs = match_kwargs(
+            self.transformer.forward, **transformer_inputs)
         outputs = self.transformer(**transformer_inputs)[0]
-
-        # apply drop-out
         outputs = self.dropout(outputs)
-
-        # outputs for all labels/tags
         outputs = self.tags(outputs)
 
         return outputs
@@ -114,7 +89,7 @@ class TransformerCRF(nn.Module):
     """
 
     def __init__(self, transformer: nn.Module, device: str, n_tags: int, dropout: float = 0.1, fixed_seed=42) -> None:
-        """Initialize a NERDA Network
+        """Initialize a NERP Network
 
         Args:
             transformer (nn.Module): huggingface `torch` transformer.
@@ -176,9 +151,7 @@ class TransformerCRF(nn.Module):
             self.transformer.forward, **transformer_inputs)
 
         padded_sequence_output = self.transformer(**transformer_inputs)[0]
-
         padded_sequence_output = self.dropout(padded_sequence_output)
-
         logits = self.classifier(padded_sequence_output)
 
         outputs = (logits,)
@@ -197,7 +170,7 @@ class TransformerBiLSTMCRF(nn.Module):
     """
 
     def __init__(self, transformer: nn.Module, device: str, n_tags: int, dropout: float = 0.1, fixed_seed=42) -> None:
-        """Initialize a NERDA Network
+        """Initialize a NERP Network
 
         Args:
             transformer (nn.Module): huggingface `torch` transformer.
@@ -268,11 +241,8 @@ class TransformerBiLSTMCRF(nn.Module):
             self.transformer.forward, **transformer_inputs)
 
         padded_sequence_output = self.transformer(**transformer_inputs)[0]
-
         padded_sequence_output = self.dropout(padded_sequence_output)
-
         lstm_output, _ = self.bilstm(padded_sequence_output)
-
         logits = self.classifier(lstm_output)
 
         outputs = (logits,)
@@ -291,7 +261,7 @@ class TransformerBiLSTM(nn.Module):
     """
 
     def __init__(self, transformer: nn.Module, device: str, n_tags: int, dropout: float = 0.1, fixed_seed=42) -> None:
-        """Initialize a NERDA Network
+        """Initialize a NERP Network
 
         Args:
             transformer (nn.Module): huggingface `torch` transformer.
@@ -300,7 +270,6 @@ class TransformerBiLSTM(nn.Module):
             dropout (float, optional): Dropout probability. Defaults to 0.1.
         """
         super(TransformerBiLSTM, self).__init__()
-
         enforce_reproducibility()
 
         # extract transformer name
@@ -361,11 +330,8 @@ class TransformerBiLSTM(nn.Module):
             self.transformer.forward, **transformer_inputs)
 
         padded_sequence_output = self.transformer(**transformer_inputs)[0]
-
         padded_sequence_output = self.dropout(padded_sequence_output)
-
         lstm_output, _ = self.bilstm(padded_sequence_output)
-
         outputs = self.classifier(lstm_output)
 
         # contain: (loss), scores

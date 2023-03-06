@@ -1,28 +1,24 @@
-'''
-File: NERP/training.py
-Project: NERP
-Created Date: Tuesday, May 24th 2022
-Author: Charangan Vasantharajan
------
-Last Modified: Friday, Aug 26th 2022
-Modified By: Charangan Vasantharajan
------
-Copyright (c) 2022
-------------------------------------
+"""
 This section covers functionality for training Named Entity Recognition models.
     - with k-fold
     - without k-fold
-'''
+"""
 
-from typing import List
 import os
 import pandas as pd
-from sklearn.model_selection import KFold
 import torch
-from NERP.compile_model import compile_model
-from NERP.prepare_data import prepare_data, prepare_train_valid_data, prepare_kfold_data, prepare_test_data, prepare_kfold_train_valid_data
 
-def do_train(archi, device, training, validation, testing, tag_scheme, o_tag_cr, hyperparameters, tokenizer_parameters, validation_batch_size, max_len, dropout, pretrained, isModelExists, model_path, tokenizer_path, model_dir, results, return_accuracy):
+from tqdm import tqdm
+from typing import List
+from sklearn.model_selection import KFold
+from loguru import logger
+
+from .prepare_data import prepare_data, prepare_train_valid_data, prepare_kfold_data, prepare_test_data, prepare_kfold_train_valid_data
+from .trainer import Trainer
+from .utils import write_accuracy_file
+
+
+def do_train(archi, device, training, validation, testing, tag_scheme, o_tag_cr, hyperparameters, tokenizer_parameters, validation_batch_size, max_len, dropout, pretrained, isModelExists, model_path, tokenizer_path, model_dir, results, return_accuracy, num_workers):
     """This function will initiate/load model, do the training and write the classification report
 
     Args:
@@ -45,64 +41,49 @@ def do_train(archi, device, training, validation, testing, tag_scheme, o_tag_cr,
         results (List[float]): A list of accuracy scores
         return_accuracy (bool): To return accuracy during training
     """
-    model = compile_model(archi, device, training, validation, tag_scheme, o_tag_cr,
-                          hyperparameters, tokenizer_parameters, max_len, dropout, pretrained, validation_batch_size)
+    model = Trainer(archi, device, training, validation, tag_scheme, o_tag_cr,
+                    hyperparameters, tokenizer_parameters, max_len, dropout, pretrained, validation_batch_size, num_workers)
     if(isModelExists):
-      print("Model weights loading..")
-      if(tokenizer_path != None):
-          model.load_network_from_file(
-              model_path=model_path, tokenizer_path=tokenizer_path)
-      else:
-          model.load_network_from_file(model_path=model_path)
-      print("Model weights loaded!")
+        logger.info("Model weights loading...")
+        if(tokenizer_path != None):
+            model.load_network_from_file(
+                model_path=model_path, tokenizer_path=tokenizer_path)
+        else:
+            model.load_network_from_file(model_path=model_path)
+        logger.success("Model weights loaded!")
 
-    print("Training started!")
+    logger.info("=====================================")
+    logger.info("Training started!")
     model.train()
+    logger.info("Training finished!")
+    logger.info("=====================================")
 
     # save model
     model.save_network(output_dir=model_dir)
-    print("Model stored!")
+    logger.success("Model stored!")
 
-    print("Evaluating performance on testing dataset...!")
+    logger.info("Evaluating performance on testing dataset...")
     # evaluate on test set
     c_reports = [
         model.evaluate_performance(
             t, return_accuracy=return_accuracy
         ) for t in testing
     ]
-    
+
     # write logs
     report_names = [
         os.path.join(model_dir, "classification_report-" + str(len(results)) +
-                               ".txt") if len(results) == 0 else os.path.join(model_dir, f"classification_report_{i+1}.txt")
+                     ".txt") if len(results) == 0 else os.path.join(model_dir, f"classification_report_{i+1}.txt")
         for i, c in enumerate(c_reports)
     ]
-    
+
     for i, r in enumerate(report_names):
         with open(r, "w") as wf:
-          wf.write(c_reports[i]["f1"])
+            wf.write(c_reports[i]["f1"])
 
     if(return_accuracy):
         results.append(c_reports[0]["accuracy"])
-    print("Evaluation metrics stored!")
-
-def write_accuracy_file(model_dir, results):
-    """This function will write the kfold accuracy file
-
-    Args:
-        model_dir (str): Output model directory to store results
-        results (List[float]): A list of accuracy scores
-    """
-    with open(os.path.join(model_dir, "k-fold-accuracy-scores.txt"), "w") as wf:
-        wf.write("K-Fold Accuracy Scores\n")
-        for i in range(len(results)):
-            wf.write(f"Step {i}: {results[i]} \n")
-
-        wf.write("\n")
-        wf.write(f"Mean-Accuracy: {sum(results) / len(results)}")
-
-    print(f"Mean-Accuracy: {sum(results) / len(results)}")
-    print("Accuracy file stored!")
+    logger.success("Evaluation metrics stored!")
 
 
 def training_pipeline(archi,
@@ -134,12 +115,14 @@ def training_pipeline(archi,
                                                "learning_rate": 0.0001,
                                                "fixed_seed": 42},
                       tokenizer_parameters: dict = {"do_lower_case": True},
-                      train_data_parameters: dict = {"train_sep": ',', "train_quoting": True, "train_shuffle": True},
+                      train_data_parameters: dict = {
+                          "train_sep": ',', "train_quoting": True, "train_shuffle": True},
                       validation_batch_size: int = 8,
                       max_len: int = 128,
                       dropout: float = 0.1,
                       kfold: int = 0,
-                      test_on_original: bool = False) -> str:
+                      test_on_original: bool = False,
+                      num_workers: int = 1) -> str:
 
     # getting vars
     for pretrained in pretrained_models:
@@ -148,20 +131,22 @@ def training_pipeline(archi,
         model_dir = os.path.join(output_dir, pretrained.split(
             "/")[-1] if len(pretrained.split("/")) > 1 else pretrained)
         if(not os.path.exists(model_dir)):
-            print("Directory not found: {model_dir}".format(
+            logger.info("Directory not found: {model_dir}".format(
                 model_dir=model_dir))
             os.makedirs(model_dir)
-            print("Directory created: {model_dir}".format(model_dir=model_dir))
+            logger.info("Directory created: {model_dir}".format(
+                model_dir=model_dir))
 
         if(kfold != 0):
-            print("Training {model} with K-Fold!".format(model=pretrained))
+            logger.info(
+                "Training {model} with K-Fold!".format(model=pretrained))
 
             model_dir = os.path.join(model_dir, "kfold")
             if(not os.path.exists(model_dir)):
-                print("Directory not found: {model_dir}".format(
+                logger.info("Directory not found: {model_dir}".format(
                     model_dir=model_dir))
                 os.makedirs(model_dir)
-                print("Directory created: {model_dir}".format(
+                logger.info("Directory created: {model_dir}".format(
                     model_dir=model_dir))
 
             # create df
@@ -171,65 +156,70 @@ def training_pipeline(archi,
             # Creating dataset directory if not exists
             dataset_dir = os.path.join(model_dir, "datasets")
             if(not os.path.exists(dataset_dir)):
-                print("Directory not found: {dataset_dir}".format(
+                logger.info("Directory not found: {dataset_dir}".format(
                     dataset_dir=dataset_dir))
                 os.makedirs(dataset_dir)
-                print("Directory created: {dataset_dir}".format(
+                logger.info("Directory created: {dataset_dir}".format(
                     dataset_dir=dataset_dir))
 
             # prepare cross validation
-            kf = KFold(n_splits=kfold, random_state=hyperparameters.seed, shuffle=True)
+            kf = KFold(n_splits=kfold,
+                       random_state=hyperparameters["fixed_seed"], shuffle=True)
 
             results = []
             for train_index, test_index in kf.split(data["sentences"]):
                 k_fold_step = str(len(results) + 1)
-                print("K-Fold Step: " + k_fold_step)
+                logger.warning("K-Fold Step: " + k_fold_step)
 
                 # splitting Dataframe (dataset not included)
                 training = {"sentences": [data["sentences"][i] for i in train_index], "tags": [
                     data["tags"][i] for i in train_index]}
                 testing = {
                     "sentences": [data["sentences"][i] for i in test_index], "tags": [data["tags"][i] for i in test_index]}
-                
+
                 if(test_on_original):
                     validation = testing
-                    testing = prepare_test_data(test_data, limit)  
-        
-                else:  
+                    testing = [prepare_test_data(t, limit) for t in test_data]
+
+                else:
                     training, validation = prepare_kfold_train_valid_data(
                         training, test_size, hyperparameters["fixed_seed"])
-                    
-                    print("Test: ({a}, {b})".format(
+
+                    logger.info("Test: ({a}, {b})".format(
                         a=str(len(testing["sentences"])), b=str(len(testing["tags"]))))
-                    print("Test dataset is prepared!")
-                    
+                    logger.info("Test dataset is prepared!")
+
                     df_test = pd.DataFrame(
                         testing, columns=["sentences", "tags"])
                     df_test.to_csv(os.path.join(
-                        dataset_dir, "test-{n}.csv".format(n=k_fold_step)), index=False)
+                        dataset_dir, "test -{n}.csv".format(n=k_fold_step)), index=False)
+
+                    testing = [testing]
 
                 df_train = pd.DataFrame(
-                        training, columns=["sentences", "tags"])
+                    training, columns=["sentences", "tags"])
                 df_train.to_csv(os.path.join(
                     dataset_dir, "train-{n}.csv".format(n=k_fold_step)), index=False)
-                
+
                 df_valid = pd.DataFrame(
                     validation, columns=["sentences", "tags"])
                 df_valid.to_csv(os.path.join(
-                    dataset_dir, "valid-{n}.csv".format(n=k_fold_step)), index=False)               
-                
+                    dataset_dir, "valid-{n}.csv".format(n=k_fold_step)), index=False)
+
                 do_train(archi, device, training, validation, testing, tag_scheme, o_tag_cr, hyperparameters, tokenizer_parameters, validation_batch_size, max_len,
-                         dropout, pretrained, is_model_exists, existing_model_path, existing_tokenizer_path, os.path.join(model_dir, k_fold_step), results, True)
+                         dropout, pretrained, is_model_exists, existing_model_path, existing_tokenizer_path, os.path.join(model_dir, k_fold_step), results, True, num_workers)
 
             # write accuracy file
             write_accuracy_file(model_dir, results)
 
         else:
-            training, validation = prepare_train_valid_data(train_data, valid_data, limit, test_size, train_data_parameters=train_data_parameters, fixed_seed=hyperparameters["fixed_seed"])
+            training, validation = prepare_train_valid_data(
+                train_data, valid_data, limit, test_size, train_data_parameters=train_data_parameters, fixed_seed=hyperparameters["fixed_seed"])
             testing = [prepare_test_data(t, limit) for t in test_data]
-            
-            print("Training {model} without K-Fold!".format(model=pretrained))
+
+            logger.info(
+                "Training {model} without K-Fold!".format(model=pretrained))
             do_train(archi, device, training, validation, testing, tag_scheme, o_tag_cr, hyperparameters, tokenizer_parameters, validation_batch_size, max_len,
-                     dropout, pretrained, is_model_exists, existing_model_path, existing_tokenizer_path,  model_dir, [0], False)
+                     dropout, pretrained, is_model_exists, existing_model_path, existing_tokenizer_path,  model_dir, [0], False, num_workers)
 
     return "Training finished successfully!"

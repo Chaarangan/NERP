@@ -1,30 +1,18 @@
-'''
-File: NERP/prepare_data.py
-Project: NERP
-Created Date: Tuesday, May 24th 2022
-Author: Charangan Vasantharajan
------
-Last Modified: Friday, Aug 26th 2022
-Modified By: Charangan Vasantharajan
------
-Copyright (c) 2022
-------------------------------------
+"""
 This script will prepare the sentences and entities from the input BIO format
-'''
+"""
 
 import os
 import pandas as pd
-from NERP.utils import SentenceGetter
-from sklearn.model_selection import train_test_split
 import csv
 import random
+import logging
 
-def unison_shuffled_copies(a, b):
-    assert len(a) == len(b)
-    c = list(zip(a, b))
-    random.shuffle(c)
-    a_, b_ = zip(*c)
-    return a_, b_
+from sklearn.model_selection import train_test_split
+from loguru import logger
+
+from .utils import unison_shuffled_copies, SentenceGetter
+
 
 def prepare_data(limit: int = 0, file_path: str = None, sep=',', quoting=True, shuffle=False, fixed_seed=42):
     """This function will prepare the sentences and entities from the input BIO format
@@ -43,17 +31,19 @@ def prepare_data(limit: int = 0, file_path: str = None, sep=',', quoting=True, s
     if quoting:
         data = pd.read_csv(file_path, sep=sep, na_filter=False)
     else:
-        data = pd.read_csv(file_path, sep=sep, quoting=csv.QUOTE_NONE, na_filter=False)
+        data = pd.read_csv(file_path, sep=sep,
+                           quoting=csv.QUOTE_NONE, na_filter=False)
 
     getter = SentenceGetter(data)
-    sentences = [[word[0] for word in sentence] for sentence in getter.sentences]
+    sentences = [[word[0] for word in sentence]
+                 for sentence in getter.sentences]
     entities = [[s[1] for s in sentence] for sentence in getter.sentences]
 
     if limit != 0:
         assert isinstance(limit, int), f"Limit shoud be a int!"
         sentences = sentences[:limit]
         entities = entities[:limit]
-        print("Dataset is limited to {}".format(limit))
+        logger.debug("Dataset is limited to {}".format(limit))
 
     assert len(sentences) == len(
         entities), f"Sentences and entities are having different length."
@@ -61,7 +51,7 @@ def prepare_data(limit: int = 0, file_path: str = None, sep=',', quoting=True, s
     if shuffle:
         random.seed(fixed_seed)
         sentences, entities = unison_shuffled_copies(sentences, entities)
-        
+
     return {'sentences': sentences, 'tags': entities}
 
 
@@ -78,30 +68,32 @@ def prepare_train_valid_data(train_data, valid_data, limit, test_size, train_dat
         dict: Two dictionaries (training and validation)
     """
     if (valid_data == None):
-        print("Valid data is None and created from train data!")
-        data = prepare_data(limit, train_data, sep=train_data_parameters["train_sep"], quoting=train_data_parameters["train_quoting"], shuffle=train_data_parameters["train_shuffle"], fixed_seed=fixed_seed)
+        logger.info("Valid data is None and created from train data!")
+        data = prepare_data(limit, train_data, sep=train_data_parameters["train_sep"], quoting=train_data_parameters[
+                            "train_quoting"], shuffle=train_data_parameters["train_shuffle"], fixed_seed=fixed_seed)
         train_sentences, val_sentences, train_entities, val_entities = train_test_split(
             data["sentences"], data["tags"], test_size=test_size, random_state=fixed_seed
         )
         training = {"sentences": train_sentences, "tags": train_entities}
         validation = {"sentences": val_sentences, "tags": val_entities}
 
-        print("Training: ({a}, {b})".format(
+        logger.info("Training: ({a}, {b})".format(
             a=str(len(training["sentences"])), b=str(len(training["tags"]))))
-        print("Validation: ({a}, {b}".format(
+        logger.info("Validation: ({a}, {b}".format(
             a=str(len(validation["sentences"])), b=str(len(validation["tags"]))))
 
     else:
-        print("Valid data exists!")
-        training = prepare_data(limit, train_data, sep=train_data_parameters["train_sep"], quoting=train_data_parameters["train_quoting"], shuffle=train_data_parameters["train_shuffle"], fixed_seed=fixed_seed)
+        logger.info("Valid data exists!")
+        training = prepare_data(limit, train_data, sep=train_data_parameters["train_sep"], quoting=train_data_parameters[
+                                "train_quoting"], shuffle=train_data_parameters["train_shuffle"], fixed_seed=fixed_seed)
         validation = prepare_data(limit, valid_data)
 
-        print("Training: ({a}, {b})".format(
+        logger.info("Training: ({a}, {b})".format(
             a=str(len(training["sentences"])), b=str(len(training["tags"]))))
-        print("Validation: ({a}, {b}".format(
+        logger.info("Validation: ({a}, {b}".format(
             a=str(len(validation["sentences"])), b=str(len(validation["tags"]))))
 
-    print("Train and Valid datasets are prepared!")
+    logger.info("Train and Valid datasets are prepared!")
 
     return training, validation
 
@@ -117,9 +109,9 @@ def prepare_test_data(test_data, limit):
         dict: a dictioanry of sentences and tags
     """
     test = prepare_data(limit, test_data)
-    print("Test: ({a}, {b})".format(
+    logger.info("Test: ({a}, {b})".format(
         a=str(len(test["sentences"])), b=str(len(test["tags"]))))
-    print("Test dataset is prepared!")
+    logger.info("Test dataset is prepared!")
 
     return test
 
@@ -140,7 +132,8 @@ def prepare_kfold_data(train_data, valid_data, test_data, limit, test_on_origina
     sentences = []
     tags = []
 
-    train_data = prepare_data(limit, train_data, sep=train_data_parameters["train_sep"], quoting=train_data_parameters["train_quoting"], shuffle=train_data_parameters["train_shuffle"], fixed_seed=fixed_seed)
+    train_data = prepare_data(limit, train_data, sep=train_data_parameters["train_sep"], quoting=train_data_parameters[
+                              "train_quoting"], shuffle=train_data_parameters["train_shuffle"], fixed_seed=fixed_seed)
     sentences += train_data["sentences"]
     tags += train_data["tags"]
 
@@ -149,15 +142,15 @@ def prepare_kfold_data(train_data, valid_data, test_data, limit, test_on_origina
         sentences += valid_data["sentences"]
         tags += valid_data["tags"]
 
-    test_data = prepare_data(limit, test_data)
-
     if(not test_on_original):
-        print("Test data is combined with training set!")
-        sentences += test_data["sentences"]
-        tags += test_data["tags"]
+        logger.info("Test data is combined with training set!")
+        for t in test_data:
+            test_data = prepare_test_data(t, limit)
+            sentences += test_data["sentences"]
+            tags += test_data["tags"]
 
     else:
-        print("Test data is ignored from training set!")
+        logger.info("Test data is ignored from training set!")
 
     return {"sentences": sentences, "tags": tags}
 
@@ -178,12 +171,11 @@ def prepare_kfold_train_valid_data(training, test_size, fixed_seed):
     training = {"sentences": train_sentences, "tags": train_entities}
     validation = {"sentences": val_sentences, "tags": val_entities}
 
-    print("Training: ({a}, {b})".format(
-            a=str(len(training["sentences"])), b=str(len(training["tags"]))))
-    print("Validation: ({a}, {b}".format(
-            a=str(len(validation["sentences"])), b=str(len(validation["tags"]))))
+    logger.info("Training: ({a}, {b})".format(
+        a=str(len(training["sentences"])), b=str(len(training["tags"]))))
+    logger.info("Validation: ({a}, {b}".format(
+        a=str(len(validation["sentences"])), b=str(len(validation["tags"]))))
 
-
-    print("Train and Valid datasets are prepared!")
+    logger.success("Train and Valid datasets are prepared!")
 
     return training, validation

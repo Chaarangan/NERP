@@ -1,24 +1,21 @@
 """
 This section covers functionality for computing predictions
-with a [NERDA.models.NERDA][] model.
+with a [NERP.models.Trainer][] model.
 """
 
-from .preprocessing import create_dataloader
 import torch
-import numpy as np
-from tqdm import tqdm 
-from nltk.tokenize import sent_tokenize, word_tokenize
-from typing import List, Callable
 import transformers
 import sklearn.preprocessing
 import nltk
-nltk.download('punkt')
 
-def sigmoid_transform(x):
-    prob = 1/(1 + np.exp(-x))
-    return prob
+from tqdm import tqdm
+from nltk.tokenize import sent_tokenize, word_tokenize
+from typing import List, Callable
 
-def predict(network: torch.nn.Module, 
+from .datasets import create_dataloader
+
+
+def predict(network: torch.nn.Module,
             sentences: List[List[str]],
             transformer_tokenizer: transformers.PreTrainedTokenizer,
             transformer_config: transformers.PretrainedConfig,
@@ -34,7 +31,7 @@ def predict(network: torch.nn.Module,
     """Compute predictions.
 
     Computes predictions for a list with word-tokenized sentences 
-    with a `NERDA` model.
+    with a `NERP` model.
 
     Args:
         network (torch.nn.Module): Network.
@@ -65,72 +62,77 @@ def predict(network: torch.nn.Module,
         List[List[str]]: List of lists with predicted Entity
         tags.
     """
-    # make sure, that input has the correct format. 
-    assert isinstance(sentences, list), "'sentences' must be a list of list of word-tokens"
-    assert isinstance(sentences[0], list), "'sentences' must be a list of list of word-tokens"
-    assert isinstance(sentences[0][0], str), "'sentences' must be a list of list of word-tokens"
-    
+    # make sure, that input has the correct format.
+    assert isinstance(
+        sentences, list), "'sentences' must be a list of list of word-tokens"
+    assert isinstance(
+        sentences[0], list), "'sentences' must be a list of list of word-tokens"
+    assert isinstance(
+        sentences[0][0], str), "'sentences' must be a list of list of word-tokens"
+
     # set network to appropriate mode.
     network.eval()
 
     # fill 'dummy' tags (expected input for dataloader).
     tag_fill = [tag_encoder.classes_[0]]
     tags_dummy = [tag_fill * len(sent) for sent in sentences]
-    
-    dl = create_dataloader(sentences = sentences,
-                           tags = tags_dummy, 
-                           transformer_tokenizer = transformer_tokenizer,
-                           transformer_config = transformer_config,
-                           max_len = max_len, 
-                           batch_size = batch_size, 
-                           tag_encoder = tag_encoder,
-                           tag_outside = tag_outside,
-                           num_workers = num_workers,
-                           pad_sequences = pad_sequences)
+
+    dl = create_dataloader(sentences=sentences,
+                           tags=tags_dummy,
+                           transformer_tokenizer=transformer_tokenizer,
+                           transformer_config=transformer_config,
+                           max_len=max_len,
+                           batch_size=batch_size,
+                           tag_encoder=tag_encoder,
+                           tag_outside=tag_outside,
+                           num_workers=num_workers,
+                           pad_sequences=pad_sequences)
 
     predictions = []
     probabilities = []
     tensors = []
-    
-    with torch.no_grad():
-        for _, dl in enumerate(dl): 
 
-            outputs = network(**dl)   
+    with torch.no_grad():
+        for _, dl in enumerate(dl):
+
+            outputs = network(**dl)
 
             # conduct operations on sentence level.
             for i in range(outputs.shape[0]):
-                
+
                 # extract prediction and transform.
 
                 # find max by row.
                 values, indices = outputs[i].max(dim=1)
-                
+
                 preds = tag_encoder.inverse_transform(indices.cpu().numpy())
                 probs = values.cpu().numpy()
 
                 if return_tensors:
-                    tensors.append(outputs)    
+                    tensors.append(outputs)
 
                 # subset predictions for original word tokens.
-                preds = [prediction for prediction, offset in zip(preds.tolist(), dl.get('offsets')[i]) if offset]
+                preds = [prediction for prediction, offset in zip(
+                    preds.tolist(), dl.get('offsets')[i]) if offset]
                 if return_confidence:
-                    probs = [prob for prob, offset in zip(probs.tolist(), dl.get('offsets')[i]) if offset]
-            
+                    probs = [prob for prob, offset in zip(
+                        probs.tolist(), dl.get('offsets')[i]) if offset]
+
                 # Remove special tokens ('CLS' + 'SEP').
                 preds = preds[1:-1]
                 if return_confidence:
                     probs = probs[1:-1]
-            
+
                 # make sure resulting predictions have same length as
                 # original sentence.
-            
-                # TODO: Move assert statement to unit tests. Does not work 
+
+                # TODO: Move assert statement to unit tests. Does not work
                 # in boundary.
-                # assert len(preds) == len(sentences[i])            
+                # assert len(preds) == len(sentences[i])
                 predictions.append(preds)
                 if return_confidence:
                     probabilities.append(probs)
-            
+
             if return_confidence:
                 return predictions, probabilities
 
@@ -139,7 +141,8 @@ def predict(network: torch.nn.Module,
 
     return predictions
 
-def predict_text(network: torch.nn.Module, 
+
+def predict_text(network: torch.nn.Module,
                  text: str,
                  transformer_tokenizer: transformers.PreTrainedTokenizer,
                  transformer_config: transformers.PretrainedConfig,
@@ -155,7 +158,7 @@ def predict_text(network: torch.nn.Module,
                  word_tokenize: Callable = word_tokenize) -> tuple:
     """Compute Predictions for Text.
 
-    Computes predictions for a text with `NERDA` model. 
+    Computes predictions for a text with `NERP` model. 
     Text is tokenized into sentences before computing predictions.
 
     Args:
@@ -190,18 +193,17 @@ def predict_text(network: torch.nn.Module,
 
     sentences = [word_tokenize(sentence) for sentence in sentences]
 
-    predictions = predict(network = network, 
-                          sentences = sentences,
-                          transformer_tokenizer = transformer_tokenizer,
-                          transformer_config = transformer_config,
-                          max_len = max_len,
-                          device = device,
-                          return_confidence = return_confidence,
-                          batch_size = batch_size,
-                          num_workers = num_workers,
-                          pad_sequences = pad_sequences,
-                          tag_encoder = tag_encoder,
-                          tag_outside = tag_outside)
+    predictions = predict(network=network,
+                          sentences=sentences,
+                          transformer_tokenizer=transformer_tokenizer,
+                          transformer_config=transformer_config,
+                          max_len=max_len,
+                          device=device,
+                          return_confidence=return_confidence,
+                          batch_size=batch_size,
+                          num_workers=num_workers,
+                          pad_sequences=pad_sequences,
+                          tag_encoder=tag_encoder,
+                          tag_outside=tag_outside)
 
     return sentences, predictions
-
