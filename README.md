@@ -250,17 +250,9 @@ Changes from the NERDA(1.0.0) to our NERDA submodule.
 
 
 ## Contributors
-
-<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
-<!-- prettier-ignore-start -->
-<!-- markdownlint-disable -->
-
-<!-- markdownlint-restore -->
-<!-- prettier-ignore-end -->
-
-<!-- ALL-CONTRIBUTORS-LIST:END -->
-
-[![All Contributors](https://img.shields.io/github/all-contributors/Chaarangan/NERP?color=ee8449&style=flat-square)](#contributors)
+<a href="https://github.com/Chaarangan/Python/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=Chaarangan/NERP"/>
+</a>
 
 ## Cite this work
 
