@@ -49,13 +49,13 @@ torch:
 data:
   train_data: 'data/train.csv'
   valid_data: 'data/valid.csv'
-  train_valid_split: None
+  train_valid_split: 0.2
   test_data: 'data/test.csv'
   parameters:
         sep: ','
         quoting: 3
         shuffle: False
-  limit: 10
+  limit: 0
   tag_scheme: ['B-PER', 'I-PER', 'B-ORG', 'I-ORG', 'B-LOC', 'I-LOC', 'B-MISC', 'I-MISC']
 
 model: 
@@ -101,6 +101,7 @@ inference:
 | ------------- | ------------- | ------------- | ------------- |
 | device | the desired device to use for computation. If not provided by the user, we take a guess. | ```cuda``` or ```cpu```| str | 
 | seed | Random state value for a particular experiment | 42 | int |
+---
 
 #### Data Parameters
 | Parameters | Description | Default | Type |
@@ -114,6 +115,7 @@ inference:
 | shuffle | Shuffle the entire dataset before training | False | bool |
 | limit | Limit the number of observations to be returned from a given split. Defaults to None, which implies that the entire data split is returned. | 0 (whole data) | int |
 | tags | All available NER tags for the given data set EXCLUDING the special outside tag, that is handled separately | | List[str] |
+---
 
 #### Model Parameters
 | Parameters | Description | Default | Type |
@@ -122,13 +124,14 @@ inference:
 | max_len | the maximum sentence length (number of tokens after applying the transformer tokenizer) | 128 | int |
 | dropout | dropout probability  | 0.1 | float |
 | epochs | number of epochs | 5 | int |
-| warmup_steps | number of learning rate warmup steps | 500 | int |
+| num_workers | number of workers/threads for data processing | 1 | int |
+| warmup_steps | number of workers/threads for data loader | 500 | int |
 | train_batch_size | batch Size for training DataLoader | 64 | int |
 | valid_batch_size | batch Size for validation DataLoader | 64 | int |
 | lr | learning rate (float) | 0.0001 | float |
 | do_lower_case | Lowercase the sequence during the tokenization | True | bool |
 | pretrained_models | list of 'huggingface' transformer models | roberta-base | str |
-
+---
 
 #### Training Parameters
 | Parameters | Description | Default | Type |
@@ -139,15 +142,15 @@ inference:
 | output_dir | path to output directory  | output/ | str |
 | o_tag_cr | To include O tag in the classification report  | True | bool |
 | return_accuracy | Return accuracy for every training step | False | bool |
-
+---
 
 #### Training Parameters
 | Parameters | Description | Default | Type |
 | ------------- | ------------- | ------------- | ------------- |
 | is_kfold | Train with KFold Cross-Validation | False | bool |
 | splits | number of splits | 0 | int |
-| seed | random state value for k-fold | 42 | int |
 | test_on_original | True, if you need to test on the original test set for each iteration | False | bool |
+---
 
 #### Inference Parameters
 | Parameters | Description | Default | Type |
@@ -245,6 +248,17 @@ Changes from the NERDA(1.0.0) to our NERDA submodule.
 4. Added multiple network architecture support
 5. Support for enforcing reproducibility in data preparation and model training
 
+
+## Contributors
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
 
 ## Cite this work
 
