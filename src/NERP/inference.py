@@ -12,7 +12,7 @@ from .trainer import Trainer
 from .utils import SentenceGetter
 
 
-def load_model(archi, device, tag_scheme, pretrained, max_len, model_path, tokenizer_path, hyperparameters, tokenizer_parameters):
+def load_model(torch_args, data_args, model_args, training_args, inference_args):
     """This function will load the trained model with tokenizer if exists
 
     Args:
@@ -30,25 +30,17 @@ def load_model(archi, device, tag_scheme, pretrained, max_len, model_path, token
         object: compiled model
     """
     # compile model
-    model = Trainer(
-        archi=archi,
-        device=device,
-        tag_scheme=tag_scheme,
-        tag_outside='O',
-        transformer=pretrained,
-        max_len=max_len,
-        hyperparameters=hyperparameters,
-        tokenizer_parameters=tokenizer_parameters
-    )
+    model = Trainer(torch_args, data_args, model_args, training_args, inference_args, inference_args.pretrained)
 
     # getting inference vars
-    assert os.path.isfile(model_path), f'File {model_path} does not exist.'
+    assert os.path.isfile(
+        inference_args.model_path), f'File {inference_args.model_path} does not exist.'
 
-    if(tokenizer_path != None):
+    if(inference_args.tokenizer_path != None):
         model.load_network_from_file(
-            model_path=model_path, tokenizer_path=tokenizer_path)
+            model_path=inference_args.model_path, tokenizer_path=inference_args.tokenizer_path)
     else:
-        model.load_network_from_file(model_path=model_path)
+        model.load_network_from_file(model_path=inference_args.model_path)
     logger.success("Model weights loaded!")
     return model
 
@@ -61,6 +53,12 @@ def predict_bulk(model, in_file_path, out_file_path):
         in_file_path (str): Input csv file path
         out_file_path (str): Output csv file path
     """
+    assert os.path.isfile(
+        in_file_path), f'File {in_file_path} does not exist.'
+
+    if not out_file_path.endswith(".csv"):
+        raise TypeError("Check output file path (out_file_path)!")
+    
     data = pd.read_csv(in_file_path)
     data = data.fillna(method="ffill")
     getter = SentenceGetter(data)
@@ -94,35 +92,14 @@ def predict_bulk(model, in_file_path, out_file_path):
     logger.success("Predictions stored!")
 
 
-def inference_pipeline(archi,
-                       device,
-                       model_path,
-                       tokenizer_path,
-                       out_file_path,
-                       in_file_path,
-                       pretrained: str = "roberta-base",
-                       is_bulk: bool = False,
-                       text: str = "Hello from NERP",
-                       tag_scheme: List[str] = [
-                           'B-PER',
-                           'I-PER',
-                           'B-ORG',
-                           'I-ORG',
-                           'B-LOC',
-                           'I-LOC',
-                           'B-MISC',
-                           'I-MISC'
-                       ],
-                       hyperparameters: dict = {"train_batch_size": 64},
-                       tokenizer_parameters: dict = {"do_lower_case": True},
-                       max_len: int = 128):
+def inference_pipeline(is_bulk, text, torch_args, data_args, model_args, training_args, inference_args):
 
-    model = load_model(archi, device, tag_scheme, pretrained, max_len,
-                       model_path, tokenizer_path, hyperparameters, tokenizer_parameters)
+    model = load_model(torch_args, data_args, model_args,
+                       training_args, inference_args)
 
     if(is_bulk):
         logger.info("Bulk Mode!")
-        predict_bulk(model, in_file_path, out_file_path)
+        predict_bulk(model, inference_args.in_file_path, inference_args.out_file_path)
 
         logger.success("Predictions are stored successfully!")
 

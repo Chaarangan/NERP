@@ -43,20 +43,13 @@ def train_model(network,
                 transformer_config,
                 dataset_training,
                 dataset_validation,
-                max_len,
                 device,
-                num_workers,
-                tag_scheme,
-                o_tag_cr,
-                fixed_seed,
-                train_batch_size,
-                validation_batch_size,
-                epochs,
-                learning_rate,
-                warmup_steps):
+                torch_args,
+                data_args,
+                model_args,
+                training_args):
 
-    if fixed_seed is not None:
-        enforce_reproducibility(fixed_seed)
+    enforce_reproducibility(torch_args.seed)
 
     # compute number of unique tags from encoder.
     n_tags = tag_encoder.classes_.shape[0]
@@ -66,29 +59,31 @@ def train_model(network,
                                  tags=dataset_training.get('tags'),
                                  transformer_tokenizer=transformer_tokenizer,
                                  transformer_config=transformer_config,
-                                 max_len=max_len,
-                                 batch_size=train_batch_size,
+                                 max_len=model_args.max_len,
+                                 batch_size=model_args.train_batch_size,
                                  tag_encoder=tag_encoder,
                                  tag_outside=tag_outside,
-                                 num_workers=num_workers)
+                                 num_workers=model_args.num_workers)
+    
     dl_validate = create_dataloader(sentences=dataset_validation.get('sentences'),
                                     tags=dataset_validation.get('tags'),
                                     transformer_tokenizer=transformer_tokenizer,
                                     transformer_config=transformer_config,
-                                    max_len=max_len,
-                                    batch_size=validation_batch_size,
+                                    max_len=model_args.max_len,
+                                    batch_size=model_args.valid_batch_size,
                                     tag_encoder=tag_encoder,
                                     tag_outside=tag_outside,
-                                    num_workers=num_workers)
+                                    num_workers=model_args.num_workers)
 
     optimizer_parameters = network.parameters()
 
     num_train_steps = int(len(dataset_training.get(
-        'sentences')) / train_batch_size * epochs)
+        'sentences')) / model_args.train_batch_size * model_args.epochs)
 
-    optimizer = torch.optim.AdamW(optimizer_parameters, lr=learning_rate)
+    optimizer = torch.optim.AdamW(
+        optimizer_parameters, lr=model_args.lr)
     scheduler = get_linear_schedule_with_warmup(
-        optimizer, num_warmup_steps=warmup_steps, num_training_steps=num_train_steps
+        optimizer, num_warmup_steps=model_args.warmup_steps, num_training_steps=num_train_steps
     )
 
     train_losses = []
@@ -96,21 +91,20 @@ def train_model(network,
     best_valid_f1 = 0.0
     best_parameters = network.state_dict()
 
-    for epoch in range(epochs):
+    for epoch in range(model_args.epochs):
 
-        logger.debug('\n Epoch {:} / {:}'.format(epoch + 1, epochs))
+        logger.debug('\n Epoch {:} / {:}'.format(epoch + 1, model_args.epochs))
 
         train_loss = train(network, dl_train, optimizer,
                            device, scheduler, n_tags)
         train_losses.append(train_loss)
         valid_loss, valid_tags_predicted = validate(
             network, dl_validate, device, n_tags, tag_encoder)
-#        logger.info(valid_tags_predicted)
-#        logger.info(dataset_validation.get('tags'))
-        if(o_tag_cr == True):
-            labels = ["O"] + tag_scheme
+
+        if(training_args.o_tag_cr == True):
+            labels = ["O"] + data_args.tags
         else:
-            labels = tag_scheme
+            labels = data_args.tags
 
         report, _ = compute_f1_scores(y_pred=valid_tags_predicted,
                                       y_true=dataset_validation.get('tags'),

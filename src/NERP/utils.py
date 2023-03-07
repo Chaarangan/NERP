@@ -124,3 +124,13 @@ def flatten(l: list):
 def sigmoid_transform(x):
     prob = 1/(1 + np.exp(-x))
     return prob
+
+def check_dir(root_dir, name):
+    new_dir = os.path.join(root_dir, name)
+    if(not os.path.exists(new_dir)):
+        logger.warning("Directory not found: {new_dir}".format(
+            new_dir=new_dir))
+        os.makedirs(new_dir)
+        logger.success("Directory created: {new_dir}".format(
+            new_dir=new_dir))
+    return new_dir

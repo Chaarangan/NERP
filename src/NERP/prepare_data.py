@@ -14,7 +14,7 @@ from loguru import logger
 from .utils import unison_shuffled_copies, SentenceGetter
 
 
-def prepare_data(limit: int = 0, file_path: str = None, sep=',', quoting=True, shuffle=False, fixed_seed=42):
+def prepare_data(limit: int = 0, file_path: str = None, sep=',', quoting=True, shuffle=False, seed=42):
     """This function will prepare the sentences and entities from the input BIO format
 
     Args:
@@ -49,13 +49,13 @@ def prepare_data(limit: int = 0, file_path: str = None, sep=',', quoting=True, s
         entities), f"Sentences and entities are having different length."
 
     if shuffle:
-        random.seed(fixed_seed)
+        random.seed(seed)
         sentences, entities = unison_shuffled_copies(sentences, entities)
 
     return {'sentences': sentences, 'tags': entities}
 
 
-def prepare_train_valid_data(train_data, valid_data, limit, test_size, train_data_parameters, fixed_seed):
+def prepare_train_valid_data(train_data, valid_data, torch_args, data_args):
     """This function will create training and validation dictionaries from train and valid csv files
 
     Args:
@@ -69,10 +69,9 @@ def prepare_train_valid_data(train_data, valid_data, limit, test_size, train_dat
     """
     if (valid_data == None):
         logger.info("Valid data is None and created from train data!")
-        data = prepare_data(limit, train_data, sep=train_data_parameters["sep"], quoting=train_data_parameters[
-                            "quoting"], shuffle=train_data_parameters["shuffle"], fixed_seed=fixed_seed)
+        data = prepare_data(data_args.limit, train_data, sep=data_args.sep, quoting=data_args.quoting, shuffle=data_args.shuffle, seed=torch_args.seed)
         train_sentences, val_sentences, train_entities, val_entities = train_test_split(
-            data["sentences"], data["tags"], test_size=test_size, random_state=fixed_seed
+            data["sentences"], data["tags"], test_size=data_args.train_test_split, random_state=torch_args.seed
         )
         training = {"sentences": train_sentences, "tags": train_entities}
         validation = {"sentences": val_sentences, "tags": val_entities}
@@ -84,9 +83,8 @@ def prepare_train_valid_data(train_data, valid_data, limit, test_size, train_dat
 
     else:
         logger.info("Valid data exists!")
-        training = prepare_data(limit, train_data, sep=train_data_parameters["sep"], quoting=train_data_parameters[
-                                "quoting"], shuffle=train_data_parameters["shuffle"], fixed_seed=fixed_seed)
-        validation = prepare_data(limit, valid_data)
+        training = prepare_data(data_args.limit, train_data, sep=data_args.sep, quoting=data_args.quoting, shuffle=data_args.shuffle, seed=torch_args.seed)
+        validation = prepare_data(data_args.limit, valid_data)
 
         logger.info("Training: ({a}, {b})".format(
             a=str(len(training["sentences"])), b=str(len(training["tags"]))))
@@ -116,7 +114,7 @@ def prepare_test_data(test_data, limit):
     return test
 
 
-def prepare_kfold_data(train_data, valid_data, test_data, limit, test_on_original, train_data_parameters, fixed_seed=42):
+def prepare_kfold_data(seed, train_data, valid_data, test_data, limit, sep, quoting, shuffle, test_on_original):
     """This function will prepare training dictionary for kfold
 
     Args:
@@ -127,13 +125,12 @@ def prepare_kfold_data(train_data, valid_data, test_data, limit, test_on_origina
         test_on_original (bool): True, if you need to test on the original test set for each iteration
 
     Returns:
-        dict: a dictioanry of sentences and tags
+        dict: a dictionary of sentences and tags
     """
     sentences = []
     tags = []
 
-    train_data = prepare_data(limit, train_data, sep=train_data_parameters["sep"], quoting=train_data_parameters[
-                              "quoting"], shuffle=train_data_parameters["shuffle"], fixed_seed=fixed_seed)
+    train_data = prepare_data(limit, train_data, sep=sep, quoting=quoting, shuffle=shuffle, seed=seed)
     sentences += train_data["sentences"]
     tags += train_data["tags"]
 
@@ -155,7 +152,7 @@ def prepare_kfold_data(train_data, valid_data, test_data, limit, test_on_origina
     return {"sentences": sentences, "tags": tags}
 
 
-def prepare_kfold_train_valid_data(training, test_size, fixed_seed):
+def prepare_kfold_train_valid_data(training, test_size, seed):
     """This function will create training and validation dictionaries from train and valid csv files for kfold
 
     Args:
@@ -166,7 +163,7 @@ def prepare_kfold_train_valid_data(training, test_size, fixed_seed):
         dict: Two dictionaries (training and validation)
     """
     train_sentences, val_sentences, train_entities, val_entities = train_test_split(
-        training["sentences"], training["tags"], test_size=test_size, random_state=fixed_seed
+        training["sentences"], training["tags"], test_size=test_size, random_state=seed
     )
     training = {"sentences": train_sentences, "tags": train_entities}
     validation = {"sentences": val_sentences, "tags": val_entities}

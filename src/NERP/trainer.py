@@ -32,48 +32,19 @@ class Trainer:
     """
 
     def __init__(self,
-                 archi: str = "baseline",
-                 device: str = None,
+                 torch_args,
+                 data_args,
+                 model_args,
+                 training_args,
+                 transformer,
                  dataset_training: dict = None,
                  dataset_validation: dict = None,
-                 tag_scheme: List[str] = [
-                     'B-PER',
-                     'I-PER',
-                     'B-ORG',
-                     'I-ORG',
-                     'B-LOC',
-                     'I-LOC',
-                     'B-MISC',
-                     'I-MISC'
-                 ],
-                 o_tag_cr: bool = True,
-                 hyperparameters: dict = {"epochs": 5,
-                                          "warmup_steps": 500,
-                                          "batch_size": {
-                                              "train": 64,
-                                              "valid": 8
-                                          },
-                                          "lr": 0.0001,
-                                          "seed": 42},
-                 tokenizer_parameters: dict = {'do_lower_case': True},
-                 max_len: int = 128,
-                 dropout: float = 0.1,
-                 transformer: str = 'bert-base-multilingual-uncased',
-                 num_workers: int = 1,
-                 tag_outside: str = 'O',
                  network: torch.nn.Module = NERPNetwork) -> None:
         """Initialize model
 
         Args:
             transformer (str, optional): which pretrained 'huggingface' 
                 transformer to use. 
-            device (str, optional): the desired device to use for computation. 
-                If not provided by the user, we take a guess.
-            tag_scheme (List[str], optional): All available NER 
-                tags for the given data set EXCLUDING the special outside tag, 
-                that is handled separately.
-            tag_outside (str, optional): the value of the special outside tag. 
-                Defaults to 'O'.
             dataset_training (dict, optional): the training data. Must consist 
                 of 'sentences': word-tokenized sentences and 'tags': corresponding 
                 NER tags.
@@ -83,45 +54,35 @@ class Trainer:
                 NER tags.
                 Defaults to None, in which case the English CoNLL-2003 data set 
                 is used.
-            max_len (int, optional): the maximum sentence length (number of 
-                tokens after applying the transformer tokenizer) for the transformer. 
-                Sentences are truncated accordingly. Look at your data to get an 
-                impression of, what could be a meaningful setting. Also be aware 
-                that many transformers have a maximum accepted length. Defaults 
-                to 128. 
             network (torch.nn.module, optional): network to be trained. Defaults
                 to a default generic `NERPNetwork`. Can be replaced with your own 
                 customized network architecture. It must however take the same 
                 arguments as `NERPNetwork`.
-            dropout (float, optional): dropout probability. Defaults to 0.1.
-            hyperparameters (dict, optional): Hyperparameters for the model. Defaults
-                to {'epochs' : 3, 'warmup_steps' : 500, 'train_batch_size': 16, 
-                'learning_rate': 0.0001}.
-            tokenizer_parameters (dict, optional): parameters for the transformer 
-                tokenizer. Defaults to {'do_lower_case' : True}.
-            validation_batch_size (int, optional): batch size for validation. Defaults
-                to 8.
-            num_workers (int, optional): number of workers for data loader.
+
         """
 
         # set device automatically if not provided by user.
-        if device is None:
+        if torch_args.device is None:
             self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
             logger.info("Device automatically set to: " + self.device.upper())
         else:
-            self.device = device
-            logger.info("Device set to: " + device.upper())
+            self.device = torch_args.device
+            logger.info("Device set to: " + torch_args.device.upper())
+            
         self.transformer = transformer
         self.dataset_training = dataset_training
         self.dataset_validation = dataset_validation
-        self.hyperparameters = hyperparameters
-        self.tokenizer_parameters = tokenizer_parameters
-        self.tag_outside = tag_outside
-        self.tag_scheme = tag_scheme
-        tag_complete = [tag_outside] + tag_scheme
-        self.o_tag_cr = o_tag_cr
+        
+        self.torch_args = torch_args
+        self.data_args = data_args
+        self.model_args = model_args
+        self.training_args = training_args
+
+        self.tokenizer_parameters = {"do_lower_case": model_args.do_lower_case}
+        self.tag_outside = "O"
+        tag_complete = [self.tag_outside] + data_args.tags
+        
         # fit encoder to _all_ possible tags.
-        self.max_len = max_len
         self.tag_encoder = sklearn.preprocessing.LabelEncoder()
         self.tag_encoder.fit(tag_complete)
         self.transformer_model = AutoModel.from_pretrained(transformer)
@@ -131,19 +92,18 @@ class Trainer:
 
         if(archi == "baseline"):
             self.network = NERPNetwork(
-                self.transformer_model, self.device, len(tag_complete), dropout=dropout, fixed_seed=hyperparameters['seed'])
+                self.transformer_model, self.device, len(tag_complete), dropout=model_args.dropout, fixed_seed=torch_args.seed)
         elif (archi == "bilstm-crf"):
             self.network = TransformerBiLSTMCRF(
-                self.transformer_model, self.device, len(tag_complete), dropout=dropout, fixed_seed=hyperparameters['seed'])
+                self.transformer_model, self.device, len(tag_complete), dropout=model_args.dropout, fixed_seed=torch_args.seed)
         elif (archi == "crf"):
             self.network = TransformerCRF(
-                self.transformer_model, self.device, len(tag_complete), dropout=dropout, fixed_seed=hyperparameters['seed'])
+                self.transformer_model, self.device, len(tag_complete), dropout=model_args.dropout, fixed_seed=torch_args.seed)
         elif (archi == "bilstm"):
             self.network = TransformerBiLSTM(
-                self.transformer_model, self.device, len(tag_complete), dropout=dropout, fixed_seed=hyperparameters.seed)
+                self.transformer_model, self.device, len(tag_complete), dropout=model_args.dropout, fixed_seed=torch_args.seed)
 
         self.network.to(self.device)
-        self.num_workers = num_workers
         self.train_losses = []
         self.valid_f1 = np.nan
         self.quantized = False
@@ -168,17 +128,11 @@ class Trainer:
                                                       transformer_config=self.transformer_config,
                                                       dataset_training=self.dataset_training,
                                                       dataset_validation=self.dataset_validation,
-                                                      max_len=self.max_len,
                                                       device=self.device,
-                                                      num_workers=self.num_workers,
-                                                      tag_scheme=self.tag_scheme,
-                                                      o_tag_cr=self.o_tag_cr,
-                                                      fixed_seed=self.hyperparameters["seed"],
-                                                      train_batch_size=self.hyperparameters["batch_size"]["train"],
-                                                      validation_batch_size=self.hyperparameters["batch_size"]["valid"],
-                                                      epochs=self.hyperparameters["epochs"],
-                                                      learning_rate=self.hyperparameters["lr"],
-                                                      warmup_steps=self.hyperparameters["warmup_steps"])
+                                                      torch_args=torch_args,
+                                                      data_args=data_args,
+                                                      model_args=model_args,
+                                                      training_args=training_args)
 
         # attach as attributes to class
         setattr(self, "network", network)
@@ -262,10 +216,11 @@ class Trainer:
                        sentences=sentences,
                        transformer_tokenizer=self.transformer_tokenizer,
                        transformer_config=self.transformer_config,
-                       max_len=self.max_len,
+                       max_len=self.model_args.max_len,
                        device=self.device,
                        tag_encoder=self.tag_encoder,
                        tag_outside=self.tag_outside,
+                       num_workers=self.model_args.num_workers,
                        return_confidence=return_confidence,
                        **kwargs)
 
@@ -290,16 +245,15 @@ class Trainer:
                             text=text,
                             transformer_tokenizer=self.transformer_tokenizer,
                             transformer_config=self.transformer_config,
-                            max_len=self.max_len,
+                            max_len=self.model_args.max_len,
                             device=self.device,
                             tag_encoder=self.tag_encoder,
                             tag_outside=self.tag_outside,
+                            num_workers=self.model_args.num_workers,
                             return_confidence=return_confidence,
                             **kwargs)
 
-    def evaluate_performance(self, dataset: dict,
-                             return_accuracy: bool = False,
-                             **kwargs) -> pd.DataFrame:
+    def evaluate_performance(self, dataset: dict, **kwargs) -> pd.DataFrame:
         """Evaluate Performance
 
         Evaluates the performance of the model on an arbitrary
@@ -310,9 +264,6 @@ class Trainer:
                 'sentences' and NER'tags'.
             kwargs: arbitrary keyword arguments for predict. For
                 instance 'batch_size' and 'num_workers'.
-            return_accuracy (bool): Return accuracy
-                as well? Defaults to False.
-
 
         Returns:
             str: F1-scores, Precision and Recall. 
@@ -322,17 +273,17 @@ class Trainer:
                                       **kwargs)
 
         # compute F1 scores by entity type
-        if(self.o_tag_cr == True):
-            labels = ["O"] + self.tag_scheme
+        if(self.training_args.o_tag_cr == True):
+            labels = ["O"] + self.data_args.tags
         else:
-            labels = self.tag_scheme
+            labels = self.data_args.tags
 
         f1, y_true = compute_f1_scores(y_pred=tags_predicted,
                                        y_true=dataset.get('tags'),
                                        labels=labels)
 
         # compute and return accuracy if desired
-        if return_accuracy:
+        if self.training_args.return_accuracy:
             accuracy = accuracy_score(y_pred=flatten(tags_predicted),
                                       y_true=y_true)
             return {'f1': f1, 'accuracy': accuracy}
