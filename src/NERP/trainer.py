@@ -80,21 +80,21 @@ class Trainer:
         self.tag_encoder.fit(tag_complete)
         self.transformer_model = AutoModel.from_pretrained(transformer)
         self.transformer_tokenizer = AutoTokenizer.from_pretrained(
-            transformer, **tokenizer_parameters)
+            transformer, **self.tokenizer_parameters)
         self.transformer_config = AutoConfig.from_pretrained(transformer)
 
         if(model_args.archi == "baseline"):
             self.network = NERPNetwork(
-                self.transformer_model, self.device, len(tag_complete), dropout=model_args.dropout, fixed_seed=torch_args.seed)
+                self.transformer_model, self.device, len(tag_complete), dropout=model_args.dropout, seed=torch_args.seed)
         elif (model_args.archi == "bilstm-crf"):
             self.network = TransformerBiLSTMCRF(
-                self.transformer_model, self.device, len(tag_complete), dropout=model_args.dropout, fixed_seed=torch_args.seed)
+                self.transformer_model, self.device, len(tag_complete), dropout=model_args.dropout, seed=torch_args.seed)
         elif (model_args.archi == "crf"):
             self.network = TransformerCRF(
-                self.transformer_model, self.device, len(tag_complete), dropout=model_args.dropout, fixed_seed=torch_args.seed)
+                self.transformer_model, self.device, len(tag_complete), dropout=model_args.dropout, seed=torch_args.seed)
         elif (model_args.archi == "bilstm"):
             self.network = TransformerBiLSTM(
-                self.transformer_model, self.device, len(tag_complete), dropout=model_args.dropout, fixed_seed=torch_args.seed)
+                self.transformer_model, self.device, len(tag_complete), dropout=model_args.dropout, seed=torch_args.seed)
 
         self.network.to(self.device)
         self.train_losses = []
@@ -122,10 +122,10 @@ class Trainer:
                                                       dataset_training=self.dataset_training,
                                                       dataset_validation=self.dataset_validation,
                                                       device=self.device,
-                                                      torch_args=torch_args,
-                                                      data_args=data_args,
-                                                      model_args=model_args,
-                                                      training_args=training_args)
+                                                      torch_args=self.torch_args,
+                                                      data_args=self.data_args,
+                                                      model_args=self.model_args,
+                                                      training_args=self.training_args)
 
         # attach as attributes to class
         setattr(self, "network", network)

@@ -37,7 +37,7 @@ def data_args(dict):
                      default=None, description="Path to validation file")
     parser.add_param('train_valid_split', float(), required=False,
                      default=0.2, description="Train/valid split ratio if valid data not exists")
-    parser.add_param('test_data', str, required=False,
+    parser.add_param('test_data', list, required=False,
                      default=None, description="Path to test file")
     parser.add_param('sep', str, required=False,
                      default=',', description="Delimiter to use")
@@ -87,7 +87,7 @@ def model_args(dict):
 def training_args(dict):
     parser = DictionaryParser()
 
-    parser.add_param('is_checkpoint_exists', bool, required=False, default=False,
+    parser.add_param('continue_from_checkpoint', bool, required=False, default=False,
                      description="Continue training from a checkpoint")
     parser.add_param('checkpoint_path', str, required=False, default=None,
                      description="Model derived from the transformer/ Trained transformer model")
