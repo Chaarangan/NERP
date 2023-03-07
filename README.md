@@ -254,17 +254,6 @@ Changes from the NERDA(1.0.0) to our NERDA submodule.
   <img src="https://contrib.rocks/image?repo=Chaarangan/NERP"/>
 </a>
 
-## Cite this work
-
-```
-@inproceedings{nerp,
-  title = {NERP},
-  author = {Charangan Vasantharajan, Kyaw Zin Tun, Lim Zhi Hao, Chng Eng Siong},
-  year = {2022},
-  publisher = {{GitHub}},
-  url = {https://github.com/Chaarangan/NERP.git}
-}
-```
 
 ## Contributing to NERP
 All contributions, bug reports, bug fixes, documentation improvements, enhancements, and ideas are welcome.
@@ -274,3 +263,25 @@ Feel free to ask questions and send feedbacks on the [mailing list](https://grou
 If you want to contribute NERP, open a [PR](https://github.com/Chaarangan/NERP/pulls).
 
 If you encounter a bug or want to suggest an enhancement, please open an [issue](https://github.com/Chaarangan/NERP/issues).
+
+## Cite this work
+
+```
+@inproceedings{medbert,
+    author={Vasantharajan, Charangan and Tun, Kyaw Zin and Thi-Nga, Ho and Jain, Sparsh and Rong, Tong and Siong, Chng Eng},
+    booktitle={2022 Asia-Pacific Signal and Information Processing Association Annual Summit and Conference (APSIPA ASC)},
+    title={MedBERT: A Pre-trained Language Model for Biomedical Named Entity Recognition},
+    year={2022},
+    volume={},
+    number={},
+    pages={1482-1488},
+    doi={10.23919/APSIPAASC55919.2022.9980157}
+}
+@inproceedings{nerp,
+  title = {NERP},
+  author = {Charangan Vasantharajan, Kyaw Zin Tun, Lim Zhi Hao, Chng Eng Siong},
+  year = {2022},
+  publisher = {{GitHub}},
+  url = {https://github.com/Chaarangan/NERP.git}
+}
+```
