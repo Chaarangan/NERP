@@ -4,3 +4,4 @@ build
 dist
 .eggs
 src/NERP.egg-info
+src/NERP/__pycache__
