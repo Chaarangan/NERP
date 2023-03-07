@@ -127,16 +127,10 @@ def inference_args(dict):
                      description="Path to trained model")
     parser.add_param('tokenizer_path', str, required=False, default=None,
                      description="Path to saved tokenizer directory")
-    parser.add_param('is_bulk', bool, required=False, default=False,
-                     description="Bulk mode for inference")
     parser.add_param('in_file_path', str, required=False, default=None,
                      description="Path to input file if you are predicting on bulk mode")
     parser.add_param('out_file_path', str, required=False, default=None,
                      description="Path to output file if you are predicting on bulk mode")
-    parser.add_param('is_text', bool, required=False, default=True,
-                     description="Text mode for inference")
-    parser.add_param('text', str, required=False, default="Hello from NERP",
-                     description="Prediction text if you predicting on individual mode")
 
     args = parser.parse_dict(dict)
     return args
