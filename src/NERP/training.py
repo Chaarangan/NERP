@@ -109,8 +109,8 @@ def do_kfold_training(pretrained, model_dir, torch_args, data_args, model_args, 
     dataset_dir = check_dir(model_dir, "datasets")
 
     # prepare cross validation
-    kf = KFold(n_splits=kfold,
-               random_state=torch_args.seed, shuffle=data_args.shuffle)
+    kf = KFold(n_splits=kfold_args.splits,
+               random_state=torch_args.seed, shuffle=True)
 
     results = []
     for train_index, test_index in kf.split(data["sentences"]):
@@ -130,7 +130,7 @@ def do_kfold_training(pretrained, model_dir, torch_args, data_args, model_args, 
 
         else:
             training, validation = prepare_kfold_train_valid_data(
-                training, data_args.train_test_split, torch_args.seed)
+                training, data_args.train_valid_split, torch_args.seed)
 
             logger.info("Test: ({a}, {b})".format(
                         a=str(len(testing["sentences"])), b=str(len(testing["tags"]))))
