@@ -26,7 +26,8 @@ setuptools.setup(
         'sentencepiece',
         'scikit-learn',
         'TorchCRF',
-        'loguru'
+        'loguru',
+        'dictparse'
     ],
     tests_require=['pytest',
                    'pytest-cov'],

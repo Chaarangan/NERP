@@ -41,8 +41,8 @@ def data_args(dict):
                      default=None, description="Path to test file")
     parser.add_param('sep', str, required=False,
                      default=',', description="Delimiter to use")
-    parser.add_param('quoting', str, required=False,
-                     default=csv.QUOTE_NONE, description="Control field quoting behavior per csv.QUOTE_* constants.")
+    parser.add_param('quoting', int, choices=[0,1,2,3], required=False,
+                     default=3, description="Control field quoting behavior per csv.QUOTE_* constants. Refer: https://pandas.pydata.org/docs/reference/api/pandas.read_csv.html")
     parser.add_param('shuffle', bool, required=False,
                      default=False, description="Shuffle the entire dataset before training")
     parser.add_param('limit', int, required=False,

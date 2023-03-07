@@ -14,7 +14,7 @@ from loguru import logger
 from .utils import unison_shuffled_copies, SentenceGetter
 
 
-def prepare_data(limit: int = 0, file_path: str = None, sep=',', quoting=True, shuffle=False, seed=42):
+def prepare_data(limit: int = 0, file_path: str = None, sep=',', quoting=3, shuffle=False, seed=42):
     """This function will prepare the sentences and entities from the input BIO format
 
     Args:
@@ -36,7 +36,7 @@ def prepare_data(limit: int = 0, file_path: str = None, sep=',', quoting=True, s
         data = pd.read_csv(file_path, sep=sep, na_filter=False)
     else:
         data = pd.read_csv(file_path, sep=sep,
-                           quoting=csv.QUOTE_NONE, na_filter=False)
+                           quoting=quoting, na_filter=False)
 
     getter = SentenceGetter(data)
     sentences = [[word[0] for word in sentence]
