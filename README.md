@@ -250,7 +250,7 @@ Changes from the NERDA(1.0.0) to our NERDA submodule.
 
 
 ## Contributors
-<a href="https://github.com/Chaarangan/Python/graphs/contributors">
+<a href="https://github.com/Chaarangan/NERP/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=Chaarangan/NERP"/>
 </a>
 
