@@ -260,6 +260,8 @@ Changes from the NERDA(1.0.0) to our NERDA submodule.
 
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
+[![All Contributors](https://img.shields.io/github/all-contributors/Chaarangan/NERP?color=ee8449&style=flat-square)](#contributors)
+
 ## Cite this work
 
 ```
