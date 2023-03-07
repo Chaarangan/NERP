@@ -20,6 +20,10 @@ def prepare_data(limit: int = 0, file_path: str = None, sep=',', quoting=True, s
     Args:
         limit (int, optional): Limit the number of observations to be returned from a given split. Defaults to 0, which implies that the entire data split is returned.
         file_path (str, optional): file where data is cached. Defaults to None.
+        sep (str, optional): Delimiter to use
+        quoting (str, optional): Control field quoting behavior per csv.QUOTE_* constants.
+        shuffle (bool, optional): Shuffle the entire dataset before training
+        seed (int, optional): Random state value for a particular experiment
 
     Returns:
         dict: sentences and corresponding entities
@@ -61,8 +65,6 @@ def prepare_train_valid_data(train_data, valid_data, torch_args, data_args):
     Args:
         train_data (str): Train csv file  path
         valid_data (str): Valid csv file
-        limit (int): Limit the number of observations to be returned from a given split. Defaults to 0, which implies that the entire data split is returned.
-        test_size (float): train/valid split ratio if valid data not exists
 
     Returns:
         dict: Two dictionaries (training and validation)
@@ -118,10 +120,14 @@ def prepare_kfold_data(seed, train_data, valid_data, test_data, limit, sep, quot
     """This function will prepare training dictionary for kfold
 
     Args:
+        seed (int, optional): Random state value for a particular experiment
         train_data (str): Train csv file  path
         valid_data (str): Valid csv file  path
         test_data (str): Test csv file  path
         limit (int): Limit the number of observations to be returned from a given split. Defaults to 0, which implies that the entire data split is returned.
+        sep (str, optional): Delimiter to use
+        quoting (str, optional): Control field quoting behavior per csv.QUOTE_* constants.
+        shuffle (bool, optional): Shuffle the entire dataset before training
         test_on_original (bool): True, if you need to test on the original test set for each iteration
 
     Returns:
@@ -158,6 +164,7 @@ def prepare_kfold_train_valid_data(training, test_size, seed):
     Args:
         training (dict): A dictioanry of sentences and tags from training set
         test_size (float): train/valid split ratio if valid data not exists
+        seed (int, optional): Random state value for a particular experiment
 
     Returns:
         dict: Two dictionaries (training and validation)

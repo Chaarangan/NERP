@@ -21,14 +21,7 @@ from .trainer_helpher import train_model
 
 
 class Trainer:
-    """models
-
-    A model object containing a complete model configuration.
-    The model can be trained with the `train` method. Afterwards
-    new observations can be predicted with the `predict` and
-    `predict_text` methods. The performance of the model can be
-    evaluated on a set of new observations with the 
-    `evaluate_performance` method.
+    """Trainer class for train, predict and evaluate performance
     """
 
     def __init__(self,
@@ -90,16 +83,16 @@ class Trainer:
             transformer, **tokenizer_parameters)
         self.transformer_config = AutoConfig.from_pretrained(transformer)
 
-        if(archi == "baseline"):
+        if(model_args.archi == "baseline"):
             self.network = NERPNetwork(
                 self.transformer_model, self.device, len(tag_complete), dropout=model_args.dropout, fixed_seed=torch_args.seed)
-        elif (archi == "bilstm-crf"):
+        elif (model_args.archi == "bilstm-crf"):
             self.network = TransformerBiLSTMCRF(
                 self.transformer_model, self.device, len(tag_complete), dropout=model_args.dropout, fixed_seed=torch_args.seed)
-        elif (archi == "crf"):
+        elif (model_args.archi == "crf"):
             self.network = TransformerCRF(
                 self.transformer_model, self.device, len(tag_complete), dropout=model_args.dropout, fixed_seed=torch_args.seed)
-        elif (archi == "bilstm"):
+        elif (model_args.archi == "bilstm"):
             self.network = TransformerBiLSTM(
                 self.transformer_model, self.device, len(tag_complete), dropout=model_args.dropout, fixed_seed=torch_args.seed)
 

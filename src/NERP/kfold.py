@@ -2,6 +2,16 @@ from .utils import check_dir
 from .training import do_train
 
 def do_kfold_training(pretrained, model_dir, torch_args, data_args, model_args, training_args, kfold_args):
+    """This function will do the kfold training
+
+    Args:
+        pretrained (str): which pretrained 'huggingface' transformer to use
+        model_dir (str): Output directory to save trained model and clasification report
+    
+    Returns:
+        str: Output directory
+        List[float]: accuracy scores of all folds
+    """
     logger.info("Training {model} with K-Fold!".format(model=pretrained))
 
     # check for directory

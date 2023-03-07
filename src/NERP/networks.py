@@ -18,7 +18,7 @@ class NERPNetwork(nn.Module):
     the restriction, that it must take the same arguments.
     """
 
-    def __init__(self, transformer: nn.Module, device: str, n_tags: int, dropout: float = 0.1, fixed_seed=42) -> None:
+    def __init__(self, transformer: nn.Module, device: str, n_tags: int, dropout: float = 0.1, seed=42) -> None:
         """Initialize a NERP Network
 
         Args:
@@ -28,8 +28,7 @@ class NERPNetwork(nn.Module):
             dropout (float, optional): Dropout probability. Defaults to 0.1.
         """
         super(NERDANetwork, self).__init__()
-
-        enforce_reproducibility()
+        enforce_reproducibility(seed)
 
         # extract transformer name
         transformer_name = transformer.name_or_path
@@ -88,7 +87,7 @@ class TransformerCRF(nn.Module):
     """Transformer + CRF
     """
 
-    def __init__(self, transformer: nn.Module, device: str, n_tags: int, dropout: float = 0.1, fixed_seed=42) -> None:
+    def __init__(self, transformer: nn.Module, device: str, n_tags: int, dropout: float = 0.1, seed=42) -> None:
         """Initialize a NERP Network
 
         Args:
@@ -98,8 +97,7 @@ class TransformerCRF(nn.Module):
             dropout (float, optional): Dropout probability. Defaults to 0.1.
         """
         super(TransformerCRF, self).__init__()
-
-        enforce_reproducibility()
+        enforce_reproducibility(seed)
 
         # extract transformer name
         transformer_name = transformer.name_or_path
@@ -169,7 +167,7 @@ class TransformerBiLSTMCRF(nn.Module):
     """Transformer + BiLSTM + CRF
     """
 
-    def __init__(self, transformer: nn.Module, device: str, n_tags: int, dropout: float = 0.1, fixed_seed=42) -> None:
+    def __init__(self, transformer: nn.Module, device: str, n_tags: int, dropout: float = 0.1, seed=42) -> None:
         """Initialize a NERP Network
 
         Args:
@@ -179,8 +177,7 @@ class TransformerBiLSTMCRF(nn.Module):
             dropout (float, optional): Dropout probability. Defaults to 0.1.
         """
         super(TransformerBiLSTMCRF, self).__init__()
-
-        enforce_reproducibility()
+        enforce_reproducibility(seed)
 
         # extract transformer name
         transformer_name = transformer.name_or_path
@@ -260,7 +257,7 @@ class TransformerBiLSTM(nn.Module):
     """Transformer + BiLSTM
     """
 
-    def __init__(self, transformer: nn.Module, device: str, n_tags: int, dropout: float = 0.1, fixed_seed=42) -> None:
+    def __init__(self, transformer: nn.Module, device: str, n_tags: int, dropout: float = 0.1, seed=42) -> None:
         """Initialize a NERP Network
 
         Args:
@@ -270,7 +267,7 @@ class TransformerBiLSTM(nn.Module):
             dropout (float, optional): Dropout probability. Defaults to 0.1.
         """
         super(TransformerBiLSTM, self).__init__()
-        enforce_reproducibility()
+        enforce_reproducibility(seed)
 
         # extract transformer name
         transformer_name = transformer.name_or_path

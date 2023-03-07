@@ -24,21 +24,10 @@ def do_train(pretrained, training, validation, testing, output_dir, results, tor
     """This function will initiate/load model, do the training and write the classification report
 
     Args:
-        archi (str): the desired architecture for the model
-        device (str): the desired device to use for computation
+        pretrained (str): which pretrained 'huggingface' transformer to use
         training (str): Training dictionary
         validation (str): Validation dictionary
         testing (str): Testing dictionary
-        tag_scheme (List[str]): All available NER tags for the given data set EXCLUDING the special outside tag, that is handled separately
-        o_tag_cr (bool): To include O tag in the classification report
-        hyperparameters (dict): Hyperparameters for the model
-        tokenizer_parameters (dict): Parameters for the tokenizer
-        max_len (int):  The maximum sentence length
-        dropout (float): dropout probability
-        pretrained (str): which pretrained 'huggingface' transformer to use
-        isModelExists (bool): True if trained model exist and want to retrain on its weights, otherwise False.
-        model_path (str): Trained model path if isModelExist is True, otherwise leave it as empty.
-        tokenizer_path (str): Existing tokenizer path if isModelExist is True, otherwise leave it as empty.
         output_dir (str): Output directory to save trained model and clasification report
         results (List[float]): A list of accuracy scores
     """

@@ -15,17 +15,6 @@ from .utils import SentenceGetter
 def load_model(torch_args, data_args, model_args, training_args, inference_args):
     """This function will load the trained model with tokenizer if exists
 
-    Args:
-        archi (str): the desired architecture for the model
-        device (str): the desired device to use for computation
-        tag_scheme (List[str]): All available NER tags for the given data set EXCLUDING the special outside tag, that is handled separately
-        pretrained (str): which pretrained 'huggingface' transformer to use
-        max_len (int): The maximum sentence length
-        model_path (str): Trained model path
-        tokenizer_path (str): Existing tokenizer path if exist: otherwise it loads from huggingface.
-        hyperparameters (dict): Hyperparameters for the model
-        tokenizer_parameters (dict): Parameters for the tokenizer
-
     Returns:
         object: compiled model
     """
