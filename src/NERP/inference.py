@@ -19,7 +19,7 @@ def load_model(torch_args, data_args, model_args, training_args, inference_args)
         object: compiled model
     """
     # compile model
-    model = Trainer(torch_args, data_args, model_args, training_args, inference_args, inference_args.pretrained)
+    model = Trainer(torch_args, data_args, model_args, training_args, inference_args.pretrained)
 
     # getting inference vars
     assert os.path.isfile(
@@ -87,7 +87,7 @@ def inference_pipeline(is_bulk, text, torch_args, data_args, model_args, trainin
                        training_args, inference_args)
 
     if(is_bulk):
-        logger.info("Bulk Mode!")
+        logger.warning("Bulk Mode!")
         predict_bulk(model, inference_args.in_file_path, inference_args.out_file_path)
 
         logger.success("Predictions are stored successfully!")
