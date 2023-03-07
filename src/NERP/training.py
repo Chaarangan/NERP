@@ -18,7 +18,7 @@ from .trainer import Trainer
 from .utils import write_accuracy_file
 
 
-def do_train(archi, device, training, validation, testing, tag_scheme, o_tag_cr, hyperparameters, tokenizer_parameters, validation_batch_size, max_len, dropout, pretrained, isModelExists, model_path, tokenizer_path, model_dir, results, return_accuracy, num_workers):
+def do_train(archi, device, training, validation, testing, tag_scheme, o_tag_cr, hyperparameters, tokenizer_parameters, max_len, dropout, pretrained, isModelExists, model_path, tokenizer_path, model_dir, results, return_accuracy, num_workers):
     """This function will initiate/load model, do the training and write the classification report
 
     Args:
@@ -42,7 +42,7 @@ def do_train(archi, device, training, validation, testing, tag_scheme, o_tag_cr,
         return_accuracy (bool): To return accuracy during training
     """
     model = Trainer(archi, device, training, validation, tag_scheme, o_tag_cr,
-                    hyperparameters, tokenizer_parameters, max_len, dropout, pretrained, validation_batch_size, num_workers)
+                    hyperparameters, tokenizer_parameters, max_len, dropout, pretrained, num_workers)
     if(isModelExists):
         logger.info("Model weights loading...")
         if(tokenizer_path != None):
@@ -111,13 +111,15 @@ def training_pipeline(archi,
                       pretrained_models: List[str] = ["roberta-base"],
                       hyperparameters: dict = {"epochs": 5,
                                                "warmup_steps": 500,
-                                               "train_batch_size": 64,
-                                               "learning_rate": 0.0001,
-                                               "fixed_seed": 42},
+                                               "batch_size": {
+                                                   "train": 64,
+                                                   "valid": 8
+                                               },
+                                               "lr": 0.0001,
+                                               "seed": 42},
                       tokenizer_parameters: dict = {"do_lower_case": True},
                       train_data_parameters: dict = {
-                          "train_sep": ',', "train_quoting": True, "train_shuffle": True},
-                      validation_batch_size: int = 8,
+                          "sep": ',', "quoting": True, "shuffle": True},
                       max_len: int = 128,
                       dropout: float = 0.1,
                       kfold: int = 0,
@@ -151,7 +153,7 @@ def training_pipeline(archi,
 
             # create df
             data = prepare_kfold_data(
-                train_data, valid_data, test_data, limit, test_on_original, train_data_parameters, hyperparameters["fixed_seed"])
+                train_data, valid_data, test_data, limit, test_on_original, train_data_parameters, hyperparameters["seed"])
 
             # Creating dataset directory if not exists
             dataset_dir = os.path.join(model_dir, "datasets")
@@ -164,7 +166,7 @@ def training_pipeline(archi,
 
             # prepare cross validation
             kf = KFold(n_splits=kfold,
-                       random_state=hyperparameters["fixed_seed"], shuffle=True)
+                       random_state=hyperparameters["seed"], shuffle=True)
 
             results = []
             for train_index, test_index in kf.split(data["sentences"]):
@@ -183,7 +185,7 @@ def training_pipeline(archi,
 
                 else:
                     training, validation = prepare_kfold_train_valid_data(
-                        training, test_size, hyperparameters["fixed_seed"])
+                        training, test_size, hyperparameters["seed"])
 
                     logger.info("Test: ({a}, {b})".format(
                         a=str(len(testing["sentences"])), b=str(len(testing["tags"]))))
@@ -206,7 +208,7 @@ def training_pipeline(archi,
                 df_valid.to_csv(os.path.join(
                     dataset_dir, "valid-{n}.csv".format(n=k_fold_step)), index=False)
 
-                do_train(archi, device, training, validation, testing, tag_scheme, o_tag_cr, hyperparameters, tokenizer_parameters, validation_batch_size, max_len,
+                do_train(archi, device, training, validation, testing, tag_scheme, o_tag_cr, hyperparameters, tokenizer_parameters, max_len,
                          dropout, pretrained, is_model_exists, existing_model_path, existing_tokenizer_path, os.path.join(model_dir, k_fold_step), results, True, num_workers)
 
             # write accuracy file
@@ -214,12 +216,12 @@ def training_pipeline(archi,
 
         else:
             training, validation = prepare_train_valid_data(
-                train_data, valid_data, limit, test_size, train_data_parameters=train_data_parameters, fixed_seed=hyperparameters["fixed_seed"])
+                train_data, valid_data, limit, test_size, train_data_parameters=train_data_parameters, fixed_seed=hyperparameters["seed"])
             testing = [prepare_test_data(t, limit) for t in test_data]
 
             logger.info(
                 "Training {model} without K-Fold!".format(model=pretrained))
-            do_train(archi, device, training, validation, testing, tag_scheme, o_tag_cr, hyperparameters, tokenizer_parameters, validation_batch_size, max_len,
+            do_train(archi, device, training, validation, testing, tag_scheme, o_tag_cr, hyperparameters, tokenizer_parameters, max_len,
                      dropout, pretrained, is_model_exists, existing_model_path, existing_tokenizer_path,  model_dir, [0], False, num_workers)
 
     return "Training finished successfully!"

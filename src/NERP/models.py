@@ -28,22 +28,21 @@ class NERP:
         self.device = dictionary["torch"]["device"]
         if self.device == None:
             self.device = "cpu"
-        self.tag_scheme = dictionary["data"]["tag_scheme"]
-        self.o_tag_cr = dictionary["model"]["o_tag_cr"]
+        self.tag_scheme = dictionary["data"]["tags"]
+        self.o_tag_cr = dictionary["train"]["o_tag_cr"]
         self.hyperparameters = dictionary["model"]["hyperparameters"]
         if(self.hyperparameters["epochs"] == None):
             self.hyperparameters["epochs"] = 5
         if(self.hyperparameters["warmup_steps"] == None):
             self.hyperparameters["warmup_steps"] = 500
-        if(self.hyperparameters["train_batch_size"] == None):
-            self.hyperparameters["train_batch_size"] = 64
-        if(self.hyperparameters["learning_rate"] == None):
-            self.hyperparameters["learning_rate"] = 0.0001
-        if(self.hyperparameters["fixed_seed"] == None):
-            self.hyperparameters["fixed_seed"] = 42
-        self.validation_batch_size = dictionary["model"]["validation_batch_size"]
-        if(self.validation_batch_size == None):
-            self.validation_batch_size = 8
+        if(self.hyperparameters["batch_size"]["train"] == None):
+            self.hyperparameters["batch_size"]["train"] = 64
+        if(self.hyperparameters["batch_size"]["valid"] == None):
+            self.hyperparameters["batch_size"]["valid"] = 64
+        if(self.hyperparameters["lr"] == None):
+            self.hyperparameters["lr"] = 0.0001
+        if(self.hyperparameters["seed"] == None):
+            self.hyperparameters["seed"] = 42
         self.tokenizer_parameters = dictionary["model"]["tokenizer_parameters"]
         if(self.tokenizer_parameters["do_lower_case"] == None):
             self.tokenizer_parameters["do_lower_case"] = True
@@ -57,24 +56,27 @@ class NERP:
         self.dropout = dictionary["model"]["dropout"]
         if self.dropout == None:
             self.dropout = 0
+        self.num_workers = dictionary["model"]["num_workers"]
+        if self.num_workers == None:
+            self.num_workers = 0
         self.pretrained_models = dictionary["model"]["pretrained_models"]
         if self.pretrained_models == [None]:
             self.pretrained_models = ["roberta-base"]
-        self.train_data = dictionary["data"]["train_data"]
-        self.train_data_parameters = dictionary["data"]["train_data_parameters"]
-        if(self.train_data_parameters["train_sep"] == None):
-            self.train_data_parameters["train_sep"] = ','
-        if(self.train_data_parameters["train_quoting"] == None):
-            self.train_data_parameters["train_quoting"] = True
-        if(self.train_data_parameters["train_shuffle"] == None):
-            self.train_data_parameters["train_shuffle"] = True
-        self.valid_data = dictionary["data"]["valid_data"]
+        self.train_data = dictionary["data"]["train"]
+        self.train_data_parameters = dictionary["data"]["parameters"]
+        if(self.train_data_parameters["sep"] == None):
+            self.train_data_parameters["sep"] = ','
+        if(self.train_data_parameters["quoting"] == None):
+            self.train_data_parameters["quoting"] = True
+        if(self.train_data_parameters["shuffle"] == None):
+            self.train_data_parameters["shuffle"] = True
+        self.valid_data = dictionary["data"]["valid"]
         if self.valid_data == "":
             self.valid_data = None
         self.train_valid_split = dictionary["data"]["train_valid_split"]
         if self.train_valid_split == None:
             self.train_valid_split = 0.2
-        self.test_data = dictionary["data"]["test_data"]
+        self.test_data = dictionary["data"]["test"]
         self.limit = dictionary["data"]["limit"]
         if self.limit == None:
             self.limit = 0
@@ -128,13 +130,12 @@ class NERP:
                                     pretrained_models=self.pretrained_models,
                                     hyperparameters=self.hyperparameters,
                                     tokenizer_parameters=self.tokenizer_parameters,
-                                    validation_batch_size=self.validation_batch_size,
                                     train_data_parameters=self.train_data_parameters,
                                     max_len=self.max_len,
                                     dropout=self.dropout,
                                     kfold=0,
                                     test_on_original=False,
-                                    num_workers=1)
+                                    num_workers=self.num_workers)
 
         return message
 
@@ -158,13 +159,12 @@ class NERP:
                                     pretrained_models=self.pretrained_models,
                                     hyperparameters=self.hyperparameters,
                                     tokenizer_parameters=self.tokenizer_parameters,
-                                    validation_batch_size=self.validation_batch_size,
                                     train_data_parameters=self.train_data_parameters,
                                     max_len=self.max_len,
                                     dropout=self.dropout,
                                     kfold=0,
                                     test_on_original=False,
-                                    num_workers=1)
+                                    num_workers=self.num_workers)
 
         return message
 
@@ -188,12 +188,11 @@ class NERP:
                                     hyperparameters=self.hyperparameters,
                                     train_data_parameters=self.train_data_parameters,
                                     tokenizer_parameters=self.tokenizer_parameters,
-                                    validation_batch_size=self.validation_batch_size,
                                     max_len=self.max_len,
                                     dropout=self.dropout,
                                     kfold=self.kfold,
                                     test_on_original=self.test_on_original,
-                                    num_workers=1)
+                                    num_workers=self.num_workers)
 
         return message
 
@@ -219,12 +218,11 @@ class NERP:
                                     hyperparameters=self.hyperparameters,
                                     train_data_parameters=self.train_data_parameters,
                                     tokenizer_parameters=self.tokenizer_parameters,
-                                    validation_batch_size=self.validation_batch_size,
                                     max_len=self.max_len,
                                     dropout=self.dropout,
                                     kfold=self.kfold,
                                     test_on_original=self.test_on_original,
-                                    num_workers=1)
+                                    num_workers=self.num_workers)
 
         return message
 

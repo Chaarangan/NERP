@@ -47,16 +47,18 @@ class Trainer:
                      'I-MISC'
                  ],
                  o_tag_cr: bool = True,
-                 hyperparameters: dict = {'epochs': 4,
-                                          'warmup_steps': 500,
-                                          'train_batch_size': 13,
-                                          'learning_rate': 0.0001,
-                                          'fixed_seed': 42},
+                 hyperparameters: dict = {"epochs": 5,
+                                          "warmup_steps": 500,
+                                          "batch_size": {
+                                              "train": 64,
+                                              "valid": 8
+                                          },
+                                          "lr": 0.0001,
+                                          "seed": 42},
                  tokenizer_parameters: dict = {'do_lower_case': True},
                  max_len: int = 128,
                  dropout: float = 0.1,
                  transformer: str = 'bert-base-multilingual-uncased',
-                 validation_batch_size: int = 8,
                  num_workers: int = 1,
                  tag_outside: str = 'O',
                  network: torch.nn.Module = NERPNetwork) -> None:
@@ -129,19 +131,18 @@ class Trainer:
 
         if(archi == "baseline"):
             self.network = NERPNetwork(
-                self.transformer_model, self.device, len(tag_complete), dropout=dropout, fixed_seed=hyperparameters['fixed_seed'])
+                self.transformer_model, self.device, len(tag_complete), dropout=dropout, fixed_seed=hyperparameters['seed'])
         elif (archi == "bilstm-crf"):
             self.network = TransformerBiLSTMCRF(
-                self.transformer_model, self.device, len(tag_complete), dropout=dropout, fixed_seed=hyperparameters['fixed_seed'])
+                self.transformer_model, self.device, len(tag_complete), dropout=dropout, fixed_seed=hyperparameters['seed'])
         elif (archi == "crf"):
             self.network = TransformerCRF(
-                self.transformer_model, self.device, len(tag_complete), dropout=dropout, fixed_seed=hyperparameters['fixed_seed'])
+                self.transformer_model, self.device, len(tag_complete), dropout=dropout, fixed_seed=hyperparameters['seed'])
         elif (archi == "bilstm"):
             self.network = TransformerBiLSTM(
-                self.transformer_model, self.device, len(tag_complete), dropout=dropout, fixed_seed=hyperparameters.fixed_seed)
+                self.transformer_model, self.device, len(tag_complete), dropout=dropout, fixed_seed=hyperparameters.seed)
 
         self.network.to(self.device)
-        self.validation_batch_size = validation_batch_size
         self.num_workers = num_workers
         self.train_losses = []
         self.valid_f1 = np.nan
@@ -167,13 +168,17 @@ class Trainer:
                                                       transformer_config=self.transformer_config,
                                                       dataset_training=self.dataset_training,
                                                       dataset_validation=self.dataset_validation,
-                                                      validation_batch_size=self.validation_batch_size,
                                                       max_len=self.max_len,
                                                       device=self.device,
                                                       num_workers=self.num_workers,
                                                       tag_scheme=self.tag_scheme,
                                                       o_tag_cr=self.o_tag_cr,
-                                                      **self.hyperparameters)
+                                                      fixed_seed=self.hyperparameters["seed"],
+                                                      train_batch_size=self.hyperparameters["batch_size"]["train"],
+                                                      validation_batch_size=self.hyperparameters["batch_size"]["valid"],
+                                                      epochs=self.hyperparameters["epochs"],
+                                                      learning_rate=self.hyperparameters["lr"],
+                                                      warmup_steps=self.hyperparameters["warmup_steps"])
 
         # attach as attributes to class
         setattr(self, "network", network)

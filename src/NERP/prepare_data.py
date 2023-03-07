@@ -69,8 +69,8 @@ def prepare_train_valid_data(train_data, valid_data, limit, test_size, train_dat
     """
     if (valid_data == None):
         logger.info("Valid data is None and created from train data!")
-        data = prepare_data(limit, train_data, sep=train_data_parameters["train_sep"], quoting=train_data_parameters[
-                            "train_quoting"], shuffle=train_data_parameters["train_shuffle"], fixed_seed=fixed_seed)
+        data = prepare_data(limit, train_data, sep=train_data_parameters["sep"], quoting=train_data_parameters[
+                            "quoting"], shuffle=train_data_parameters["shuffle"], fixed_seed=fixed_seed)
         train_sentences, val_sentences, train_entities, val_entities = train_test_split(
             data["sentences"], data["tags"], test_size=test_size, random_state=fixed_seed
         )
@@ -84,8 +84,8 @@ def prepare_train_valid_data(train_data, valid_data, limit, test_size, train_dat
 
     else:
         logger.info("Valid data exists!")
-        training = prepare_data(limit, train_data, sep=train_data_parameters["train_sep"], quoting=train_data_parameters[
-                                "train_quoting"], shuffle=train_data_parameters["train_shuffle"], fixed_seed=fixed_seed)
+        training = prepare_data(limit, train_data, sep=train_data_parameters["sep"], quoting=train_data_parameters[
+                                "quoting"], shuffle=train_data_parameters["shuffle"], fixed_seed=fixed_seed)
         validation = prepare_data(limit, valid_data)
 
         logger.info("Training: ({a}, {b})".format(
@@ -132,8 +132,8 @@ def prepare_kfold_data(train_data, valid_data, test_data, limit, test_on_origina
     sentences = []
     tags = []
 
-    train_data = prepare_data(limit, train_data, sep=train_data_parameters["train_sep"], quoting=train_data_parameters[
-                              "train_quoting"], shuffle=train_data_parameters["train_shuffle"], fixed_seed=fixed_seed)
+    train_data = prepare_data(limit, train_data, sep=train_data_parameters["sep"], quoting=train_data_parameters[
+                              "quoting"], shuffle=train_data_parameters["shuffle"], fixed_seed=fixed_seed)
     sentences += train_data["sentences"]
     tags += train_data["tags"]
 
