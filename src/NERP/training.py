@@ -173,7 +173,8 @@ def training_pipeline(torch_args, data_args, model_args, training_args, kfold_ar
                 pretrained, model_dir, torch_args, data_args, model_args, training_args, kfold_args)
             
             # write accuracy file
-            write_accuracy_file(model_dir, results)
+            if(training_args.return_accuracy):
+                write_accuracy_file(model_dir, results)
 
         else:
             training, validation = prepare_train_valid_data(data_args.train_data, data_args.valid_data, torch_args, data_args)
