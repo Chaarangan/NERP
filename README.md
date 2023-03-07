@@ -250,10 +250,10 @@ Changes from the NERDA(1.0.0) to our NERDA submodule.
 
 
 ## Contributing to NERP
-All contributions, bug reports, bug fixes, documentation improvements, enhancements, and ideas are welcome.
-Feel free to ask questions and send feedbacks on the [mailing list](https://groups.google.com/g/ner-pipeline).
-If you want to contribute NERP, open a [PR](https://github.com/Chaarangan/NERP/pulls).
-If you encounter a bug or want to suggest an enhancement, please open an [issue](https://github.com/Chaarangan/NERP/issues).
+- All contributions, bug reports, bug fixes, documentation improvements, enhancements, and ideas are welcome.
+- Feel free to ask questions and send feedbacks on the [mailing list](https://groups.google.com/g/ner-pipeline).
+- If you want to contribute NERP, open a [PR](https://github.com/Chaarangan/NERP/pulls).
+- If you encounter a bug or want to suggest an enhancement, please open an [issue](https://github.com/Chaarangan/NERP/issues).
 
 ### Contributors
 <a href="https://github.com/Chaarangan/NERP/graphs/contributors">
