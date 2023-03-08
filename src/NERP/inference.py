@@ -22,15 +22,17 @@ def load_model(torch_args, data_args, model_args, training_args, inference_args)
     model = Trainer(torch_args, data_args, model_args, training_args, inference_args.pretrained)
 
     # getting inference vars
-    assert os.path.isfile(
-        inference_args.model_path), f'File {inference_args.model_path} does not exist.'
-
-    if(inference_args.tokenizer_path != None):
+    if inference_args.tokenizer_path != None and inference_args.model_path != None:
         model.load_network_from_file(
             model_path=inference_args.model_path, tokenizer_path=inference_args.tokenizer_path)
-    else:
+        logger.success("Model weights loaded with tokenizer!")
+    elif inference_args.tokenizer_path == None and inference_args.model_path != None:
         model.load_network_from_file(model_path=inference_args.model_path)
-    logger.success("Model weights loaded!")
+        logger.success("Model weights loaded!")
+    else:
+        logger.success("Experiment continues with huggingface model!")
+        pass
+    
     return model
 
 
