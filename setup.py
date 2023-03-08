@@ -27,7 +27,8 @@ setuptools.setup(
         'scikit-learn',
         'TorchCRF',
         'loguru',
-        'dictparse'
+        'dictparse',
+        'pytorch-crf'
     ],
     tests_require=['pytest',
                    'pytest-cov'],
