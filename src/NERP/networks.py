@@ -172,9 +172,9 @@ class TransformerCRF(nn.Module):
         target_tags = target_tags.to(self.device)
         if target_tags is not None:
             loss = -self.crf(log_soft(logits, 2), target_tags,
-                             mask=transformer_inputs.masks.type(torch.uint8), reduction='mean')
+                             mask=masks.to(self.device).type(torch.uint8), reduction='mean')
             prediction = self.crf.decode(
-                logits, mask=transformer_inputs.masks.type(torch.uint8))
+                logits, mask=masks.to(self.device).type(torch.uint8))
             outputs = (loss,) + prediction
         
         return outputs[1]
