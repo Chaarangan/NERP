@@ -3,17 +3,13 @@ This section covers `torch` networks for `NERP`
 """
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 
 from transformers import AutoConfig
-# from TorchCRF import CRF
-from torchcrf import CRF
-
+from TorchCRF import CRF
 
 from .utils import match_kwargs
 from .utils import enforce_reproducibility
 
-log_soft = F.log_softmax
 
 class NERPNetwork(nn.Module):
     """A Generic Network for NERP models.
@@ -115,8 +111,7 @@ class TransformerCRF(nn.Module):
         self.device = device
 
         self.classifier = nn.Linear(hidden_size, n_tags)
-        #self.crf = CRF(n_tags) 
-        self.crf = CRF(n_tags, batch_first=True)
+        self.crf = CRF(n_tags) 
 
     # NOTE: 'offsets 'are not used in model as-is, but they are expected as output
     # down-stream. So _DON'T_ remove! :)
@@ -159,27 +154,15 @@ class TransformerCRF(nn.Module):
         padded_sequence_output = self.dropout(padded_sequence_output)
         logits = self.classifier(padded_sequence_output)
 
-        # outputs = (logits,)
-        # target_tags = target_tags.to(self.device)
-        # if target_tags is not None:
-        #     loss_mask = target_tags.gt(-1)
-        #     loss = self.crf(logits, target_tags, loss_mask) * (-1)
-        #     outputs = (loss,) + outputs
-
-        # # contain: (loss), scores
-        # return outputs[1]
-        
         outputs = (logits,)
         target_tags = target_tags.to(self.device)
         if target_tags is not None:
-            loss = -self.crf(log_soft(logits, 2), target_tags,
-                             mask=masks.to(self.device).type(torch.uint8), reduction='mean')
-            prediction = self.crf.decode(
-                logits, mask=masks.to(self.device).type(torch.uint8))
-            outputs = (loss,) + tuple(prediction)
-        
+            loss_mask = target_tags.gt(-1)
+            loss = self.crf(logits, target_tags, loss_mask) * (-1)
+            outputs = (loss,) + outputs
+
+        # contain: (loss), scores
         return outputs[1]
-        
 
 
 class TransformerBiLSTMCRF(nn.Module):
