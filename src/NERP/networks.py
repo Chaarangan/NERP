@@ -255,88 +255,6 @@ class TransformerBiLSTMCRF(nn.Module):
         return outputs[1]
 
 
-# class TransformerBiLSTM(nn.Module):
-#     """Transformer + BiLSTM
-#     """
-
-#     def __init__(self, transformer: nn.Module, device: str, n_tags: int, dropout: float = 0.1, seed=42) -> None:
-#         """Initialize a NERP Network
-
-#         Args:
-#             transformer (nn.Module): huggingface `torch` transformer.
-#             device (str): Computational device.
-#             n_tags (int): Number of unique entity tags (incl. outside tag)
-#             dropout (float, optional): Dropout probability. Defaults to 0.1.
-#         """
-#         super(TransformerBiLSTM, self).__init__()
-#         enforce_reproducibility(seed)
-
-#         # extract AutoConfig, from which relevant parameters can be extracted.
-#         transformer_config = AutoConfig.from_pretrained(
-#             transformer.name_or_path)
-#         hidden_size = transformer_config.hidden_size
-
-#         self.transformer = transformer
-#         self.dropout = nn.Dropout(dropout)
-#         self.device = device
-
-#         self.bilstm = nn.LSTM(
-#             input_size=hidden_size,
-#             hidden_size=hidden_size // 2,
-#             batch_first=True,
-#             num_layers=2,
-#             dropout=dropout,
-#             bidirectional=True
-#         )
-
-#         self.classifier = nn.Linear(hidden_size, n_tags)
-
-#     # NOTE: 'offsets 'are not used in model as-is, but they are expected as output
-#     # down-stream. So _DON'T_ remove! :)
-#     def forward(self,
-#                 input_ids: torch.Tensor,
-#                 masks: torch.Tensor,
-#                 token_type_ids: torch.Tensor,
-#                 target_tags: torch.Tensor,
-#                 offsets: torch.Tensor) -> torch.Tensor:
-#         """Model Forward Iteration
-
-#         Args:
-#             input_ids (torch.Tensor): Input IDs.
-#             masks (torch.Tensor): Attention Masks.
-#             token_type_ids (torch.Tensor): Token Type IDs.
-#             target_tags (torch.Tensor): Target tags. Are not used 
-#                 in model as-is, but they are expected downstream,
-#                 so they can not be left out.
-#             offsets (torch.Tensor): Offsets to keep track of original
-#                 words. Are not used in model as-is, but they are 
-#                 expected as down-stream, so they can not be left out.
-
-#         Returns:
-#             torch.Tensor: predicted values.
-#         """
-
-#         # TODO: can be improved with ** and move everything to device in a
-#         # single step.
-#         transformer_inputs = {
-#             'input_ids': input_ids.to(self.device),
-#             'masks': masks.to(self.device),
-#             'token_type_ids': token_type_ids.to(self.device)
-#         }
-
-#         # match args with transformer
-#         transformer_inputs = match_kwargs(
-#             self.transformer.forward, **transformer_inputs)
-
-#         padded_sequence_output = self.transformer(**transformer_inputs)[0]
-#         padded_sequence_output = self.dropout(padded_sequence_output)
-#         lstm_output, _ = self.bilstm(padded_sequence_output)
-#         outputs = self.classifier(lstm_output)
-
-#         # contain: (loss), scores
-#         return outputs
-    
-    
 class TransformerBiLSTM(nn.Module):
     """Transformer + BiLSTM
     """
@@ -400,20 +318,20 @@ class TransformerBiLSTM(nn.Module):
 
         # TODO: can be improved with ** and move everything to device in a
         # single step.
-        input_ids = input_ids.to(self.device)
-        attention_mask = masks.to(self.device)
-        token_type_ids = token_type_ids.to(self.device)
+        transformer_inputs = {
+            'input_ids': input_ids.to(self.device),
+            'masks': masks.to(self.device),
+            'token_type_ids': token_type_ids.to(self.device)
+        }
 
-        transformer_outputs = self.transformer(
-            input_ids=input_ids,
-            attention_mask=attention_mask,
-            token_type_ids=token_type_ids
-        )
+        # match args with transformer
+        transformer_inputs = match_kwargs(
+            self.transformer.forward, **transformer_inputs)
 
-        sequence_output = transformer_outputs.last_hidden_state
-        sequence_output = self.dropout(sequence_output)
-        lstm_output, _ = self.bilstm(sequence_output)
-        logits = self.classifier(lstm_output)
+        padded_sequence_output = self.transformer(**transformer_inputs)[0]
+        padded_sequence_output = self.dropout(padded_sequence_output)
+        lstm_output, _ = self.bilstm(padded_sequence_output)
+        outputs = self.classifier(lstm_output)
 
         # contain: (loss), scores
-        return logits
+        return outputs
