@@ -175,7 +175,7 @@ class TransformerCRF(nn.Module):
                              mask=masks.to(self.device).type(torch.uint8), reduction='mean')
             prediction = self.crf.decode(
                 logits, mask=masks.to(self.device).type(torch.uint8))
-            outputs = (loss,) + prediction
+            outputs = [loss, prediction]
         
         return outputs[1]
         
