@@ -5,8 +5,8 @@ import torch
 import torch.nn as nn
 
 from transformers import AutoConfig
-from TorchCRF import CRF
 
+from .crf import CRF
 from .utils import match_kwargs
 from .utils import enforce_reproducibility
 
@@ -111,7 +111,7 @@ class TransformerCRF(nn.Module):
         self.device = device
 
         self.classifier = nn.Linear(hidden_size, n_tags)
-        self.crf = CRF(n_tags)  # batch_first=True
+        self.crf = CRF(n_tags, device=device)
 
     # NOTE: 'offsets 'are not used in model as-is, but they are expected as output
     # down-stream. So _DON'T_ remove! :)
@@ -200,7 +200,7 @@ class TransformerBiLSTMCRF(nn.Module):
         )
 
         self.classifier = nn.Linear(hidden_size, n_tags)
-        self.crf = CRF(n_tags)
+        self.crf = CRF(n_tags, device=device)
 
     # NOTE: 'offsets 'are not used in model as-is, but they are expected as output
     # down-stream. So _DON'T_ remove! :)
