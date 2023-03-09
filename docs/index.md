@@ -13,29 +13,6 @@ NERP (Named Entity Recognition Pipeline) is a Python package that provides a use
 - Prediction on a single text.
 - Prediction on a CSV file.
 
-## Package Diagram
-
-<table>
-  <tr>
-    <td>NERP Main Component</td>
-  </tr>
-  <tr>
-    <td><img alt="NERP Main Component" src="https://github.com/Chaarangan/NERP/blob/master/diagrams/1.png"/></td>
-  </tr>
-  <tr>
-    <td>Component of NERP K-Fold Cross Validation</td>
-  </tr>
-  <tr>
-    <td><img align="left" alt="Component of NERP K-Fold Cross Validation" src="https://github.com/Chaarangan/NERP/blob/master/diagrams/2.png" height="200"/></td>
-  </tr>
-  <tr>
-    <td>Component of NERP Inference</td>
-  </tr>
-  <tr>
-    <td><img align="left" alt="Component of NERP Inference" src="https://github.com/Chaarangan/NERP/blob/master/diagrams/3.png" height="200"/></td>
-  </tr>
- </table>
-
 ## **Config**
 
 The user interface consists of only one file config as a YAML. Change it to create the desired configuration.
@@ -134,6 +111,7 @@ inference:
 ---
 
 #### Training Parameters
+
 | Parameters | Description | Default | Type |
 | ------------- | ------------- | ------------- | ------------- |
 | continue_from_checkpoint | Boolean flag to continue training from a previous checkpoint | False | bool | 
@@ -152,7 +130,9 @@ inference:
 | test_on_original | Evaluate on the original test set for each iteration if set to True | False | bool |
 ---
 
+
 #### Inference Parameters
+
 | Parameters | Description | Default | Type |
 | ------------- | ------------- | ------------- | ------------- |
 | pretrained | A 'huggingface' transformer model to use for inference | roberta-base | str |
