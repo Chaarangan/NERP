@@ -16,9 +16,18 @@ import os
 import pandas as pd
 from NERP.utils import SentenceGetter
 from sklearn.model_selection import train_test_split
+import csv
+import random
 
-def prepare_data(limit: int = 0, file_path: str = None):
-    """This function will prepare the sentences and entities from the input BIO format 
+def unison_shuffled_copies(a, b):
+    assert len(a) == len(b)
+    c = list(zip(a, b))
+    random.shuffle(c)
+    a_, b_ = zip(*c)
+    return a_, b_
+
+def prepare_data(limit: int = 0, file_path: str = None, sep=',', quoting=True, shuffle=False, fixed_seed=42):
+    """This function will prepare the sentences and entities from the input BIO format
 
     Args:
         limit (int, optional): Limit the number of observations to be returned from a given split. Defaults to 0, which implies that the entire data split is returned.
@@ -30,8 +39,11 @@ def prepare_data(limit: int = 0, file_path: str = None):
     file_path = os.path.join(file_path)
     assert os.path.isfile(file_path), f'File {file_path} does not exist.'
 
-    data = pd.read_csv(file_path)
-    data = data.fillna(method="ffill")
+    data = None
+    if quoting:
+        data = pd.read_csv(file_path, sep=sep, na_filter=False)
+    else:
+        data = pd.read_csv(file_path, sep=sep, quoting=csv.QUOTE_NONE, na_filter=False)
 
     getter = SentenceGetter(data)
     sentences = [[word[0] for word in sentence] for sentence in getter.sentences]
@@ -46,10 +58,14 @@ def prepare_data(limit: int = 0, file_path: str = None):
     assert len(sentences) == len(
         entities), f"Sentences and entities are having different length."
 
+    if shuffle:
+        random.seed(fixed_seed)
+        sentences, entities = unison_shuffled_copies(sentences, entities)
+        
     return {'sentences': sentences, 'tags': entities}
 
 
-def prepare_train_valid_data(train_data, valid_data, limit, test_size):
+def prepare_train_valid_data(train_data, valid_data, limit, test_size, train_data_parameters, fixed_seed):
     """This function will create training and validation dictionaries from train and valid csv files
 
     Args:
@@ -63,9 +79,9 @@ def prepare_train_valid_data(train_data, valid_data, limit, test_size):
     """
     if (valid_data == None):
         print("Valid data is None and created from train data!")
-        data = prepare_data(limit, train_data)
+        data = prepare_data(limit, train_data, sep=train_data_parameters["train_sep"], quoting=train_data_parameters["train_quoting"], shuffle=train_data_parameters["train_shuffle"], fixed_seed=fixed_seed)
         train_sentences, val_sentences, train_entities, val_entities = train_test_split(
-            data["sentences"], data["tags"], test_size=test_size
+            data["sentences"], data["tags"], test_size=test_size, random_state=fixed_seed
         )
         training = {"sentences": train_sentences, "tags": train_entities}
         validation = {"sentences": val_sentences, "tags": val_entities}
@@ -77,7 +93,7 @@ def prepare_train_valid_data(train_data, valid_data, limit, test_size):
 
     else:
         print("Valid data exists!")
-        training = prepare_data(limit, train_data)
+        training = prepare_data(limit, train_data, sep=train_data_parameters["train_sep"], quoting=train_data_parameters["train_quoting"], shuffle=train_data_parameters["train_shuffle"], fixed_seed=fixed_seed)
         validation = prepare_data(limit, valid_data)
 
         print("Training: ({a}, {b})".format(
@@ -108,7 +124,7 @@ def prepare_test_data(test_data, limit):
     return test
 
 
-def prepare_kfold_data(train_data, valid_data, test_data, limit, test_on_original):
+def prepare_kfold_data(train_data, valid_data, test_data, limit, test_on_original, train_data_parameters, fixed_seed=42):
     """This function will prepare training dictionary for kfold
 
     Args:
@@ -124,7 +140,7 @@ def prepare_kfold_data(train_data, valid_data, test_data, limit, test_on_origina
     sentences = []
     tags = []
 
-    train_data = prepare_data(limit, train_data)
+    train_data = prepare_data(limit, train_data, sep=train_data_parameters["train_sep"], quoting=train_data_parameters["train_quoting"], shuffle=train_data_parameters["train_shuffle"], fixed_seed=fixed_seed)
     sentences += train_data["sentences"]
     tags += train_data["tags"]
 
@@ -146,7 +162,7 @@ def prepare_kfold_data(train_data, valid_data, test_data, limit, test_on_origina
     return {"sentences": sentences, "tags": tags}
 
 
-def prepare_kfold_train_valid_data(training, test_size):
+def prepare_kfold_train_valid_data(training, test_size, fixed_seed):
     """This function will create training and validation dictionaries from train and valid csv files for kfold
 
     Args:
@@ -157,7 +173,7 @@ def prepare_kfold_train_valid_data(training, test_size):
         dict: Two dictionaries (training and validation)
     """
     train_sentences, val_sentences, train_entities, val_entities = train_test_split(
-        training["sentences"], training["tags"], test_size=test_size
+        training["sentences"], training["tags"], test_size=test_size, random_state=fixed_seed
     )
     training = {"sentences": train_sentences, "tags": train_entities}
     validation = {"sentences": val_sentences, "tags": val_entities}

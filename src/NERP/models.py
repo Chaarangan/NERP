@@ -43,6 +43,11 @@ class NERP:
             self.hyperparameters["train_batch_size"] = 64
         if(self.hyperparameters["learning_rate"] == None):
             self.hyperparameters["learning_rate"] = 0.0001
+        if(self.hyperparameters["fixed_seed"] == None):
+            self.hyperparameters["fixed_seed"] = 42
+        self.validation_batch_size = dictionary["model"]["validation_batch_size"]
+        if(self.validation_batch_size == None):
+            self.validation_batch_size = 8
         self.tokenizer_parameters = dictionary["model"]["tokenizer_parameters"]
         if(self.tokenizer_parameters["do_lower_case"] == None):
             self.tokenizer_parameters["do_lower_case"] = True
@@ -51,14 +56,21 @@ class NERP:
             self.archi = "baseline"
         self.max_len = dictionary["model"]["max_len"]
         if self.max_len == None:
-            self.max_len = 128
+            self.max_len = 256
         self.dropout = dictionary["model"]["dropout"]
         if self.dropout == None:
-            self.dropout = 0.1
+            self.dropout = 0
         self.pretrained_models = dictionary["model"]["pretrained_models"]
         if self.pretrained_models == [None]:
             self.pretrained_models = ["roberta-base"]
         self.train_data = dictionary["data"]["train_data"]
+        self.train_data_parameters = dictionary["data"]["train_data_parameters"]
+        if(self.train_data_parameters["train_sep"] == None):
+            self.train_data_parameters["train_sep"] = ','
+        if(self.train_data_parameters["train_quoting"] == None):
+            self.train_data_parameters["train_quoting"] = True
+        if(self.train_data_parameters["train_shuffle"] == None):
+            self.train_data_parameters["train_shuffle"] = True
         self.valid_data = dictionary["data"]["valid_data"]
         if self.valid_data == "":
             self.valid_data = None
@@ -79,9 +91,9 @@ class NERP:
         self.kfold = dictionary["kfold"]["splits"]
         if self.kfold == None:
             self.kfold = 0
-        self.seed = dictionary["kfold"]["seed"]
-        if self.seed == None:
-            self.seed = 42
+        #self.seed = dictionary["kfold"]["seed"]
+        #if self.seed == None:
+        #    self.seed = 42
         self.test_on_original = dictionary["kfold"]["test_on_original"]
         if(self.test_on_original == None):
             self.test_on_original = False
@@ -118,10 +130,11 @@ class NERP:
                                     pretrained_models=self.pretrained_models,
                                     hyperparameters=self.hyperparameters,
                                     tokenizer_parameters=self.tokenizer_parameters,
+                                    validation_batch_size=self.validation_batch_size,
+                                    train_data_parameters=self.train_data_parameters,
                                     max_len=self.max_len,
                                     dropout=self.dropout,
                                     kfold = 0,
-                                    seed=42,
                                     test_on_original=False)
         
         return message
@@ -134,9 +147,13 @@ class NERP:
                                     device=self.device,
                                     train_data=self.train_data,
                                     valid_data=self.valid_data,
+<<<<<<< HEAD
                                     test_data_1 = self.test_data_1,
                                     test_data_2 = self.test_data_2,
                                     test_data_3 = self.test_data_3,
+=======
+                                    test_data = self.test_data,
+>>>>>>> origin/v1.0.2.2
                                     existing_model_path=self.existing_model_path,
                                     existing_tokenizer_path=self.existing_tokenizer_path,
                                     tag_scheme=self.tag_scheme,
@@ -148,10 +165,11 @@ class NERP:
                                     pretrained_models=self.pretrained_models,
                                     hyperparameters=self.hyperparameters,
                                     tokenizer_parameters=self.tokenizer_parameters,
+                                    validation_batch_size=self.validation_batch_size,
+                                    train_data_parameters=self.train_data_parameters,
                                     max_len=self.max_len,
                                     dropout=self.dropout,
                                     kfold=0,
-                                    seed=42,
                                     test_on_original=False)
 
         return message
@@ -174,11 +192,12 @@ class NERP:
                                     output_dir=self.output_dir,
                                     pretrained_models=self.pretrained_models,
                                     hyperparameters=self.hyperparameters,
+                                    train_data_parameters=self.train_data_parameters,
                                     tokenizer_parameters=self.tokenizer_parameters,
+                                    validation_batch_size=self.validation_batch_size,
                                     max_len=self.max_len,
                                     dropout=self.dropout,
                                     kfold=self.kfold,
-                                    seed=self.seed,
                                     test_on_original=self.test_on_original)
 
         return message
@@ -203,11 +222,12 @@ class NERP:
                                     output_dir=self.output_dir,
                                     pretrained_models=self.pretrained_models,
                                     hyperparameters=self.hyperparameters,
+                                    train_data_parameters=self.train_data_parameters,
                                     tokenizer_parameters=self.tokenizer_parameters,
+                                    validation_batch_size=slf.validation_batch_size,
                                     max_len=self.max_len,
                                     dropout=self.dropout,
                                     kfold=self.kfold,
-                                    seed=self.seed,
                                     test_on_original=self.test_on_original)
 
         return message
@@ -276,5 +296,4 @@ class NERP:
 
         return message
     
-
 
