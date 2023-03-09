@@ -1,7 +1,7 @@
 # NERP - NER Pipeline
 
 ## What is it?
-NERP (Named Entity Recognition Pipeline) is a python package that offers an easy-to-use pipeline for fine-tuning pre-trained transformers for Named Entity Recognition (NER) tasks.
+NERP (Named Entity Recognition Pipeline) is a Python package that provides a user-friendly pipeline for fine-tuning pre-trained transformers for Named Entity Recognition (NER) tasks.
 
 ## Main Features include:
 - Support for multiple architectures, such as BiLSTM, CRF, and BiLSTM+CRF.
@@ -99,67 +99,67 @@ inference:
 #### Torch Parameters
 | Parameters | Description | Default | Type |
 | ------------- | ------------- | ------------- | ------------- |
-| device | the desired device to use for computation. If not provided by the user, we take a guess. | ```cuda``` or ```cpu```| str | 
-| seed | Random state value for a particular experiment | 42 | int |
+| device | The desired device to use for computation. If not provided by the user, the package will make a guess | ```cuda``` or ```cpu```| str | 
+| seed | A random state value used for a specific experiment | 42 | int |
 ---
 
 #### Data Parameters
 | Parameters | Description | Default | Type |
 | ------------- | ------------- | ------------- | ------------- |
-| train_data | path to training csv file | | str |
-| valid_data | path to validation csv file | | str |
-| train_valid_split | train/valid split ratio if valid data not exists | 0.2 | float | 
-| test_data | path to testing csv file | | str |
-| sep | Delimiter to use | ',' | str |
-| quoting | Control field quoting behavior per csv.QUOTE_* constants. | 3 | int |
-| shuffle | Shuffle the entire dataset before training | False | bool |
-| limit | Limit the number of observations to be returned from a given split. Defaults to None, which implies that the entire data split is returned. | 0 (whole data) | int |
-| tags | All available NER tags for the given data set EXCLUDING the special outside tag, that is handled separately | | List[str] |
+| train_data | The path to the training CSV file | | str |
+| valid_data | The path to the validation CSV file | | str |
+| train_valid_split | The train/validation split ratio if there's no validation data | 0.2 | float | 
+| test_data | The path to the testing CSV file | | str |
+| sep | The delimiter to use | ',' | str |
+| quoting | The behavior for field quoting per csv.QUOTE_* constants | 3 | int |
+| shuffle | Whether to shuffle the entire dataset before training | False | bool |
+| limit | The maximum number of observations to be returned from a given split. Defaults to 0, which returns the entire data split | 0 | int |
+| tags | A list of all the available NER tags for the given dataset, excluding the special outside tag, which is handled separately | | List[str] |
 ---
 
 #### Model Parameters
 | Parameters | Description | Default | Type |
 | ------------- | ------------- | ------------- | ------------- |
-| archi | The desired architecture for the model (baseline, bilstm-crf, bilstm, crf) | baseline | str |
-| max_len | the maximum sentence length (number of tokens after applying the transformer tokenizer) | 128 | int |
-| dropout | dropout probability  | 0.1 | float |
-| epochs | number of epochs | 5 | int |
-| num_workers | number of workers/threads for data processing | 1 | int |
-| warmup_steps | number of workers/threads for data loader | 500 | int |
-| train_batch_size | batch Size for training DataLoader | 64 | int |
-| valid_batch_size | batch Size for validation DataLoader | 64 | int |
-| lr | learning rate (float) | 0.0001 | float |
+| archi | The desired architecture for the model. It can be one of the following: baseline, bilstm-crf, bilstm, or crf | baseline | str |
+| max_len | The maximum sentence length (number of tokens after applying the transformer tokenizer) | 128 | int |
+| dropout | The dropout probability  | 0.1 | float |
+| epochs | The number of epochs | 5 | int |
+| num_workers | The number of workers/threads for data processing | 1 | int |
+| warmup_steps | The number of warmup steps for the optimizer | 500 | int |
+| train_batch_size | The batch size for training DataLoader | 64 | int |
+| valid_batch_size | The batch size for validation DataLoader | 64 | int |
+| lr | The learning rate | 0.0001 | float |
 | do_lower_case | Lowercase the sequence during the tokenization | True | bool |
-| pretrained_models | list of 'huggingface' transformer models | roberta-base | str |
+| pretrained_models | A list of 'huggingface' transformer models | roberta-base | str |
 ---
 
 #### Training Parameters
 | Parameters | Description | Default | Type |
 | ------------- | ------------- | ------------- | ------------- |
-| continue_from_checkpoint | Continue training from previous checkpoint | False | bool | 
-| checkpoint_path | model derived from the transformer  | | str |
-| checkpoint_tokenizer_path | tokenizer derived from the transformer | | str |
-| output_dir | path to output directory  | output/ | str |
-| o_tag_cr | To include O tag in the classification report  | True | bool |
-| return_accuracy | Return accuracy for every training step | False | bool |
+| continue_from_checkpoint | Boolean flag to continue training from a previous checkpoint | False | bool | 
+| checkpoint_path | Path to the pre-trained model derived from the transformer  | | str |
+| checkpoint_tokenizer_path | Path to the tokenizer derived from the transformer | | str |
+| output_dir | Path to the output directory  | output/ | str |
+| o_tag_cr | Boolean flag to include O tag in the classification report  | True | bool |
+| return_accuracy | Boolean flag to return accuracy for every training step | False | bool |
 ---
 
-#### Training Parameters
+#### KFold Parameters
 | Parameters | Description | Default | Type |
 | ------------- | ------------- | ------------- | ------------- |
-| is_kfold | Train with KFold Cross-Validation | False | bool |
-| splits | number of splits | 0 | int |
-| test_on_original | True, if you need to test on the original test set for each iteration | False | bool |
+| is_kfold | Enable K-Fold Cross-Validation for training | False | bool |
+| splits | Number of splits for K-Fold Cross-Validation | 0 | int |
+| test_on_original | Evaluate on the original test set for each iteration if set to True | False | bool |
 ---
 
 #### Inference Parameters
 | Parameters | Description | Default | Type |
 | ------------- | ------------- | ------------- | ------------- |
-| pretrained | 'huggingface' transformer model | roberta-base | str |
-| model_path | path to trained model |  | str  |
-| tokenizer_path | path to saved tokenizer folder |  | str |
-| in_file_path | path to inference file otherwise leave it as empty | | str |
-| out_file_path | path to the output file if the input is a file, otherwise leave it as empty | | str |
+| pretrained | A 'huggingface' transformer model to use for inference | roberta-base | str |
+| model_path | Path to the trained model file |  | str  |
+| tokenizer_path | Path to the saved tokenizer folder |  | str |
+| in_file_path | Path to the input file to be used for inference | | str |
+| out_file_path | Path to the output file for saving the inference results | | str |
 ---
 
 ### **Data Format**
@@ -179,12 +179,12 @@ Pipeline works with CSV files containing separated tokens and labels on each lin
 
 ### **Output**
 
-After training the model, the pipeline will return the following files in the output directory:
+Once the model training is complete, the pipeline will generate the following files in the output directory:
 
 * model.bin - PyTorch NER model
-* tokenizer files
-* classification-report.csv - logging file
-* If k-fold - split datasets, models and tokenizers for each iteration and accuracy file
+* Tokenizer files
+* Classification-report.csv - a logging file
+* In case of k-fold training, the pipeline generates split datasets, models, tokenizers, and accuracy files for each iteration.
 
 ---
 
