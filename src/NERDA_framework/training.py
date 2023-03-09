@@ -184,7 +184,9 @@ def train_model(network,
         report, _ = compute_f1_scores(y_pred=valid_tags_predicted,
                                y_true=dataset_validation.get('tags'),
                                labels=labels)
-        valid_f1 = report.split('\n')[len(labels) + 4].split()[3]
+
+        f1_row = report.split('\n')[len(labels) + 3].split()
+        valid_f1 = f1_row[1] if f1_row[0] == 'accuracy' else f1_row[3]
         valid_f1 = float(valid_f1)
 
         print(f"Train Loss = {train_loss} Valid Loss = {valid_loss} Valid F1 = {valid_f1}")
