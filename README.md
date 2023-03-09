@@ -13,7 +13,7 @@ NERP (Named Entity Recognition Pipeline) is a Python package that provides a use
 - Prediction on a single text.
 - Prediction on a CSV file.
 
-<!-- ## Package Diagram
+## Package Diagram
 
 <table>
   <tr>
@@ -34,7 +34,7 @@ NERP (Named Entity Recognition Pipeline) is a Python package that provides a use
   <tr>
     <td><img align="left" alt="Component of NERP Inference" src="https://github.com/Chaarangan/NERP/blob/master/diagrams/3.png" height="200"/></td>
   </tr>
- </table> -->
+ </table>
 
 ## **Config**
 
