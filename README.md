@@ -13,7 +13,7 @@ NERP (Named Entity Recognition Pipeline) is a Python package that provides a use
 - Prediction on a single text.
 - Prediction on a CSV file.
 
-## Package Diagram
+<!-- ## Package Diagram
 
 <table>
   <tr>
@@ -34,7 +34,7 @@ NERP (Named Entity Recognition Pipeline) is a Python package that provides a use
   <tr>
     <td><img align="left" alt="Component of NERP Inference" src="https://github.com/Chaarangan/NERP/blob/master/diagrams/3.png" height="200"/></td>
   </tr>
- </table>
+ </table> -->
 
 ## **Config**
 
@@ -101,6 +101,7 @@ inference:
 | ------------- | ------------- | ------------- | ------------- |
 | device | The desired device to use for computation. If not provided by the user, the package will make a guess | ```cuda``` or ```cpu```| str | 
 | seed | A random state value used for a specific experiment | 42 | int |
+
 ---
 
 #### Data Parameters
@@ -115,6 +116,7 @@ inference:
 | shuffle | Whether to shuffle the entire dataset before training | False | bool |
 | limit | The maximum number of observations to be returned from a given split. Defaults to 0, which returns the entire data split | 0 | int |
 | tags | A list of all the available NER tags for the given dataset, excluding the special outside tag, which is handled separately | | List[str] |
+
 ---
 
 #### Model Parameters
@@ -131,6 +133,7 @@ inference:
 | lr | The learning rate | 0.0001 | float |
 | do_lower_case | Lowercase the sequence during the tokenization | True | bool |
 | pretrained_models | A list of 'huggingface' transformer models | roberta-base | str |
+
 ---
 
 #### Training Parameters
@@ -142,6 +145,7 @@ inference:
 | output_dir | Path to the output directory  | output/ | str |
 | o_tag_cr | Boolean flag to include O tag in the classification report  | True | bool |
 | return_accuracy | Boolean flag to return accuracy for every training step | False | bool |
+
 ---
 
 #### KFold Parameters
@@ -150,6 +154,7 @@ inference:
 | is_kfold | Enable K-Fold Cross-Validation for training | False | bool |
 | splits | Number of splits for K-Fold Cross-Validation | 0 | int |
 | test_on_original | Evaluate on the original test set for each iteration if set to True | False | bool |
+
 ---
 
 #### Inference Parameters
@@ -160,6 +165,7 @@ inference:
 | tokenizer_path | Path to the saved tokenizer folder |  | str |
 | in_file_path | Path to the input file to be used for inference | | str |
 | out_file_path | Path to the output file for saving the inference results | | str |
+
 ---
 
 ### **Data Format**

@@ -9,7 +9,7 @@ setuptools.setup(
     license='LICENSE.txt',
     author="Charangan Vasantharajan",
     author_email="chaanuv@gmail.com",
-    description="A pipeline for fine-tuning pre-trained transformers for Named Entity Recognition (NER) tasks",
+    description="This is a pipeline designed for fine-tuning pre-trained transformers to perform Named Entity Recognition (NER) tasks",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/chaarangan/NERP",
