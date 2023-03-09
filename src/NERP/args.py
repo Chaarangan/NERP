@@ -59,7 +59,7 @@ def model_args(dict):
 
     parser.add_param('archi', str, required=False, default="baseline",
                      description="The desired architecture for the model (baseline, bilstm-crf, bilstm, crf)")
-    parser.add_param('max_len', int, required=False, default=128,
+    parser.add_param('max_len', int, required=False, default=256,
                      description="The maximum sentence length (number of tokens after applying the transformer tokenizer)")
     parser.add_param('dropout', float, required=False, default=0.1,
                      description="Dropout probability")
