@@ -215,25 +215,30 @@ from NERP.models import NERP
 model = NERP("env.yaml")
 ```
 
-### Training a NER model using NERP
-
-Train a base model
+### Training
+- Common function to call
 ```python
 model.train()
 ```
+There are several options depending on your needs:
+- Casual Training: Configure the YAML file and set ```continue_from_checkpoint``` as ```False``` and ```is_kfold``` as ```False```. Then call ```model.train()```.
+- Training from a previous checkpoint: Configure the YAML file and set ```continue_from_checkpoint``` as ```True``` and ```is_kfold``` as ```False```. You will need to specify the ```checkpoint_path```. Then call ```model.train()```.
+- Training with KFold: Configure the YAML file and set ```continue_from_checkpoint``` as ```False``` and ```is_kfold``` as ```True```. You will need to specify the number of ```splits```. If you wish to test each fold with your original test set rather than its own test split, set the ```test_on_original``` variable as ```True```. Then call ```model.train()```.
+- Training from a previous checkpoint with KFold: Configure the YAML file and set ```continue_from_checkpoint``` as ```True``` and ```is_kfold``` as ```True```. You will need to specify the ```checkpoint_path```. Then call ```model.train()```.
 
-### Inference of a NER model using NERP 
+### Predictions 
+There are several options depending on your needs:
+- Prediction on a CSV file: Configure the YAML file and give ```model_path```, ```tokenizer_path``` (if exists), ```in_file_path```, and ```out_file_path```. Then call ```model.predict()```.
+```python
+model.predict()
+```
 
-1. Prediction on a single text
+- Prediction on text: Configure the YAML file and give ```model_path``` and ```tokenizer_path``` (if exists). Then call ```model.predict_text(“some text”)```.
 ```python
 output = model.predict_text("Hello from NERP")
 print(output)
 ```
 
-2. Prediction on a input file
-```python
-model.predict()
-```
 
 ## License
 MIT License
@@ -259,6 +264,9 @@ Changes from the NERDA(1.0.0) to our NERDA submodule.
 <a href="https://github.com/Chaarangan/NERP/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=Chaarangan/NERP"/>
 </a>
+
+### PRs
+- [@tanmaysurana](https://github.com/tanmaysurana) (Tanmay Surana): add support for testing on multiple files, add additional parameters to maintain consistency across multiple experiments (validation batch size, shuffle, fixed seed), and improve loss computation algorithms [PR #20](https://github.com/Chaarangan/NERP/pull/20)
 
 ## Cite this work
 
