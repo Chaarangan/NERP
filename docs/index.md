@@ -219,7 +219,6 @@ output = model.predict_text("Hello from NERP")
 print(output)
 ```
 
-
 ## License
 MIT License
 
