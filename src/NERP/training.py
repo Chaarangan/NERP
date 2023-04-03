@@ -67,7 +67,7 @@ def do_train(archi, device, training, validation, testing, tag_scheme, o_tag_cr,
     # evaluate on test set
     c_reports = [
         model.evaluate_performance(
-            t, return_accuracy=return_accuracy
+            t, return_accuracy=return_accuracy, batch_size=validation_batch_size
         ) for t in testing
     ]
     

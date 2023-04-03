@@ -164,6 +164,7 @@ def train_model(network,
     )
 
     train_losses = []
+    best_parameters = network.state_dict()
     # best_valid_loss = np.inf
     best_valid_f1 = 0.0
 
@@ -174,8 +175,7 @@ def train_model(network,
         train_loss = train(network, dl_train, optimizer, device, scheduler, n_tags)
         train_losses.append(train_loss)
         valid_loss, valid_tags_predicted = validate(network, dl_validate, device, n_tags, tag_encoder)
-#        print(valid_tags_predicted)
-#        print(dataset_validation.get('tags')) 
+        
         if(o_tag_cr == True):
             labels = ["O"] + tag_scheme
         else:
@@ -203,6 +203,3 @@ def train_model(network,
     network.load_state_dict(best_parameters)
 
     return network, train_losses, best_valid_f1
-
-
-        
