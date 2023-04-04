@@ -26,7 +26,7 @@ def unison_shuffled_copies(a, b):
     a_, b_ = zip(*c)
     return a_, b_
 
-def prepare_data(limit: int = 0, file_path: str = None, sep=',', quoting=True, shuffle=False, fixed_seed=42):
+def prepare_data(limit: int = 0, file_path: str = None, sep=',', quoting=True, shuffle=False, fixed_seed=42, encoding='utf-8'):
     """This function will prepare the sentences and entities from the input BIO format
 
     Args:
@@ -41,9 +41,9 @@ def prepare_data(limit: int = 0, file_path: str = None, sep=',', quoting=True, s
 
     data = None
     if quoting:
-        data = pd.read_csv(file_path, sep=sep, na_filter=False)
+        data = pd.read_csv(file_path, sep=sep, na_filter=False, encoding=encoding)
     else:
-        data = pd.read_csv(file_path, sep=sep, quoting=csv.QUOTE_NONE, na_filter=False)
+        data = pd.read_csv(file_path, sep=sep, quoting=csv.QUOTE_NONE, na_filter=False, encoding=encoding)
 
     getter = SentenceGetter(data)
     sentences = [[word[0] for word in sentence] for sentence in getter.sentences]
@@ -93,8 +93,8 @@ def prepare_train_valid_data(train_data, valid_data, limit, test_size, train_dat
 
     else:
         print("Valid data exists!")
-        training = prepare_data(limit, train_data, sep=train_data_parameters["train_sep"], quoting=train_data_parameters["train_quoting"], shuffle=train_data_parameters["train_shuffle"], fixed_seed=fixed_seed)
-        validation = prepare_data(limit, valid_data)
+        training = prepare_data(limit, train_data, sep=train_data_parameters["train_sep"], quoting=train_data_parameters["train_quoting"], shuffle=train_data_parameters["train_shuffle"], fixed_seed=fixed_seed, encoding=train_data_parameters["train_encoding"])
+        validation = prepare_data(limit, valid_data, encoding=train_data_parameters["valid_encoding"])
 
         print("Training: ({a}, {b})".format(
             a=str(len(training["sentences"])), b=str(len(training["tags"]))))
@@ -106,7 +106,7 @@ def prepare_train_valid_data(train_data, valid_data, limit, test_size, train_dat
     return training, validation
 
 
-def prepare_test_data(test_data, limit):
+def prepare_test_data(test_data, limit, encoding='utf-8'):
     """The function will create a dictionary of sentences and tags for test set
 
     Args:
@@ -116,7 +116,7 @@ def prepare_test_data(test_data, limit):
     Returns:
         dict: a dictioanry of sentences and tags
     """
-    test = prepare_data(limit, test_data)
+    test = prepare_data(limit, test_data, encoding=encoding)
     print("Test: ({a}, {b})".format(
         a=str(len(test["sentences"])), b=str(len(test["tags"]))))
     print("Test dataset is prepared!")
