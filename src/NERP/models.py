@@ -71,6 +71,12 @@ class NERP:
             self.train_data_parameters["train_quoting"] = True
         if(self.train_data_parameters["train_shuffle"] == None):
             self.train_data_parameters["train_shuffle"] = True
+        if(self.train_data_parameters["train_encoding"] == None):
+            self.train_data_parameters["train_encoding"] = "utf-8"
+        if(self.train_data_parameters["valid_encoding"] == None):
+            self.train_data_parameters["valid_encoding"] = "utf-8"
+        if(self.train_data_parameters["test_encodings"] == None):
+            self.train_data_parameters["test_encodings"] = ["utf-8", "utf-8", "latin1", "utf-8", "utf-8"]
         self.valid_data = dictionary["data"]["valid_data"]
         if self.valid_data == "":
             self.valid_data = None
