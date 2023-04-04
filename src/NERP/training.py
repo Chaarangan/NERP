@@ -226,7 +226,7 @@ def training_pipeline(archi,
 
         else:
             training, validation = prepare_train_valid_data(train_data, valid_data, limit, test_size, train_data_parameters=train_data_parameters, fixed_seed=hyperparameters["fixed_seed"])
-            testing = [prepare_test_data(t, limit) for t in test_data]
+            testing = [prepare_test_data(t, limit, train_data_parameters['test_encoding'][i]) for i, t in enumerate(test_data)]
             
             print("Training {model} without K-Fold!".format(model=pretrained))
             do_train(archi, device, training, validation, testing, tag_scheme, o_tag_cr, hyperparameters, tokenizer_parameters, validation_batch_size, max_len,
